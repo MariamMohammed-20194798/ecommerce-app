@@ -18,6 +18,15 @@ enum Role {
   ADMIN
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING 
+  SHIPPED
+  DELIVERED 
+  CANCELLED
+}
+
 model User {
   id              String    @id @default(uuid())
   email           String    @unique
@@ -26,6 +35,125 @@ model User {
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  orders          Order[]
+  cart            Cart?
+  reviews         Review[]
+  addresses       Address[]
   @@map("users")
 }
 
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  products Product[]
+  @@map("categories")
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id])
+  slug        String           @unique
+  name        String
+  description String?
+  basePrice   Decimal          @db.Decimal(10, 2)
+  isActive    Boolean          @default(true)
+  metadata    Json?
+  types    ProductVariant[]
+  reviews     Review[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  @@map("products")
+}
+
+model ProductVariant {
+  id            String      @id @default(uuid())
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  sku           String      @unique
+  size          String?
+  color         String?
+  priceOverride Decimal?    @db.Decimal(10, 2)
+  stockQuantity Int         @default(0)
+  images        String[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  @@map("product_variants")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id])
+  sessionId String?
+  items     CartItem[]
+  expiresAt DateTime?
+  createdAt DateTime   @default(now())
+  @@map("carts")
+}
+
+model CartItem {
+  id            String         @id @default(uuid())
+  cartId        String
+  cart          Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId     String
+  variant       ProductVariant @relation(fields: [variantId], references: [id])
+  quantity      Int
+  customization Json?
+  @@map("cart_items")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  status          OrderStatus @default(PENDING)
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  stripePaymentId String?
+  addressId       String
+  address         Address     @relation(fields: [addressId], references: [id])
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String         @id @default(uuid())
+  orderId       String
+  order         Order          @relation(fields: [orderId], references: [id])
+  variantId     String
+  variant       ProductVariant @relation(fields: [variantId], references: [id])
+  quantity      Int
+  unitPrice     Decimal        @db.Decimal(10, 2)
+  customization Json?
+  @@map("order_items")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int
+  body      String?
+  createdAt DateTime @default(now())
+  @@map("reviews")
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id])
+  line1      String
+  line2      String?
+  city       String
+  state      String?
+  postalCode String
+  country    String
+  isDefault  Boolean @default(false)
+  orders     Order[]
+  @@map("addresses")
+}
