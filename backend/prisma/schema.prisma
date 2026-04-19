@@ -31,6 +31,7 @@ model User {
   id              String    @id @default(uuid())
   email           String    @unique
   passwordHash    String?
+  googleId        String?   @unique
   role            Role      @default(CUSTOMER)
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
@@ -39,7 +40,30 @@ model User {
   cart            Cart?
   reviews         Review[]
   addresses       Address[]
+  refreshTokens            RefreshToken[]
+  emailVerificationTokens  EmailVerificationToken[]
   @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  @@map("refresh_tokens")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@map("email_verification_tokens")
 }
 
 model Category {
