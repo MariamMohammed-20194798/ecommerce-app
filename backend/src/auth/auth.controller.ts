@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -59,6 +60,11 @@ export class AuthController {
     await this.auth.revokeRefresh(raw);
     this.clearRefreshCookie(res);
     return { ok: true };
+  }
+
+  @Post('verify-email')
+  verifyEmail(@Query('token') token: string) {
+    return this.auth.verifyEmail(token);
   }
 
   @Get('google')

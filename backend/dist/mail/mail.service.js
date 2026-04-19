@@ -24,7 +24,8 @@ let MailService = MailService_1 = class MailService {
         this.resend = key ? new resend_1.Resend(key) : null;
     }
     async sendVerificationEmail(to, verifyUrl) {
-        const from = this.config.get('EMAIL_FROM', 'onboarding@resend.dev');
+        const from = this.config.get('EMAIL_FROM', 'noreply@ecommerce.com');
+        this.logger.log(`Verification email URL for ${to}: ${verifyUrl}`);
         if (!this.resend) {
             this.logger.warn(`RESEND_API_KEY not set; skipping verification email to ${to}. URL: ${verifyUrl}`);
             return;
@@ -35,6 +36,7 @@ let MailService = MailService_1 = class MailService {
             subject: 'Verify your email',
             html: `<p>Click to verify your account:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`,
         });
+        this.logger.log(`Verification email sent to ${to}`);
     }
 };
 exports.MailService = MailService;

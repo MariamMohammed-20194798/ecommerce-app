@@ -57,6 +57,23 @@ let AuthService = class AuthService {
     jwt;
     mail;
     config;
+    async verifyEmail(token) {
+        const tokenHash = (0, auth_utils_1.hashOpaqueToken)(token);
+        const record = await this.prisma.emailVerificationToken.findUnique({
+            where: { tokenHash },
+        });
+        if (!record || record.expiresAt < new Date()) {
+            throw new common_1.UnauthorizedException('Invalid or expired token');
+        }
+        await this.prisma.user.update({
+            where: { id: record.userId },
+            data: { emailVerifiedAt: new Date() },
+        });
+        await this.prisma.emailVerificationToken.delete({
+            where: { id: record.id },
+        });
+        return { message: 'Email verified successfully' };
+    }
     constructor(prisma, jwt, mail, config) {
         this.prisma = prisma;
         this.jwt = jwt;

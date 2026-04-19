@@ -33,6 +33,9 @@ export declare class AuthController {
     logout(req: Request, res: Response): Promise<{
         ok: boolean;
     }>;
+    verifyEmail(token: string): Promise<{
+        message: string;
+    }>;
     googleAuth(): void;
     googleCallback(req: Request, res: Response): Promise<void>;
     private refreshCookieOptions;

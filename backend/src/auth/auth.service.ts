@@ -18,6 +18,23 @@ const BCRYPT_ROUNDS = 12;
 
 @Injectable()
 export class AuthService {
+  async verifyEmail(token: string) {
+    const tokenHash = hashOpaqueToken(token);
+    const record = await this.prisma.emailVerificationToken.findUnique({
+      where: { tokenHash },
+    });
+    if (!record || record.expiresAt < new Date()) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+    await this.prisma.user.update({
+      where: { id: record.userId },
+      data: { emailVerifiedAt: new Date() },
+    });
+    await this.prisma.emailVerificationToken.delete({
+      where: { id: record.id },
+    });
+    return { message: 'Email verified successfully' };
+  }
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,

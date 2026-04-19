@@ -13,7 +13,11 @@ export class MailService {
   }
 
   async sendVerificationEmail(to: string, verifyUrl: string): Promise<void> {
-    const from = this.config.get<string>('EMAIL_FROM', 'onboarding@resend.dev');
+    const from = this.config.get<string>('EMAIL_FROM', 'noreply@ecommerce.com');
+
+    // ✅ ALWAYS log the verification URL (for development)
+    this.logger.log(`Verification email URL for ${to}: ${verifyUrl}`);
+
     if (!this.resend) {
       this.logger.warn(
         `RESEND_API_KEY not set; skipping verification email to ${to}. URL: ${verifyUrl}`,
@@ -26,5 +30,8 @@ export class MailService {
       subject: 'Verify your email',
       html: `<p>Click to verify your account:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`,
     });
+
+    // ✅ Optional: confirm email sent
+    this.logger.log(`Verification email sent to ${to}`);
   }
 }
