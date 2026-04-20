@@ -1,0 +1,201 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
+
+import { ProductService } from './product.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard';
+import { AdminGuard } from './guards/admin.guard';
+import {
+  ProductsQueryDto,
+  SearchQueryDto,
+  ReviewsQueryDto,
+  CreateProductDto,
+  UpdateProductDto,
+} from './dto/product.dto';
+
+@ApiTags('products')
+@Controller('products')
+export class ProductController {
+  constructor(private readonly productService: ProductService) {}
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // GET /products/search?q=
+  //
+  // IMPORTANT: This route MUST be declared before GET /products/:slug
+  // because Express/NestJS matches routes in order — if /:slug comes first,
+  // "search" would be captured as a slug parameter.
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Get('search')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Full-text product search',
+    description:
+      'Searches product names and descriptions using PostgreSQL pg_trgm + tsvector. ' +
+      'Requires the pg_trgm extension and a GIN index on the products table.',
+  })
+  @ApiOkResponse({ description: 'Paginated search results' })
+  @ApiQuery({ name: 'q', required: true, description: 'Search term' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async search(@Query() query: SearchQueryDto) {
+    return this.productService.search(query);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // GET /products
+  //
+  // Public. Paginated list with optional filters: category, size, color,
+  // price range, and sort order.
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'List all products',
+    description:
+      'Returns a paginated list of active products. Supports filtering by ' +
+      'category (slug or ID), size, color, price range, and sort order.',
+  })
+  @ApiOkResponse({ description: 'Paginated product list with metadata' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiQuery({ name: 'size', required: false, type: String })
+  @ApiQuery({ name: 'color', required: false, type: String })
+  @ApiQuery({ name: 'priceMin', required: false, type: Number })
+  @ApiQuery({ name: 'priceMax', required: false, type: Number })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    enum: ['price_asc', 'price_desc', 'newest', 'popular', 'rating'],
+  })
+  async findAll(@Query() query: ProductsQueryDto) {
+    return this.productService.findAll(query);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // GET /products/:slug
+  //
+  // Public. Returns full product detail: all variants, first page of reviews,
+  // category, and aggregate review count.
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Get(':slug')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get product by slug',
+    description:
+      'Returns full product detail including all variants and the most ' +
+      'recent 5 reviews. Use the slug (SEO-friendly URL) not the UUID.',
+  })
+  @ApiOkResponse({ description: 'Product with variants and reviews' })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  async findOne(@Param('slug') slug: string) {
+    return this.productService.findBySlug(slug);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // GET /products/:id/reviews
+  //
+  // Public. Paginated reviews for a product. Supports optional rating filter.
+  // Uses UUID not slug because it's a sub-resource of a known product.
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Get(':id/reviews')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get reviews for a product',
+    description:
+      'Returns paginated reviews for the given product UUID, with ' +
+      'average rating and total count in the response metadata.',
+  })
+  @ApiOkResponse({ description: 'Paginated reviews with rating summary' })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'rating',
+    required: false,
+    type: Number,
+    description: '1–5',
+  })
+  async findReviews(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: ReviewsQueryDto,
+  ) {
+    return this.productService.findReviews(id, query);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // POST /products
+  //
+  // Admin only. Creates a product with optional variants in one request.
+  // Requires JWT + ADMIN role.
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Post()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create a product (admin)',
+    description:
+      'Creates a new product and optionally its variants in a single request. ' +
+      'Slug is auto-generated from the name if not provided. ' +
+      'Requires ADMIN role.',
+  })
+  @ApiCreatedResponse({ description: 'Product created successfully' })
+  @ApiForbiddenResponse({ description: 'Requires ADMIN role' })
+  async create(@Body() dto: CreateProductDto) {
+    return this.productService.create(dto);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // PUT /products/:id
+  //
+  // Admin only. Partial update of product fields (not variants — manage
+  // variants via /products/:id/variants endpoints, to be added).
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update a product (admin)',
+    description:
+      'Updates product fields. All fields are optional — send only what needs changing. ' +
+      'To manage variants, use the /products/:id/variants endpoints. ' +
+      'Requires ADMIN role.',
+  })
+  @ApiOkResponse({ description: 'Product updated successfully' })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiForbiddenResponse({ description: 'Requires ADMIN role' })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProductDto,
+  ) {
+    return this.productService.update(id, dto);
+  }
+}

@@ -6,23 +6,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.ProductModule = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const auth_module_1 = require("./auth/auth.module");
-const product_module_1 = require("./product/product.module");
-const database_module_1 = require("./database/database.module");
-let AppModule = class AppModule {
+const product_controller_1 = require("./product.controller");
+const product_service_1 = require("./product.service");
+const product_repository_1 = require("./product.repository");
+let ProductModule = class ProductModule {
 };
-exports.AppModule = AppModule;
-exports.AppModule = AppModule = __decorate([
+exports.ProductModule = ProductModule;
+exports.ProductModule = ProductModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            config_1.ConfigModule.forRoot({ isGlobal: true }),
-            database_module_1.DatabaseModule,
-            auth_module_1.AuthModule,
-            product_module_1.ProductModule,
-        ],
+        controllers: [product_controller_1.ProductController],
+        providers: [product_service_1.ProductService, product_repository_1.ProductRepository],
+        exports: [product_service_1.ProductService],
     })
-], AppModule);
-//# sourceMappingURL=app.module.js.map
+], ProductModule);
+//# sourceMappingURL=product.module.js.map
