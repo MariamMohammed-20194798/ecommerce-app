@@ -70,7 +70,16 @@ model Category {
   id       String    @id @default(uuid())
   name     String    @unique
   slug     String    @unique
-  products Product[]
+  description String?
+
+  // Self-relation (parent ↔ children)
+  parentId    String?
+  parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryToCategory")
+
+  // Relation with products
+  products    Product[]
+
   @@map("categories")
 }
 
