@@ -22,7 +22,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-import { ProductService } from './product.service';
+import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard';
 import { AdminGuard } from './guards/admin.guard';
 import {
@@ -35,8 +35,8 @@ import {
 
 @ApiTags('products')
 @Controller('products')
-export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
   // ─────────────────────────────────────────────────────────────────────────────
   // GET /products/search?q=
@@ -59,7 +59,7 @@ export class ProductController {
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async search(@Query() query: SearchQueryDto) {
-    return this.productService.search(query);
+    return this.productsService.search(query);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -91,7 +91,7 @@ export class ProductController {
     enum: ['price_asc', 'price_desc', 'newest', 'popular', 'rating'],
   })
   async findAll(@Query() query: ProductsQueryDto) {
-    return this.productService.findAll(query);
+    return this.productsService.findAll(query);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -112,7 +112,7 @@ export class ProductController {
   @ApiOkResponse({ description: 'Product with variants and reviews' })
   @ApiNotFoundResponse({ description: 'Product not found' })
   async findOne(@Param('slug') slug: string) {
-    return this.productService.findBySlug(slug);
+    return this.productsService.findBySlug(slug);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ export class ProductController {
     @Param('id', ParseUUIDPipe) id: string,
     @Query() query: ReviewsQueryDto,
   ) {
-    return this.productService.findReviews(id, query);
+    return this.productsService.findReviews(id, query);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ export class ProductController {
   @ApiCreatedResponse({ description: 'Product created successfully' })
   @ApiForbiddenResponse({ description: 'Requires ADMIN role' })
   async create(@Body() dto: CreateProductDto) {
-    return this.productService.create(dto);
+    return this.productsService.create(dto);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -196,6 +196,6 @@ export class ProductController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateProductDto,
   ) {
-    return this.productService.update(id, dto);
+    return this.productsService.update(id, dto);
   }
 }

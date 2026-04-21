@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { ProductModule } from './product/product.module';
+import { ProductsModule } from './product/products.module';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
@@ -9,7 +9,7 @@ import { DatabaseModule } from './database/database.module';
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
     AuthModule,
-    ProductModule,
+    ProductsModule,
   ],
 })
 export class AppModule {}

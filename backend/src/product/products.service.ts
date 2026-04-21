@@ -13,7 +13,7 @@ import {
 } from './dto/product.dto';
 
 @Injectable()
-export class ProductService {
+export class ProductsService {
   constructor(private readonly productsRepo: ProductRepository) {}
 
   // ─── GET /products ────────────────────────────────────────────────────────────
