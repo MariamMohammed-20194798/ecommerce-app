@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,177 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String                   @id @default(uuid())
+  email                   String                   @unique
+  passwordHash            String?
+  role                    Role                     @default(CUSTOMER)
+  emailVerifiedAt         DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  googleId                String?                  @unique
+  addresses               Address[]
+  cart                    Cart?
+  emailVerificationTokens EmailVerificationToken[]
+  orders                  Order[]
+  refreshTokens           RefreshToken[]
+  reviews                 Review[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryToCategory")
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  categoryId  String
+  slug        String           @unique
+  name        String
+  description String?
+  basePrice   Decimal          @db.Decimal(10, 2)
+  isActive    Boolean          @default(true)
+  metadata    Json?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  variants    ProductVariant[]
+  category    Category         @relation(fields: [categoryId], references: [id])
+  reviews     Review[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id            String      @id @default(uuid())
+  productId     String
+  sku           String      @unique
+  size          String?
+  color         String?
+  priceOverride Decimal?    @db.Decimal(10, 2)
+  stockQuantity Int         @default(0)
+  images        String[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  product       Product     @relation(fields: [productId], references: [id])
+
+  @@map("product_variants")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String?    @unique
+  sessionId String?
+  expiresAt DateTime?
+  createdAt DateTime   @default(now())
+  items     CartItem[]
+  user      User?      @relation(fields: [userId], references: [id])
+
+  @@map("carts")
+}
+
+model CartItem {
+  id            String         @id @default(uuid())
+  cartId        String
+  variantId     String
+  quantity      Int
+  customization Json?
+  cart          Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant       ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@map("cart_items")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  status          OrderStatus @default(PENDING)
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  stripePaymentId String?
+  addressId       String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+  address         Address     @relation(fields: [addressId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String         @id @default(uuid())
+  orderId       String
+  variantId     String
+  quantity      Int
+  unitPrice     Decimal        @db.Decimal(10, 2)
+  customization Json?
+  order         Order          @relation(fields: [orderId], references: [id])
+  variant       ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  productId String
+  userId    String
+  rating    Int
+  body      String?
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("reviews")
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  userId     String
+  line1      String
+  line2      String?
+  city       String
+  state      String?
+  postalCode String
+  country    String
+  isDefault  Boolean @default(false)
+  user       User    @relation(fields: [userId], references: [id])
+  orders     Order[]
+
+  @@map("addresses")
 }
 
 enum Role {
@@ -21,172 +186,8 @@ enum Role {
 enum OrderStatus {
   PENDING
   PAID
-  PROCESSING 
+  PROCESSING
   SHIPPED
-  DELIVERED 
+  DELIVERED
   CANCELLED
-}
-
-model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
-  passwordHash    String?
-  googleId        String?   @unique
-  role            Role      @default(CUSTOMER)
-  emailVerifiedAt DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  orders          Order[]
-  cart            Cart?
-  reviews         Review[]
-  addresses       Address[]
-  refreshTokens            RefreshToken[]
-  emailVerificationTokens  EmailVerificationToken[]
-  @@map("users")
-}
-
-model RefreshToken {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String    @unique
-  expiresAt DateTime
-  revokedAt DateTime?
-  createdAt DateTime  @default(now())
-  @@map("refresh_tokens")
-}
-
-model EmailVerificationToken {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  @@map("email_verification_tokens")
-}
-
-model Category {
-  id       String    @id @default(uuid())
-  name     String    @unique
-  slug     String    @unique
-  description String?
-
-  // Self-relation (parent ↔ children)
-  parentId    String?
-  parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
-  children    Category[] @relation("CategoryToCategory")
-
-  // Relation with products
-  products    Product[]
-
-  @@map("categories")
-}
-
-model Product {
-  id          String           @id @default(uuid())
-  categoryId  String
-  category    Category         @relation(fields: [categoryId], references: [id])
-  slug        String           @unique
-  name        String
-  description String?
-  basePrice   Decimal          @db.Decimal(10, 2)
-  isActive    Boolean          @default(true)
-  metadata    Json?
-  variants    ProductVariant[]
-  reviews     Review[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  @@map("products")
-}
-
-model ProductVariant {
-  id            String      @id @default(uuid())
-  productId     String
-  product       Product     @relation(fields: [productId], references: [id])
-  sku           String      @unique
-  size          String?
-  color         String?
-  priceOverride Decimal?    @db.Decimal(10, 2)
-  stockQuantity Int         @default(0)
-  images        String[]
-  cartItems     CartItem[]
-  orderItems    OrderItem[]
-  @@map("product_variants")
-}
-
-model Cart {
-  id        String     @id @default(uuid())
-  userId    String?    @unique
-  user      User?      @relation(fields: [userId], references: [id])
-  sessionId String?
-  items     CartItem[]
-  expiresAt DateTime?
-  createdAt DateTime   @default(now())
-  @@map("carts")
-}
-
-model CartItem {
-  id            String         @id @default(uuid())
-  cartId        String
-  cart          Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  variantId     String
-  variant       ProductVariant @relation(fields: [variantId], references: [id])
-  quantity      Int
-  customization Json?
-  @@map("cart_items")
-}
-
-model Order {
-  id              String      @id @default(uuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id])
-  status          OrderStatus @default(PENDING)
-  totalAmount     Decimal     @db.Decimal(10, 2)
-  stripePaymentId String?
-  addressId       String
-  address         Address     @relation(fields: [addressId], references: [id])
-  items           OrderItem[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  @@map("orders")
-}
-
-model OrderItem {
-  id            String         @id @default(uuid())
-  orderId       String
-  order         Order          @relation(fields: [orderId], references: [id])
-  variantId     String
-  variant       ProductVariant @relation(fields: [variantId], references: [id])
-  quantity      Int
-  unitPrice     Decimal        @db.Decimal(10, 2)
-  customization Json?
-  @@map("order_items")
-}
-
-model Review {
-  id        String   @id @default(uuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  rating    Int
-  body      String?
-  createdAt DateTime @default(now())
-  @@map("reviews")
-}
-
-model Address {
-  id         String  @id @default(uuid())
-  userId     String
-  user       User    @relation(fields: [userId], references: [id])
-  line1      String
-  line2      String?
-  city       String
-  state      String?
-  postalCode String
-  country    String
-  isDefault  Boolean @default(false)
-  orders     Order[]
-  @@map("addresses")
 }

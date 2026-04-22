@@ -10,8 +10,10 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
-const product_module_1 = require("./product/product.module");
+const products_module_1 = require("./products/products.module");
 const database_module_1 = require("./database/database.module");
+const categories_module_1 = require("./categories/categories.module");
+const cart_module_1 = require("./cart/cart.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -21,7 +23,9 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             database_module_1.DatabaseModule,
             auth_module_1.AuthModule,
-            product_module_1.ProductModule,
+            products_module_1.ProductsModule,
+            categories_module_1.CategoriesModule,
+            cart_module_1.CartModule,
         ],
     })
 ], AppModule);

@@ -182,7 +182,7 @@ export class ProductRepository {
         ) AS rank
       FROM products
       WHERE
-        is_active = true
+        "isActive" = true
         AND (
           to_tsvector('english', name || ' ' || COALESCE(description, ''))
             @@ plainto_tsquery('english', ${q})
@@ -227,7 +227,7 @@ export class ProductRepository {
 
     const countResult = await this.prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(*) FROM products
-      WHERE is_active = true AND (
+      WHERE "isActive" = true AND (
         to_tsvector('english', name || ' ' || COALESCE(description, ''))
           @@ plainto_tsquery('english', ${q})
         OR similarity(name, ${q}) > 0.2
