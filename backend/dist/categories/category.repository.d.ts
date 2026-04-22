@@ -19,8 +19,8 @@ export declare class CategoryRepository {
         } & {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
             parentId: string | null;
         })[];
         meta: {
@@ -38,8 +38,8 @@ export declare class CategoryRepository {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     } & {
         children: ({
@@ -49,8 +49,8 @@ export declare class CategoryRepository {
         } & {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
             parentId: string | null;
         } & any)[];
     })[]>;
@@ -67,21 +67,21 @@ export declare class CategoryRepository {
         children: {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
         }[];
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }) | null>;
     findById(id: string): Promise<{
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     } | null>;
     findProductsBySlug(slug: string, query: CategoryProductsQueryDto): Promise<{
@@ -108,11 +108,11 @@ export declare class CategoryRepository {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
             slug: string;
-            categoryId: string;
+            description: string | null;
             basePrice: Prisma.Decimal;
+            categoryId: string;
             metadata: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -134,8 +134,8 @@ export declare class CategoryRepository {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     update(id: string, data: Partial<UpdateCategoryDto> & {
@@ -157,15 +157,15 @@ export declare class CategoryRepository {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     slugExists(slug: string, excludeId?: string): Promise<boolean>;

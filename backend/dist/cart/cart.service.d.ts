@@ -29,11 +29,11 @@ export declare class CartService {
             id: string;
             size: string | null;
             color: string | null;
+            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
-            productId: string;
         };
     } & {
         id: string;
@@ -53,11 +53,11 @@ export declare class CartService {
             id: string;
             size: string | null;
             color: string | null;
+            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
-            productId: string;
         };
     } & {
         id: string;

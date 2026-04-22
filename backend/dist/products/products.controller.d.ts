@@ -7,8 +7,11 @@ export declare class ProductsController {
         data: ({
             category: {
                 id: string;
-                slug: string;
                 name: string;
+                slug: string;
+            };
+            _count: {
+                reviews: number;
             };
             variants: {
                 id: string;
@@ -18,20 +21,17 @@ export declare class ProductsController {
                 stockQuantity: number;
                 images: string[];
             }[];
-            _count: {
-                reviews: number;
-            };
         } & {
             id: string;
-            categoryId: string;
-            slug: string;
+            createdAt: Date;
             name: string;
+            updatedAt: Date;
+            isActive: boolean;
+            slug: string;
             description: string | null;
             basePrice: import("@prisma/client/runtime/library").Decimal;
-            isActive: boolean;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -45,32 +45,32 @@ export declare class ProductsController {
         data: ({
             category: {
                 id: string;
-                slug: string;
                 name: string;
+                slug: string;
+            };
+            _count: {
+                reviews: number;
             };
             variants: {
                 id: string;
-                sku: string;
                 size: string | null;
                 color: string | null;
+                sku: string;
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
                 images: string[];
             }[];
-            _count: {
-                reviews: number;
-            };
         } & {
             id: string;
-            categoryId: string;
-            slug: string;
+            createdAt: Date;
             name: string;
+            updatedAt: Date;
+            isActive: boolean;
+            slug: string;
             description: string | null;
             basePrice: import("@prisma/client/runtime/library").Decimal;
-            isActive: boolean;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -83,18 +83,9 @@ export declare class ProductsController {
     findOne(slug: string): Promise<{
         category: {
             id: string;
-            slug: string;
             name: string;
+            slug: string;
         };
-        variants: {
-            id: string;
-            sku: string;
-            size: string | null;
-            color: string | null;
-            priceOverride: import("@prisma/client/runtime/library").Decimal | null;
-            stockQuantity: number;
-            images: string[];
-        }[];
         reviews: ({
             user: {
                 id: string;
@@ -102,26 +93,35 @@ export declare class ProductsController {
             };
         } & {
             id: string;
+            userId: string;
             createdAt: Date;
             productId: string;
-            userId: string;
             rating: number;
             body: string | null;
         })[];
         _count: {
             reviews: number;
         };
+        variants: {
+            id: string;
+            size: string | null;
+            color: string | null;
+            sku: string;
+            priceOverride: import("@prisma/client/runtime/library").Decimal | null;
+            stockQuantity: number;
+            images: string[];
+        }[];
     } & {
         id: string;
-        categoryId: string;
-        slug: string;
+        createdAt: Date;
         name: string;
+        updatedAt: Date;
+        isActive: boolean;
+        slug: string;
         description: string | null;
         basePrice: import("@prisma/client/runtime/library").Decimal;
-        isActive: boolean;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     findReviews(id: string, query: ReviewsQueryDto): Promise<{
         data: ({
@@ -131,9 +131,9 @@ export declare class ProductsController {
             };
         } & {
             id: string;
+            userId: string;
             createdAt: Date;
             productId: string;
-            userId: string;
             rating: number;
             body: string | null;
         })[];
@@ -150,57 +150,57 @@ export declare class ProductsController {
     create(dto: CreateProductDto): Promise<{
         category: {
             id: string;
-            slug: string;
             name: string;
+            slug: string;
         };
         variants: {
             id: string;
-            productId: string;
-            sku: string;
             size: string | null;
             color: string | null;
+            productId: string;
+            sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
         }[];
     } & {
         id: string;
-        categoryId: string;
-        slug: string;
+        createdAt: Date;
         name: string;
+        updatedAt: Date;
+        isActive: boolean;
+        slug: string;
         description: string | null;
         basePrice: import("@prisma/client/runtime/library").Decimal;
-        isActive: boolean;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
         category: {
             id: string;
-            slug: string;
             name: string;
+            slug: string;
         };
         variants: {
             id: string;
-            productId: string;
-            sku: string;
             size: string | null;
             color: string | null;
+            productId: string;
+            sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
         }[];
     } & {
         id: string;
-        categoryId: string;
-        slug: string;
+        createdAt: Date;
         name: string;
+        updatedAt: Date;
+        isActive: boolean;
+        slug: string;
         description: string | null;
         basePrice: import("@prisma/client/runtime/library").Decimal;
-        isActive: boolean;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }

@@ -19,8 +19,8 @@ export declare class CategoriesService {
         } & {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
             parentId: string | null;
         })[];
         meta: {
@@ -38,8 +38,8 @@ export declare class CategoriesService {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     } & {
         children: ({
@@ -49,8 +49,8 @@ export declare class CategoriesService {
         } & {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
             parentId: string | null;
         } & any)[];
     })[]>;
@@ -67,14 +67,14 @@ export declare class CategoriesService {
         children: {
             id: string;
             name: string;
-            description: string | null;
             slug: string;
+            description: string | null;
         }[];
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     findProducts(slug: string, query: CategoryProductsQueryDto): Promise<{
@@ -101,11 +101,11 @@ export declare class CategoriesService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
             slug: string;
-            categoryId: string;
+            description: string | null;
             basePrice: import("@prisma/client/runtime/library").Decimal;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -125,8 +125,8 @@ export declare class CategoriesService {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     update(id: string, dto: UpdateCategoryDto): Promise<{
@@ -146,8 +146,8 @@ export declare class CategoriesService {
     } & {
         id: string;
         name: string;
-        description: string | null;
         slug: string;
+        description: string | null;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{

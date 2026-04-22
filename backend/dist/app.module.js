@@ -14,6 +14,7 @@ const products_module_1 = require("./products/products.module");
 const database_module_1 = require("./database/database.module");
 const categories_module_1 = require("./categories/categories.module");
 const cart_module_1 = require("./cart/cart.module");
+const checkout_module_1 = require("./checkout/checkout.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,6 +27,7 @@ exports.AppModule = AppModule = __decorate([
             products_module_1.ProductsModule,
             categories_module_1.CategoriesModule,
             cart_module_1.CartModule,
+            checkout_module_1.CheckoutModule,
         ],
     })
 ], AppModule);
