@@ -7,8 +7,7 @@ import { HomeNavbar } from '@/components/home-navbar';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Custom T-Shirt Shop',
-  description: 'Design your own custom apparel',
+  title: 'Women\'s the brand: Luxury & confidence for everyday life.',
 };
 
 export default function RootLayout({
