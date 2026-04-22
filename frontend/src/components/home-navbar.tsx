@@ -35,7 +35,9 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "text-sm font-medium tracking-wide text-foreground/80 hover:text-foreground",
+        "relative inline-block text-sm font-medium tracking-wide text-foreground/80 hover:text-foreground",
+        "after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200",
+        "hover:after:scale-x-100 focus-visible:after:scale-x-100",
         className
       )}
     >
@@ -132,16 +134,21 @@ export function HomeNavbar() {
           </Link>
         </div>
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 md:flex">
-          <NavLink href="/home">home</NavLink>
+        <nav className="hidden flex-1 items-center justify-center gap-6 md:flex ">
+          <NavLink className="text-foreground" href="/home">Home</NavLink>
 
           <div className="relative group">
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-sm font-medium tracking-wide text-foreground/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              className={cn(
+                "relative inline-flex items-center gap-1 text-sm font-medium tracking-wide text-foreground",
+                "after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200",
+                "hover:after:scale-x-100 focus-visible:after:scale-x-100",
+                "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              )}
               aria-haspopup="menu"
             >
-              categories <ChevronDownIcon className="size-4" />
+              Shop <ChevronDownIcon className="size-4" />
             </button>
 
             <div className="pointer-events-none absolute top-full z-50 hidden w-[200px] pt-4 group-hover:block group-focus-within:block">
@@ -164,10 +171,8 @@ export function HomeNavbar() {
             </div>
           </div>
 
-          <NavLink href="/exchanges-and-refunds">exchanges &amp; refunds</NavLink>
-          <NavLink href="/inside-self">inside self</NavLink>
-          <NavLink href="/corporate">corporate</NavLink>
-          <NavLink href="/careers">careers</NavLink>
+          <NavLink className="text-foreground" href="/exchanges-and-refunds">Exchanges &amp; Refunds</NavLink>
+          <NavLink className="text-foreground" href="/careers">Careers</NavLink>
         </nav>
 
         <div className="ml-auto flex items-center gap-1 md:ml-0">
