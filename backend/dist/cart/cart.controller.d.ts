@@ -4,6 +4,8 @@ import { AddCartItemDto, UpdateCartItemDto } from './dto/cart.dto';
 export declare class CartController {
     private readonly cartService;
     constructor(cartService: CartService);
+    private getAuthUserId;
+    private resolveSessionId;
     getCart(req: express.Request): Promise<{
         subtotal: number;
         itemCount: number;
@@ -28,11 +30,11 @@ export declare class CartController {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         };
     } & {
         id: string;
@@ -52,11 +54,11 @@ export declare class CartController {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         };
     } & {
         id: string;

@@ -30,11 +30,11 @@ export declare class ProductRepository {
             createdAt: Date;
             name: string;
             updatedAt: Date;
+            description: string | null;
             isActive: boolean;
             slug: string;
-            description: string | null;
-            basePrice: Prisma.Decimal;
             categoryId: string;
+            basePrice: Prisma.Decimal;
             metadata: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -60,8 +60,8 @@ export declare class ProductRepository {
             id: string;
             userId: string;
             createdAt: Date;
-            productId: string;
             rating: number;
+            productId: string;
             body: string | null;
         })[];
         _count: {
@@ -81,11 +81,11 @@ export declare class ProductRepository {
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: Prisma.Decimal;
         categoryId: string;
+        basePrice: Prisma.Decimal;
         metadata: Prisma.JsonValue | null;
     }) | null>;
     findById(id: string): Promise<{
@@ -93,11 +93,11 @@ export declare class ProductRepository {
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: Prisma.Decimal;
         categoryId: string;
+        basePrice: Prisma.Decimal;
         metadata: Prisma.JsonValue | null;
     } | null>;
     search(query: SearchQueryDto): Promise<{
@@ -123,11 +123,11 @@ export declare class ProductRepository {
             createdAt: Date;
             name: string;
             updatedAt: Date;
+            description: string | null;
             isActive: boolean;
             slug: string;
-            description: string | null;
-            basePrice: Prisma.Decimal;
             categoryId: string;
+            basePrice: Prisma.Decimal;
             metadata: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -148,8 +148,8 @@ export declare class ProductRepository {
             id: string;
             userId: string;
             createdAt: Date;
-            productId: string;
             rating: number;
+            productId: string;
             body: string | null;
         })[];
         meta: {
@@ -172,22 +172,22 @@ export declare class ProductRepository {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         }[];
     } & {
         id: string;
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: Prisma.Decimal;
         categoryId: string;
+        basePrice: Prisma.Decimal;
         metadata: Prisma.JsonValue | null;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
@@ -200,22 +200,22 @@ export declare class ProductRepository {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         }[];
     } & {
         id: string;
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: Prisma.Decimal;
         categoryId: string;
+        basePrice: Prisma.Decimal;
         metadata: Prisma.JsonValue | null;
     }>;
     slugExists(slug: string, excludeId?: string): Promise<boolean>;

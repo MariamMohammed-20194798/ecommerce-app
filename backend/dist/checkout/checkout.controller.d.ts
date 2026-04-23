@@ -5,7 +5,8 @@ import { CreatePaymentIntentDto } from './dto/checkout.dto';
 export declare class CheckoutController {
     private readonly checkoutService;
     constructor(checkoutService: CheckoutService);
-    createIntent(dto: CreatePaymentIntentDto, req: Request): Promise<{
+    private getAuthUserId;
+    createIntent(dto: CreatePaymentIntentDto, req: Request, autoCreateOrder?: string): Promise<{
         clientSecret: any;
         paymentIntentId: any;
         subtotal: number;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -25,6 +24,7 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import express from 'express';
+import { randomUUID } from 'crypto';
 
 import { CartService } from './cart.service';
 import { AddCartItemDto, UpdateCartItemDto } from './dto/cart.dto';
@@ -34,6 +34,18 @@ import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
+
+  private getAuthUserId(req: express.Request) {
+    const user = req as unknown as { user?: { sub?: string; id?: string } };
+    return user.user?.sub ?? user.user?.id;
+  }
+
+  private resolveSessionId(req: express.Request, userId?: string) {
+    if (userId) return undefined;
+    const headerSessionId = req.headers['x-session-id'] as string | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return req.cookies?.session_id ?? headerSessionId ?? randomUUID();
+  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   // GET /cart
@@ -56,9 +68,9 @@ export class CartController {
   })
   @ApiOkResponse({ description: 'Cart with items, subtotal, and itemCount' })
   async getCart(@Req() req: express.Request) {
-    const userId = (req as { user?: { id: string } }).user?.id;
-    const sessionId =
-      req.cookies?.session_id ?? (req.headers['x-session-id'] as string);
+    const userId = this.getAuthUserId(req);
+    const sessionId = this.resolveSessionId(req, userId);
+    if (!userId && sessionId) req.res?.setHeader('x-session-id', sessionId);
     return this.cartService.getCart(userId, sessionId);
   }
 
@@ -85,9 +97,9 @@ export class CartController {
     description: 'Insufficient stock or inactive product',
   })
   async addItem(@Body() dto: AddCartItemDto, @Req() req: express.Request) {
-    const userId = (req as any).user?.id;
-    const sessionId =
-      req.cookies?.session_id ?? (req.headers['x-session-id'] as string);
+    const userId = this.getAuthUserId(req);
+    const sessionId = this.resolveSessionId(req, userId);
+    if (!userId && sessionId) req.res?.setHeader('x-session-id', sessionId);
     return this.cartService.addItem(dto, userId, sessionId);
   }
 
@@ -116,9 +128,9 @@ export class CartController {
     @Body() dto: UpdateCartItemDto,
     @Req() req: express.Request,
   ) {
-    const userId = (req as any).user?.id;
-    const sessionId =
-      req.cookies?.session_id ?? (req.headers['x-session-id'] as string);
+    const userId = this.getAuthUserId(req);
+    const sessionId = this.resolveSessionId(req, userId);
+    if (!userId && sessionId) req.res?.setHeader('x-session-id', sessionId);
     return this.cartService.updateItem(id, dto, userId, sessionId);
   }
 
@@ -143,9 +155,9 @@ export class CartController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: express.Request,
   ) {
-    const userId = (req as any).user?.id;
-    const sessionId =
-      req.cookies?.session_id ?? (req.headers['x-session-id'] as string);
+    const userId = this.getAuthUserId(req);
+    const sessionId = this.resolveSessionId(req, userId);
+    if (!userId && sessionId) req.res?.setHeader('x-session-id', sessionId);
     return this.cartService.removeItem(id, userId, sessionId);
   }
 }

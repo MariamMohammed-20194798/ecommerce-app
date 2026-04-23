@@ -3,13 +3,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(helmet());
   app.use(cookieParser());
-
+  app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
   app.enableCors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
@@ -28,4 +29,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3001);
   console.log(`Backend running on port ${process.env.PORT ?? 3001}`);
 }
-bootstrap();
+void bootstrap();

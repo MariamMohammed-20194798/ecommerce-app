@@ -9,7 +9,7 @@ export declare class CheckoutService {
     private readonly stripe;
     private readonly logger;
     constructor(prisma: PrismaService, cartRepo: CartRepository, config: ConfigService);
-    createPaymentIntent(userId: string, dto: CreatePaymentIntentDto): Promise<{
+    createPaymentIntent(userId: string, dto: CreatePaymentIntentDto, autoCreateOrderForTesting?: boolean): Promise<{
         clientSecret: any;
         paymentIntentId: any;
         subtotal: number;

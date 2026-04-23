@@ -19,6 +19,7 @@ exports.CartController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const express_1 = __importDefault(require("express"));
+const crypto_1 = require("crypto");
 const cart_service_1 = require("./cart.service");
 const cart_dto_1 = require("./dto/cart.dto");
 const optional_jwt_auth_guard_1 = require("../auth/guards/optional-jwt-auth.guard");
@@ -27,24 +28,42 @@ let CartController = class CartController {
     constructor(cartService) {
         this.cartService = cartService;
     }
+    getAuthUserId(req) {
+        const user = req;
+        return user.user?.sub ?? user.user?.id;
+    }
+    resolveSessionId(req, userId) {
+        if (userId)
+            return undefined;
+        const headerSessionId = req.headers['x-session-id'];
+        return req.cookies?.session_id ?? headerSessionId ?? (0, crypto_1.randomUUID)();
+    }
     async getCart(req) {
-        const userId = req.user?.id;
-        const sessionId = req.cookies?.session_id ?? req.headers['x-session-id'];
+        const userId = this.getAuthUserId(req);
+        const sessionId = this.resolveSessionId(req, userId);
+        if (!userId && sessionId)
+            req.res?.setHeader('x-session-id', sessionId);
         return this.cartService.getCart(userId, sessionId);
     }
     async addItem(dto, req) {
-        const userId = req.user?.id;
-        const sessionId = req.cookies?.session_id ?? req.headers['x-session-id'];
+        const userId = this.getAuthUserId(req);
+        const sessionId = this.resolveSessionId(req, userId);
+        if (!userId && sessionId)
+            req.res?.setHeader('x-session-id', sessionId);
         return this.cartService.addItem(dto, userId, sessionId);
     }
     async updateItem(id, dto, req) {
-        const userId = req.user?.id;
-        const sessionId = req.cookies?.session_id ?? req.headers['x-session-id'];
+        const userId = this.getAuthUserId(req);
+        const sessionId = this.resolveSessionId(req, userId);
+        if (!userId && sessionId)
+            req.res?.setHeader('x-session-id', sessionId);
         return this.cartService.updateItem(id, dto, userId, sessionId);
     }
     async removeItem(id, req) {
-        const userId = req.user?.id;
-        const sessionId = req.cookies?.session_id ?? req.headers['x-session-id'];
+        const userId = this.getAuthUserId(req);
+        const sessionId = this.resolveSessionId(req, userId);
+        if (!userId && sessionId)
+            req.res?.setHeader('x-session-id', sessionId);
         return this.cartService.removeItem(id, userId, sessionId);
     }
 };

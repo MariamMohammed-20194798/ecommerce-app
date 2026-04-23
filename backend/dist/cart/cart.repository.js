@@ -37,6 +37,9 @@ let CartRepository = class CartRepository {
         this.prisma = prisma;
     }
     async findOrCreate(userId, sessionId) {
+        if (!userId && !sessionId) {
+            throw new common_1.BadRequestException('Cart identity is missing. Provide a valid user token or x-session-id.');
+        }
         const existing = await this.prisma.cart.findFirst({
             where: userId ? { userId } : { sessionId },
             include: CART_INCLUDE,

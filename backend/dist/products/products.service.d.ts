@@ -27,11 +27,11 @@ export declare class ProductsService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
+            description: string | null;
             isActive: boolean;
             slug: string;
-            description: string | null;
-            basePrice: import("@prisma/client/runtime/library").Decimal;
             categoryId: string;
+            basePrice: import("@prisma/client/runtime/library").Decimal;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -57,8 +57,8 @@ export declare class ProductsService {
             id: string;
             userId: string;
             createdAt: Date;
-            productId: string;
             rating: number;
+            productId: string;
             body: string | null;
         })[];
         _count: {
@@ -78,11 +78,11 @@ export declare class ProductsService {
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: import("@prisma/client/runtime/library").Decimal;
         categoryId: string;
+        basePrice: import("@prisma/client/runtime/library").Decimal;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     search(query: SearchQueryDto): Promise<{
@@ -108,11 +108,11 @@ export declare class ProductsService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
+            description: string | null;
             isActive: boolean;
             slug: string;
-            description: string | null;
-            basePrice: import("@prisma/client/runtime/library").Decimal;
             categoryId: string;
+            basePrice: import("@prisma/client/runtime/library").Decimal;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -133,8 +133,8 @@ export declare class ProductsService {
             id: string;
             userId: string;
             createdAt: Date;
-            productId: string;
             rating: number;
+            productId: string;
             body: string | null;
         })[];
         meta: {
@@ -157,22 +157,22 @@ export declare class ProductsService {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         }[];
     } & {
         id: string;
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: import("@prisma/client/runtime/library").Decimal;
         categoryId: string;
+        basePrice: import("@prisma/client/runtime/library").Decimal;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
@@ -185,22 +185,22 @@ export declare class ProductsService {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         }[];
     } & {
         id: string;
         createdAt: Date;
         name: string;
         updatedAt: Date;
+        description: string | null;
         isActive: boolean;
         slug: string;
-        description: string | null;
-        basePrice: import("@prisma/client/runtime/library").Decimal;
         categoryId: string;
+        basePrice: import("@prisma/client/runtime/library").Decimal;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }

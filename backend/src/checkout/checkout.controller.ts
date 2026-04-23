@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as common from '@nestjs/common';
 import {
   ApiTags,
@@ -8,6 +6,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiBadRequestResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 
@@ -19,6 +18,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard';
 @common.Controller('checkout')
 export class CheckoutController {
   constructor(private readonly checkoutService: CheckoutService) {}
+
+  private getAuthUserId(req: Request) {
+    const user = req as unknown as { user?: { sub?: string; id?: string } };
+    return user.user?.sub ?? user.user?.id;
+  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   // POST /checkout/intent
@@ -48,13 +52,27 @@ export class CheckoutController {
   @ApiBadRequestResponse({
     description: 'Empty cart, invalid address, or invalid discount code',
   })
+  @ApiQuery({
+    name: 'autoCreateOrder',
+    required: false,
+    type: Boolean,
+    description:
+      'Testing only: if true, creates order immediately from the PaymentIntent without waiting for Stripe webhook.',
+  })
   async createIntent(
     @common.Body() dto: CreatePaymentIntentDto,
     @common.Req() req: Request,
+    @common.Query('autoCreateOrder') autoCreateOrder?: string,
   ) {
-    const userId = (req as any).user.id;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.checkoutService.createPaymentIntent(userId, dto);
+    const userId = this.getAuthUserId(req);
+    if (!userId) {
+      throw new common.UnauthorizedException('Missing authenticated user id.');
+    }
+    return this.checkoutService.createPaymentIntent(
+      userId,
+      dto,
+      autoCreateOrder === 'true',
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────────

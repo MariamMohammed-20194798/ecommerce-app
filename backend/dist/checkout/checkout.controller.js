@@ -56,9 +56,16 @@ let CheckoutController = class CheckoutController {
     constructor(checkoutService) {
         this.checkoutService = checkoutService;
     }
-    async createIntent(dto, req) {
-        const userId = req.user.id;
-        return this.checkoutService.createPaymentIntent(userId, dto);
+    getAuthUserId(req) {
+        const user = req;
+        return user.user?.sub ?? user.user?.id;
+    }
+    async createIntent(dto, req, autoCreateOrder) {
+        const userId = this.getAuthUserId(req);
+        if (!userId) {
+            throw new common.UnauthorizedException('Missing authenticated user id.');
+        }
+        return this.checkoutService.createPaymentIntent(userId, dto, autoCreateOrder === 'true');
     }
     async webhook(req, signature) {
         return this.checkoutService.handleWebhook(req.rawBody, signature);
@@ -83,10 +90,17 @@ __decorate([
     (0, swagger_1.ApiBadRequestResponse)({
         description: 'Empty cart, invalid address, or invalid discount code',
     }),
+    (0, swagger_1.ApiQuery)({
+        name: 'autoCreateOrder',
+        required: false,
+        type: Boolean,
+        description: 'Testing only: if true, creates order immediately from the PaymentIntent without waiting for Stripe webhook.',
+    }),
     __param(0, common.Body()),
     __param(1, common.Req()),
+    __param(2, common.Query('autoCreateOrder')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [checkout_dto_1.CreatePaymentIntentDto, Object]),
+    __metadata("design:paramtypes", [checkout_dto_1.CreatePaymentIntentDto, Object, String]),
     __metadata("design:returntype", Promise)
 ], CheckoutController.prototype, "createIntent", null);
 __decorate([

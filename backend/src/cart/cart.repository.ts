@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -32,6 +32,12 @@ export class CartRepository {
   // On login the caller should call mergeCarts() to combine guest → user cart
 
   async findOrCreate(userId?: string, sessionId?: string) {
+    if (!userId && !sessionId) {
+      throw new BadRequestException(
+        'Cart identity is missing. Provide a valid user token or x-session-id.',
+      );
+    }
+
     // Try to find an existing cart
     const existing = await this.prisma.cart.findFirst({
       where: userId ? { userId } : { sessionId },

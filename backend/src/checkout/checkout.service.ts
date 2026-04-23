@@ -37,7 +37,11 @@ export class CheckoutService {
   // 4. Apply discount code if provided
   // 5. Create a Stripe PaymentIntent and return the client_secret
 
-  async createPaymentIntent(userId: string, dto: CreatePaymentIntentDto) {
+  async createPaymentIntent(
+    userId: string,
+    dto: CreatePaymentIntentDto,
+    autoCreateOrderForTesting = false,
+  ) {
     type CartWithItems = Prisma.CartGetPayload<{ include: { items: true } }>;
     type CartItem = CartWithItems['items'][number];
 
@@ -158,6 +162,10 @@ export class CheckoutService {
       },
       automatic_payment_methods: { enabled: true },
     });
+
+    if (autoCreateOrderForTesting) {
+      await this.createOrderFromIntent(paymentIntent);
+    }
 
     return {
       clientSecret: paymentIntent.client_secret,

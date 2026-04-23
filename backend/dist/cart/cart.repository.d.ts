@@ -15,11 +15,11 @@ export declare class CartRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
-                productId: string;
                 sku: string;
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
                 images: string[];
+                productId: string;
             };
         } & {
             id: string;
@@ -47,11 +47,11 @@ export declare class CartRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
-                productId: string;
                 sku: string;
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
                 images: string[];
+                productId: string;
             };
         } & {
             id: string;
@@ -78,11 +78,11 @@ export declare class CartRepository {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         };
     } & {
         id: string;
@@ -102,11 +102,11 @@ export declare class CartRepository {
             id: string;
             size: string | null;
             color: string | null;
-            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
             images: string[];
+            productId: string;
         };
     } & {
         id: string;

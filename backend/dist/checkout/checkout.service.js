@@ -33,7 +33,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
             apiVersion: '2026-03-25.dahlia',
         });
     }
-    async createPaymentIntent(userId, dto) {
+    async createPaymentIntent(userId, dto, autoCreateOrderForTesting = false) {
         const cart = (await this.cartRepo.findOrCreate(userId));
         const items = cart.items;
         if (!items || items.length === 0) {
@@ -111,6 +111,9 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
             },
             automatic_payment_methods: { enabled: true },
         });
+        if (autoCreateOrderForTesting) {
+            await this.createOrderFromIntent(paymentIntent);
+        }
         return {
             clientSecret: paymentIntent.client_secret,
             paymentIntentId: paymentIntent.id,
