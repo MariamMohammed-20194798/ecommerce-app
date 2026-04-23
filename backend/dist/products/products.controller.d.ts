@@ -95,6 +95,7 @@ export declare class ProductsController {
             id: string;
             userId: string;
             createdAt: Date;
+            updatedAt: Date;
             rating: number;
             productId: string;
             body: string | null;
@@ -133,6 +134,7 @@ export declare class ProductsController {
             id: string;
             userId: string;
             createdAt: Date;
+            updatedAt: Date;
             rating: number;
             productId: string;
             body: string | null;

@@ -60,6 +60,7 @@ export declare class ProductRepository {
             id: string;
             userId: string;
             createdAt: Date;
+            updatedAt: Date;
             rating: number;
             productId: string;
             body: string | null;
@@ -148,6 +149,7 @@ export declare class ProductRepository {
             id: string;
             userId: string;
             createdAt: Date;
+            updatedAt: Date;
             rating: number;
             productId: string;
             body: string | null;
