@@ -136,7 +136,7 @@ export function HomeNavbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-primary supports-backdrop-filter:backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b supports-backdrop-filter:backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Sheet>

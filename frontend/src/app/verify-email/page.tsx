@@ -70,7 +70,7 @@ export default function VerifyEmailPage() {
         <div className="mt-6">
           <Link
             href="/auth"
-            className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+            className="inline-flex h-10 items-center justify-center rounded-lg bg-background px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
           >
             Go to sign in
           </Link>

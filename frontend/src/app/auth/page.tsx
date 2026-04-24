@@ -27,19 +27,12 @@ export default function AuthPage() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [subscribe, setSubscribe] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const headerText = useMemo(() => {
-    return mode === "signin" ? "Sign in" : "Sign up";
-  }, [mode]);
-
-  const subText = useMemo(() => {
-    return mode === "signin"
-      ? "Sign in to your account"
-      : "Create your account to get started";
+    return mode === "signin" ? "Signin" : "Signup";
   }, [mode]);
 
   const validate = () => {
@@ -105,25 +98,7 @@ export default function AuthPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <section className="w-full max-w-sm rounded-xl bg-card/50 p-6 shadow-sm backdrop-blur-sm">
-        <div className="mb-5 text-center">
-          <p className="font-heading text-2xl italic">Women&apos;S</p>
-        </div>
-
-        <h1 className="text-xl font-semibold">{headerText}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{subText}</p>
-
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => onModeChange(mode === "signin" ? "signup" : "signin")}
-            className="h-10 w-full rounded-lg bg-black text-sm font-semibold text-white transition hover:opacity-90"
-          >
-            Create an account
-          </button>
-        </div>
-
-        <div className="my-3 text-center text-xs text-muted-foreground">or</div>
-
+        <h1 className="text-xl font-semibold text-center mb-4">{headerText}</h1>
         <form className="space-y-3" onSubmit={onSubmit}>
           <label className="block">
             <span className="sr-only">Email</span>
@@ -150,11 +125,20 @@ export default function AuthPage() {
               disabled={isSubmitting}
             />
           </label>
+          
+        {(error || success) && (
+          <p
+            className={`mt-3 ml-2 text-xs ${error ? "text-red-600" : "text-emerald-700"}`}
+            role={error ? "alert" : "status"}
+          >
+            {error ?? success}
+          </p>
+        )}
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="h-10 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-10 w-full rounded-lg bg-background text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting
               ? "Please wait..."
@@ -162,30 +146,30 @@ export default function AuthPage() {
                 ? "Continue"
                 : "Create account"}
           </button>
+
+          <div className="my-3 text-center text-sm text-muted-foreground">or</div>
+          
+        <div className="mt-4">
+          {mode === "signin" && <button
+            type="button"
+            onClick={() => onModeChange(mode === "signin" ? "signup" : "signin")}
+            className="h-10 w-full rounded-lg bg-black text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            Create an account
+          </button>}
+          {mode === "signup" && <button
+            type="button"
+            onClick={() => onModeChange(mode === "signup" ? "signin" : "signup")}
+            className="h-10 w-full rounded-lg bg-black text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            Signin to your account
+          </button>}
+        </div>
+
         </form>
 
-        <label className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-          <input
-            type="checkbox"
-            checked={subscribe}
-            onChange={(event) => setSubscribe(event.target.checked)}
-            className="size-4 rounded border-border"
-            disabled={isSubmitting}
-          />
-          Email me with news and offers
-        </label>
-
-        {(error || success) && (
-          <p
-            className={`mt-3 text-xs ${error ? "text-red-600" : "text-emerald-700"}`}
-            role={error ? "alert" : "status"}
-          >
-            {error ?? success}
-          </p>
-        )}
-
         <p className="mt-4 text-[11px] text-muted-foreground text-center">
-          By continuing, you agree to our Terms of service.
+          By continuing, you agree to our <a href="/terms" className="text-muted-foreground underline">Terms of service</a>.
         </p>
       </section>
     </main>

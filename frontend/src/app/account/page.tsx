@@ -153,15 +153,12 @@ export default function AccountPage() {
   useEffect(() => {
     const bootstrap = async () => {
       const token = localStorage.getItem("accessToken");
-      if (!token) {
-        router.replace("/auth");
-        return;
-      }
-
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const fromToken = decodeToken(token);
-      if (fromToken) {
-        setUser(fromToken);
+      if (token) {
+        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const fromToken = decodeToken(token);
+        if (fromToken) {
+          setUser(fromToken);
+        }
       }
 
       try {
@@ -312,12 +309,12 @@ export default function AccountPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-6">
-      <header className="mb-6 flex items-center justify-between border-b border-border/80 pb-4">
-        <div className="flex items-center gap-8">
-          <Link href="/home" className="font-heading text-3xl italic">
+      <header className="mb-6 flex items-center justify-between border-b-2 border-secondary pb-4">
+        <div className="flex items-center gap-15">
+          <Link href="/home" className="font-heading text-2xl italic bold">
             Women&apos;S
           </Link>
-          <nav className="flex items-center gap-5 text-sm">
+          <nav className="flex items-center gap-8 text-sm mt-2">
             <button
               type="button"
               className={tab === "orders" ? "underline underline-offset-4" : ""}
@@ -334,23 +331,23 @@ export default function AccountPage() {
             </button>
           </nav>
         </div>
-        <CircleUserRound className="size-5 text-foreground/80" />
+        <CircleUserRound className="size-6 text-foreground/80 cursor-pointer" onClick={tab === "orders" ? () => setTab("profile") : undefined} />
       </header>
 
       {tab === "profile" ? (
-        <section className="space-y-4">
-          <h1 className="text-2xl font-semibold">Profile</h1>
+        <section className="space-y-8">
+          <h1 className="text-lg font-bold">Profile</h1>
 
           <div className="rounded-xl bg-card/50 p-4">
             <p className="text-sm text-muted-foreground">Name</p>
-            <p className="font-medium">{displayName}</p>
+            <p className="text-sm">{displayName}</p>
             <p className="mt-2 text-sm text-muted-foreground">Email</p>
-            <p className="font-medium">{user?.email ?? "Not available"}</p>
+            <p className="text-sm">{user?.email ?? "Not available"}</p>
           </div>
 
           <div className="rounded-xl bg-card/50 p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-semibold">Addresses</h2>
+              <h2 className="font-semibold text-sm">Addresses</h2>
               <Dialog open={isAddAddressOpen} onOpenChange={setIsAddAddressOpen}>
                 <DialogTrigger asChild>
                   <button
@@ -565,8 +562,8 @@ export default function AccountPage() {
           </div>
         </section>
       ) : (
-        <section className="space-y-4">
-          <h1 className="text-2xl font-semibold">Orders</h1>
+        <section className="space-y-8">
+          <h1 className="text-lg font-bold">Orders</h1>
           <div className="rounded-xl bg-card/50 p-4">
             {isLoadingOrders ? (
               <p className="text-sm text-muted-foreground">Loading orders...</p>
