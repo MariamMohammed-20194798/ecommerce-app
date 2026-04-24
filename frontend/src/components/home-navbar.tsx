@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { MenuIcon, SearchIcon, UserIcon, HeartIcon, ShoppingBagIcon, ChevronDownIcon } from "lucide-react"
 
 import api from "@/lib/api"
@@ -85,10 +86,20 @@ function NavLink({
 function IconButton({
   label,
   children,
+  href,
 }: {
   label: string
   children: React.ReactNode
+  href?: string
 }) {
+  if (href) {
+    return (
+      <Button asChild variant="ghost" size="icon-sm" aria-label={label} title={label}>
+        <Link href={href}>{children}</Link>
+      </Button>
+    )
+  }
+
   return (
     <Button variant="ghost" size="icon-sm" aria-label={label} title={label}>
       {children}
@@ -98,6 +109,7 @@ function IconButton({
 
 export function HomeNavbar() {
   const [shopCategories, setShopCategories] = useState<CategoryNode[]>([])
+  const pathname = usePathname()
 
   useEffect(() => {
     let isMounted = true
@@ -118,6 +130,10 @@ export function HomeNavbar() {
       isMounted = false
     }
   }, [])
+
+  if (pathname === "/auth" || pathname === "/verify-email" || pathname === "/account") {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-primary supports-backdrop-filter:backdrop-blur-md">
@@ -198,7 +214,7 @@ export function HomeNavbar() {
           <IconButton label="Search">
             <SearchIcon />
           </IconButton>
-          <IconButton label="Account">
+          <IconButton label="Account" href="/account">
             <UserIcon />
           </IconButton>
           <IconButton label="Wishlist">

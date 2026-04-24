@@ -7,4 +7,14 @@ const api = axios.create({
   withCredentials: true,  // send cookies automatically
 });
 
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = window.localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 export default api;
