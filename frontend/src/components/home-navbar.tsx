@@ -1,8 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { MenuIcon, SearchIcon, UserIcon, HeartIcon, ShoppingBagIcon, ChevronDownIcon } from "lucide-react"
 
+import api from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -13,14 +15,48 @@ import {
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
-const shopCategories = [
-  "all products",
-  "the girls' picks",
-  "accessories",
-  "robes",
-  "bags",
-  "cards",
-] as const
+type CategoryNode = {
+  id?: string
+  name: string
+  slug?: string
+  children?: CategoryNode[]
+}
+
+function CategoryTree({
+  categories,
+  level = 0,
+}: {
+  categories: CategoryNode[]
+  level?: number
+}) {
+  return (
+    <ul className="grid gap-1">
+      {categories.map((category, index) => {
+        const key = category.id ?? `${category.name}-${level}-${index}`
+        return (
+          <li key={key}>
+            <Link
+              href={`/shop?category=${encodeURIComponent(category.name)}`}
+              className={cn(
+                "block rounded-md px-2 py-1.5 text-sm text-foreground/80 hover:bg-muted hover:text-foreground",
+                level === 0 ? "font-medium" : "font-normal",
+                level > 0 && "ml-3 border-l border-border/70 pl-3"
+              )}
+            >
+              {category.name}
+            </Link>
+
+            {category.children?.length ? (
+              <div className="mt-1">
+                <CategoryTree categories={category.children} level={level + 1} />
+              </div>
+            ) : null}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
 
 function NavLink({
   href,
@@ -61,6 +97,28 @@ function IconButton({
 }
 
 export function HomeNavbar() {
+  const [shopCategories, setShopCategories] = useState<CategoryNode[]>([])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadCategories = async () => {
+      try {
+        const response = await api.get<CategoryNode[]>("/categories/tree")
+        if (!isMounted) return
+        setShopCategories(response.data)
+      } catch (error) {
+        console.error("Failed to load categories:", error)
+      }
+    }
+
+    void loadCategories()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-primary supports-backdrop-filter:backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
@@ -91,35 +149,9 @@ export function HomeNavbar() {
                   <div className="flex flex-col gap-2">
                     <span className="text-sm font-medium">shop</span>
                     <div className="grid gap-1 pl-3">
-                      {shopCategories.map((c) => (
-                        <Link
-                          key={c}
-                          href={`/shop?category=${encodeURIComponent(c)}`}
-                          className="text-sm text-foreground/80 hover:text-foreground"
-                        >
-                          {c}
-                        </Link>
-                      ))}
+                      <CategoryTree categories={shopCategories} />
                     </div>
                   </div>
-                  <Link href="/size-guide" className="text-sm font-medium">
-                    the size guide
-                  </Link>
-                  <Link
-                    href="/exchanges-and-refunds"
-                    className="text-sm font-medium"
-                  >
-                    exchanges &amp; refunds
-                  </Link>
-                  <Link href="/inside-self" className="text-sm font-medium">
-                    inside self
-                  </Link>
-                  <Link href="/corporate" className="text-sm font-medium">
-                    corporate
-                  </Link>
-                  <Link href="/careers" className="text-sm font-medium">
-                    careers
-                  </Link>
                 </div>
               </div>
             </SheetContent>
@@ -154,25 +186,12 @@ export function HomeNavbar() {
             <div className="pointer-events-none absolute top-full z-50 hidden w-[200px] pt-4 group-hover:block group-focus-within:block">
               <div className="pointer-events-auto border bg-background shadow-xl">
                   <div className="border-r p-4">
-                    <ul className="grid gap-1">
-                      {shopCategories.map((c) => (
-                        <li key={c}>
-                          <Link
-                            href={`/shop?category=${encodeURIComponent(c)}`}
-                            className="block rounded-md px-2 py-1.5 text-sm text-foreground/80 hover:bg-muted hover:text-foreground"
-                          >
-                            {c}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                    <CategoryTree categories={shopCategories} />
                   </div>
               </div>
             </div>
           </div>
 
-          <NavLink className="text-foreground" href="/exchanges-and-refunds">Exchanges &amp; Refunds</NavLink>
-          <NavLink className="text-foreground" href="/careers">Careers</NavLink>
         </nav>
 
         <div className="ml-auto flex items-center gap-1 md:ml-0">
