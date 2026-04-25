@@ -299,9 +299,11 @@ export default function AccountPage() {
     <main className="mx-auto max-w-6xl px-4 py-6">
       <header className="mb-6 flex items-center justify-between border-b-2 border-secondary pb-4">
         <div className="flex items-center gap-15">
-          <Link href="/home" className="font-heading text-2xl italic bold">
-            Women&apos;S
-          </Link>
+        <div className="flex lg:flex-1">
+            <Link href="/" className="text-2xl font-light tracking-[0.3em] text-foreground">
+              Women&apos;s
+            </Link>
+          </div>
           <nav className="flex items-center gap-6 text-sm mt-2">
             <button
               type="button"
@@ -326,14 +328,14 @@ export default function AccountPage() {
         <section className="space-y-4">
           <h1 className="text-lg font-bold">Profile</h1>
 
-          <div className="rounded-xl bg-card/50 p-4">
+          <div className="rounded-xl p-4 bg-card/90 ">
             <p className="text-sm text-muted-foreground">Name</p>
             <p className="text-sm">{displayName}</p>
             <p className="mt-2 text-sm text-muted-foreground">Email</p>
             <p className="text-sm">{user?.email ?? "Not available"}</p>
           </div>
 
-          <div className="rounded-xl bg-card/50 p-4">
+          <div className="rounded-xl bg-card/90 p-4">
             <div className="mb-3 flex items-center justify-between ">
               <h2 className="font-semibold text-sm">Addresses</h2>
               <Dialog open={addressModalMode !== null} onOpenChange={onAddressModalOpenChange}>
@@ -424,7 +426,7 @@ export default function AccountPage() {
 
             <div className="mt-4 rounded-lg p-3">
               {isLoadingAddresses ? (
-                <p className="text-sm text-muted-foreground">Loading addresses...</p>
+                <p className="text-sm text-muted-foreground text-center">Loading addresses...</p>
               ) : addresses.length === 0 ? (
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Info className="size-4" />
@@ -474,7 +476,7 @@ export default function AccountPage() {
       ) : (
         <section className="space-y-4">
           <h1 className="text-lg font-bold">Orders</h1>
-          <div className="rounded-xl bg-card/50 p-4">
+          <div className="rounded-xl bg-card/90 p-4">
             {isLoadingOrders ? (
               <p className="text-sm text-muted-foreground">Loading orders...</p>
             ) : orders.length === 0 ? (

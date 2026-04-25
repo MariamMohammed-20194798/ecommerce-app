@@ -1,229 +1,105 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { MenuIcon, SearchIcon, UserIcon, HeartIcon, ShoppingBagIcon, ChevronDownIcon } from "lucide-react"
-
-import api from "@/lib/api"
+import { Search, ShoppingBag, User, Menu, X, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
 
-type CategoryNode = {
-  id?: string
-  name: string
-  slug?: string
-  children?: CategoryNode[]
-}
+const navigation = [
+  { name: "New Arrivals", href: "#new" },
+  { name: "Collections", href: "#collections" },
+  { name: "Dresses", href: "#dresses" },
+  { name: "Accessories", href: "#accessories" },
+  { name: "Sale", href: "#sale" },
+]
 
-function CategoryTree({
-  categories,
-  level = 0,
-}: {
-  categories: CategoryNode[]
-  level?: number
-}) {
-  return (
-    <ul className="grid gap-1">
-      {categories.map((category, index) => {
-        const key = category.id ?? `${category.name}-${level}-${index}`
-        return (
-          <li key={key}>
-            <Link
-              href={`/shop?category=${encodeURIComponent(category.name)}`}
-              className={cn(
-                "block rounded-md px-2 py-1.5 text-sm text-foreground/80 hover:bg-muted hover:text-foreground",
-                level === 0 ? "font-medium" : "font-normal",
-                level > 0 && "ml-3 border-l border-border/70 pl-3"
-              )}
-            >
-              {category.name}
-            </Link>
-
-            {category.children?.length ? (
-              <div className="mt-1">
-                <CategoryTree categories={category.children} level={level + 1} />
-              </div>
-            ) : null}
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
-function Header({
-  href,
-  children,
-  className,
-}: {
-  href: string
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "relative inline-block text-sm font-medium tracking-wide text-foreground/80 hover:text-foreground",
-        "after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200",
-        "hover:after:scale-x-100 focus-visible:after:scale-x-100",
-        className
-      )}
-    >
-      {children}
-    </Link>
-  )
-}
-
-function IconButton({
-  label,
-  children,
-  href,
-}: {
-  label: string
-  children: React.ReactNode
-  href?: string
-}) {
-  if (href) {
-    return (
-      <Button asChild variant="ghost" size="icon-sm" aria-label={label} title={label}>
-        <Link href={href}>{children}</Link>
-      </Button>
-    )
-  }
-
-  return (
-    <Button variant="ghost" size="icon-sm" aria-label={label} title={label}>
-      {children}
-    </Button>
-  )
-}
-
-export function HomeNavbar() {
-  const [shopCategories, setShopCategories] = useState<CategoryNode[]>([])
+export function Header() {
   const pathname = usePathname()
 
-  useEffect(() => {
-    let isMounted = true
-
-    const loadCategories = async () => {
-      try {
-        const response = await api.get<CategoryNode[]>("/categories/tree")
-        if (!isMounted) return
-        setShopCategories(response.data)
-      } catch (error) {
-        console.error("Failed to load categories:", error)
-      }
-    }
-
-    void loadCategories()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
 
   if (pathname === "/auth" || pathname === "/verify-email" || pathname === "/account") {
     return null
   }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
-        <div className="flex items-center gap-2">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="md:hidden"
-                aria-label="Open menu"
-                title="Open menu"
-              >
-                <MenuIcon />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0">
-              <SheetHeader className="border-b">
-                <SheetTitle className="font-semibold tracking-wide">
-                  Women&apos;s
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-4 p-4">
-                <div className="flex flex-col gap-3">
-                  <Link href="/home" className="text-sm font-medium">
-                    home
-                  </Link>
-                  <div className="flex flex-col gap-2">
-                    <span className="text-sm font-medium">shop</span>
-                    <div className="grid gap-1 pl-3">
-                      <CategoryTree categories={shopCategories} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Mobile menu button */}
+          <div className="flex lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
 
+          {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href="/home" className="text-2xl font-semibold tracking-[0.3em] text-foreground">
+            <Link href="/" className="text-2xl font-light tracking-[0.3em] text-foreground">
               Women&apos;s
             </Link>
           </div>
-        </div>
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 md:flex ">
-          <Header className="text-foreground" href="/home">Home</Header>
-
-          <div className="relative group">
-            <button
-              type="button"
-              className={cn(
-                "relative inline-flex items-center gap-1 text-sm font-medium tracking-wide text-foreground",
-                "after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200",
-                "hover:after:scale-x-100 focus-visible:after:scale-x-100",
-                "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              )}
-              aria-haspopup="menu"
-            >
-              Shop <ChevronDownIcon className="size-4" />
-            </button>
-
-            <div className="pointer-events-none absolute top-full z-50 hidden w-[200px] pt-4 group-hover:block group-focus-within:block">
-              <div className="pointer-events-auto border bg-background shadow-xl">
-                  <div className="border-r p-4">
-                    <CategoryTree categories={shopCategories} />
-                  </div>
-              </div>
-            </div>
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex lg:gap-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
 
-        </nav>
-
-        <div className="ml-auto flex items-center gap-1 md:ml-0">
-          <IconButton label="Search">
-            <SearchIcon />
-          </IconButton>
-          <IconButton label="Account" href="/account">
-            <UserIcon />
-          </IconButton>
-          <IconButton label="Wishlist">
-            <HeartIcon />
-          </IconButton>
-          <IconButton label="Cart">
-            <ShoppingBagIcon />
-          </IconButton>
+          {/* Right side icons */}
+          <div className="flex flex-1 items-center justify-end gap-2">
+            <Button variant="ghost" size="icon" aria-label="Search">
+              <Search className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Wishlist">
+              <Heart className="h-5 w-5" />
+            </Button>
+            <Link href='/account'>
+            <Button variant="ghost" size="icon" aria-label="Account">
+              <User className="h-5 w-5" />
+            </Button></Link>
+            <Button variant="ghost" size="icon" className="relative" aria-label="Shopping bag">
+              <ShoppingBag className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">
+                2
+              </span>
+            </Button>
+          </div>
         </div>
-      </div>
-    </header>
-  )
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden py-4 border-t border-border">
+            <div className="flex flex-col gap-4">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+    </header>  )
 }
 

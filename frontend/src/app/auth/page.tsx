@@ -138,7 +138,7 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="h-10 w-full rounded-lg bg-background text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-10 w-full rounded-lg bg-black text-white text-sm font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting
               ? "Please wait..."

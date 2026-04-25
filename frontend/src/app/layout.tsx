@@ -3,8 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import './tailwind.config.ts';
 import { QueryProvider } from '@/providers/query-provider';
-import { HomeNavbar } from '@/components/header';
-import { Footer } from '@/components/ui/footer';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,8 +21,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryProvider>
-          <div className="min-h-dvh bg-primary">
-            <HomeNavbar />
+          <div className="min-h-dvh bg-muted">
+            <Header />
             {children}
             <Footer/>
           </div>
