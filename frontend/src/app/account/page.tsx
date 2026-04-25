@@ -296,13 +296,13 @@ export default function AccountPage() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-6">
+    <main className="mx-auto max-w-6xl px-4 py-6">
       <header className="mb-6 flex items-center justify-between border-b-2 border-secondary pb-4">
         <div className="flex items-center gap-15">
           <Link href="/home" className="font-heading text-2xl italic bold">
             Women&apos;S
           </Link>
-          <nav className="flex items-center gap-8 text-sm mt-2">
+          <nav className="flex items-center gap-6 text-sm mt-2">
             <button
               type="button"
               className={tab === "orders" ? "underline underline-offset-4" : ""}
@@ -323,7 +323,7 @@ export default function AccountPage() {
       </header>
 
       {tab === "profile" ? (
-        <section className="space-y-8">
+        <section className="space-y-4">
           <h1 className="text-lg font-bold">Profile</h1>
 
           <div className="rounded-xl bg-card/50 p-4">
@@ -334,7 +334,7 @@ export default function AccountPage() {
           </div>
 
           <div className="rounded-xl bg-card/50 p-4">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between ">
               <h2 className="font-semibold text-sm">Addresses</h2>
               <Dialog open={addressModalMode !== null} onOpenChange={onAddressModalOpenChange}>
                 <DialogTrigger asChild>
@@ -422,7 +422,7 @@ export default function AccountPage() {
               </Dialog>
             </div>
 
-            <div className="mt-4 rounded-lg bg-background p-3">
+            <div className="mt-4 rounded-lg p-3">
               {isLoadingAddresses ? (
                 <p className="text-sm text-muted-foreground">Loading addresses...</p>
               ) : addresses.length === 0 ? (
@@ -465,21 +465,14 @@ export default function AccountPage() {
             <button
               type="button"
               onClick={onLogout}
-              className="h-9 rounded-lg border border-border px-4 text-sm font-medium"
+              className="h-9 rounded-lg border border-foreground/20 px-4 text-sm font-medium"
             >
               Sign out
-            </button>
-            <button
-              type="button"
-              onClick={onLogout}
-              className="text-sm text-foreground/80 hover:text-foreground"
-            >
-              Sign out of all devices
             </button>
           </div>
         </section>
       ) : (
-        <section className="space-y-8">
+        <section className="space-y-4">
           <h1 className="text-lg font-bold">Orders</h1>
           <div className="rounded-xl bg-card/50 p-4">
             {isLoadingOrders ? (
@@ -489,7 +482,7 @@ export default function AccountPage() {
             ) : (
               <ul className="space-y-3">
                 {orders.map((order) => (
-                  <li key={order.id} className="rounded-lg bg-background p-3 text-sm">
+                  <li key={order.id} className="rounded-lg bg-card p-3 text-sm">
                     <div className="flex items-center justify-between">
                       <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
                       <p className="text-xs">{order.status}</p>
