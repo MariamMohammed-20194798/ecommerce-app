@@ -59,7 +59,7 @@ function CategoryTree({
   )
 }
 
-function NavLink({
+function Header({
   href,
   children,
   className,
@@ -173,17 +173,15 @@ export function HomeNavbar() {
             </SheetContent>
           </Sheet>
 
-          <Link
-            href="/home"
-            className="text-xl font-bold tracking-wide"
-            aria-label="Go to home"
-          >
-            Women&apos;s
-          </Link>
+          <div className="flex lg:flex-1">
+            <Link href="/home" className="text-2xl font-semibold tracking-[0.3em] text-foreground">
+              Women&apos;s
+            </Link>
+          </div>
         </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-6 md:flex ">
-          <NavLink className="text-foreground" href="/home">Home</NavLink>
+          <Header className="text-foreground" href="/home">Home</Header>
 
           <div className="relative group">
             <button
