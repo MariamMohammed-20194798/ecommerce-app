@@ -3,6 +3,7 @@ import {
   IsOptional,
   IsUUID,
   IsBoolean,
+  IsArray,
   MinLength,
   MaxLength,
   Matches,
@@ -109,6 +110,9 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsUUID()
   parentId?: string;
+
+  @IsOptional()
+  images?: string[];
 }
 
 export class UpdateCategoryDto {
@@ -142,4 +146,13 @@ export class UpdateCategoryDto {
   @IsOptional()
   @IsUUID()
   parentId?: string | null;
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'Category image URLs.',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 }

@@ -94,6 +94,7 @@ class CreateCategoryDto {
     slug;
     description;
     parentId;
+    images;
 }
 exports.CreateCategoryDto = CreateCategoryDto;
 __decorate([
@@ -132,11 +133,16 @@ __decorate([
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "parentId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateCategoryDto.prototype, "images", void 0);
 class UpdateCategoryDto {
     name;
     slug;
     description;
     parentId;
+    images;
 }
 exports.UpdateCategoryDto = UpdateCategoryDto;
 __decorate([
@@ -174,4 +180,14 @@ __decorate([
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", Object)
 ], UpdateCategoryDto.prototype, "parentId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        type: [String],
+        description: 'Category image URLs.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], UpdateCategoryDto.prototype, "images", void 0);
 //# sourceMappingURL=category.dto.js.map

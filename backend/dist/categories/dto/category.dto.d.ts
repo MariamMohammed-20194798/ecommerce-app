@@ -14,10 +14,12 @@ export declare class CreateCategoryDto {
     slug?: string;
     description?: string;
     parentId?: string;
+    images?: string[];
 }
 export declare class UpdateCategoryDto {
     name?: string;
     slug?: string;
     description?: string;
     parentId?: string | null;
+    images?: string[];
 }

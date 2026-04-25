@@ -183,6 +183,7 @@ let CategoryRepository = class CategoryRepository {
             data: {
                 ...(data.name !== undefined && { name: data.name }),
                 ...(data.slug !== undefined && { slug: data.slug }),
+                ...(data.images !== undefined && { images: data.images }),
                 ...(data.description !== undefined && {
                     description: data.description,
                 }),

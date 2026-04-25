@@ -230,13 +230,14 @@ export class CategoryRepository {
 
   async update(
     id: string,
-    data: Partial<UpdateCategoryDto> & { slug?: string },
+    data: Partial<UpdateCategoryDto> & { slug?: string; images?: string[] },
   ) {
     return this.prisma.category.update({
       where: { id },
       data: {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.slug !== undefined && { slug: data.slug }),
+        ...(data.images !== undefined && { images: data.images }),
         ...(data.description !== undefined && {
           description: data.description,
         }),
