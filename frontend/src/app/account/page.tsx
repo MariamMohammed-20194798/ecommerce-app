@@ -119,8 +119,7 @@ export default function AccountPage() {
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
-  const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
-  const [isEditAddressOpen, setIsEditAddressOpen] = useState(false);
+  const [addressModalMode, setAddressModalMode] = useState<"add" | "edit" | null>(null);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [addressForm, setAddressForm] = useState<AddressFormState>(emptyAddressForm);
 
@@ -202,41 +201,8 @@ export default function AccountPage() {
     return null;
   };
 
-  const onAddAddress = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmitAddress = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setPageError(null);
-
-    const validationError = validateAddressForm();
-    if (validationError) {
-      setPageError(validationError);
-      return;
-    }
-
-    setIsSavingAddress(true);
-    try {
-      await api.post("/addresses", {
-        line1: addressForm.line1.trim(),
-        line2: addressForm.line2.trim() || undefined,
-        city: addressForm.city.trim(),
-        state: addressForm.state.trim() || undefined,
-        postalCode: addressForm.postalCode.trim(),
-        country: addressForm.country.trim(),
-        isDefault: addressForm.isDefault,
-      });
-      setAddressForm(emptyAddressForm);
-      setIsAddAddressOpen(false);
-      await loadAddresses();
-    } catch (error) {
-      setPageError(getApiErrorMessage(error, "Failed to add address."));
-    } finally {
-      setIsSavingAddress(false);
-    }
-  };
-
-  const onEditAddress = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!editingAddressId) return;
-
     setPageError(null);
     const validationError = validateAddressForm();
     if (validationError) {
@@ -246,7 +212,7 @@ export default function AccountPage() {
 
     setIsSavingAddress(true);
     try {
-      await api.put(`/addresses/${editingAddressId}`, {
+      const payload = {
         line1: addressForm.line1.trim(),
         line2: addressForm.line2.trim() || undefined,
         city: addressForm.city.trim(),
@@ -254,13 +220,26 @@ export default function AccountPage() {
         postalCode: addressForm.postalCode.trim(),
         country: addressForm.country.trim(),
         isDefault: addressForm.isDefault,
-      });
-      setIsEditAddressOpen(false);
+      };
+
+      if (addressModalMode === "edit") {
+        if (!editingAddressId) return;
+        await api.put(`/addresses/${editingAddressId}`, payload);
+      } else {
+        await api.post("/addresses", payload);
+      }
+
+      setAddressModalMode(null);
       setEditingAddressId(null);
       setAddressForm(emptyAddressForm);
       await loadAddresses();
     } catch (error) {
-      setPageError(getApiErrorMessage(error, "Failed to update address."));
+      setPageError(
+        getApiErrorMessage(
+          error,
+          addressModalMode === "edit" ? "Failed to update address." : "Failed to add address.",
+        ),
+      );
     } finally {
       setIsSavingAddress(false);
     }
@@ -269,7 +248,8 @@ export default function AccountPage() {
   const openAddAddressModal = () => {
     setPageError(null);
     setAddressForm(emptyAddressForm);
-    setIsAddAddressOpen(true);
+    setEditingAddressId(null);
+    setAddressModalMode("add");
   };
 
   const openEditAddressModal = (address: Address) => {
@@ -284,7 +264,15 @@ export default function AccountPage() {
       country: address.country,
       isDefault: address.isDefault,
     });
-    setIsEditAddressOpen(true);
+    setAddressModalMode("edit");
+  };
+
+  const onAddressModalOpenChange = (open: boolean) => {
+    if (!open) {
+      setAddressModalMode(null);
+      setEditingAddressId(null);
+      setAddressForm(emptyAddressForm);
+    }
   };
 
   const onLogout = async () => {
@@ -348,7 +336,7 @@ export default function AccountPage() {
           <div className="rounded-xl bg-card/50 p-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="font-semibold text-sm">Addresses</h2>
-              <Dialog open={isAddAddressOpen} onOpenChange={setIsAddAddressOpen}>
+              <Dialog open={addressModalMode !== null} onOpenChange={onAddressModalOpenChange}>
                 <DialogTrigger asChild>
                   <button
                     type="button"
@@ -358,14 +346,16 @@ export default function AccountPage() {
                     + Add
                   </button>
                 </DialogTrigger>
-                <DialogContent className="max-w-xl bg-card">
+                <DialogContent className="max-w-xl bg-card p-6">
                   <DialogHeader>
-                    <DialogTitle>Add address</DialogTitle>
+                    <DialogTitle>{addressModalMode === "edit" ? "Edit address" : "Add address"}</DialogTitle>
                     <DialogDescription>
-                      Fill the fields below to save a new address.
+                      {addressModalMode === "edit"
+                        ? "Update this address and save your changes."
+                        : "Fill the fields below to save a new address."}
                     </DialogDescription>
                   </DialogHeader>
-                  <form id="add-address-form" className="grid gap-2 md:grid-cols-2" onSubmit={onAddAddress}>
+                  <form id="address-form" className="grid gap-2 md:grid-cols-2" onSubmit={onSubmitAddress}>
                     <input
                       placeholder="Line 1"
                       className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none md:col-span-2"
@@ -414,14 +404,14 @@ export default function AccountPage() {
                   <DialogFooter className="bg-transparent p-0 border-0 mt-2">
                     <button
                       type="button"
-                      onClick={() => setIsAddAddressOpen(false)}
+                      onClick={() => onAddressModalOpenChange(false)}
                       className="h-9 rounded-lg px-4 text-sm"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      form="add-address-form"
+                      form="address-form"
                       disabled={isSavingAddress}
                       className="h-9 rounded-lg bg-black px-4 text-sm font-medium text-white disabled:opacity-70"
                     >
@@ -444,7 +434,7 @@ export default function AccountPage() {
                 <ul className="grid gap-3 md:grid-cols-2">
                   {addresses.map((address) => (
                     <li key={address.id} className="rounded-md border border-border/80 bg-card p-3 text-sm">
-                      <div className="mb-2 flex items-start justify-between gap-2">
+                      <div className="mb-2 flex items-start justify-between gap-2 text-muted-foreground">
                         <p className="font-medium">
                           {address.isDefault ? "Default address" : "Saved address"}
                         </p>
@@ -453,15 +443,16 @@ export default function AccountPage() {
                           className="text-foreground/70 hover:text-foreground"
                           onClick={() => openEditAddressModal(address)}
                         >
-                          <Pencil className="size-4" />
+                          <Pencil className="size-4 text-muted-foreground" />
                         </button>
                       </div>
                       <p className="font-medium">{address.line1}</p>
                       {address.line2 ? <p>{address.line2}</p> : null}
                       <p>
                         {address.city}
-                        {address.state ? `, ${address.state}` : ""} {address.postalCode}
                       </p>
+                      <p>{address.state ? `${address.state}` : ""} </p>
+                      <p>{address.postalCode}</p>
                       <p>{address.country}</p>
                     </li>
                   ))}
@@ -469,80 +460,6 @@ export default function AccountPage() {
               )}
             </div>
           </div>
-
-          <Dialog open={isEditAddressOpen} onOpenChange={setIsEditAddressOpen}>
-            <DialogContent className="max-w-xl bg-card">
-              <DialogHeader>
-                <DialogTitle>Edit address</DialogTitle>
-                <DialogDescription>
-                  Update this address and save your changes.
-                </DialogDescription>
-              </DialogHeader>
-              <form id="edit-address-form" className="grid gap-2 md:grid-cols-2" onSubmit={onEditAddress}>
-                <input
-                  placeholder="Line 1"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none md:col-span-2"
-                  value={addressForm.line1}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, line1: e.target.value }))}
-                />
-                <input
-                  placeholder="Line 2 (optional)"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none md:col-span-2"
-                  value={addressForm.line2}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, line2: e.target.value }))}
-                />
-                <input
-                  placeholder="City"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none"
-                  value={addressForm.city}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, city: e.target.value }))}
-                />
-                <input
-                  placeholder="State (optional)"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none"
-                  value={addressForm.state}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, state: e.target.value }))}
-                />
-                <input
-                  placeholder="Postal code"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none"
-                  value={addressForm.postalCode}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, postalCode: e.target.value }))}
-                />
-                <input
-                  placeholder="Country"
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none"
-                  value={addressForm.country}
-                  onChange={(e) => setAddressForm((s) => ({ ...s, country: e.target.value }))}
-                />
-                <label className="md:col-span-2 flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={addressForm.isDefault}
-                    onChange={(e) => setAddressForm((s) => ({ ...s, isDefault: e.target.checked }))}
-                  />
-                  This is my default address
-                </label>
-              </form>
-              <DialogFooter className="bg-transparent p-0 border-0 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditAddressOpen(false)}
-                  className="h-9 rounded-lg px-4 text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  form="edit-address-form"
-                  disabled={isSavingAddress}
-                  className="h-9 rounded-lg bg-black px-4 text-sm font-medium text-white disabled:opacity-70"
-                >
-                  {isSavingAddress ? "Saving..." : "Save"}
-                </button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
 
           <div className="flex items-center gap-3">
             <button
