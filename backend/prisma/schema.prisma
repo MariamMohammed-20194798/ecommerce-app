@@ -70,6 +70,7 @@ model Product {
   slug        String           @unique
   name        String
   description String?
+  images      String[]
   basePrice   Decimal          @db.Decimal(10, 2)
   isActive    Boolean          @default(true)
   metadata    Json?

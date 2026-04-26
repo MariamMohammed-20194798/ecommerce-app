@@ -7,61 +7,61 @@ export declare class ReviewsController {
     private getAuthUser;
     private getAuthUserId;
     findMyReviews(req: Request): Promise<({
-        product: {
-            id: string;
-            slug: string;
-            name: string;
-        };
         user: {
             id: string;
             email: string;
         };
+        product: {
+            id: string;
+            name: string;
+            slug: string;
+        };
     } & {
         id: string;
-        productId: string;
         userId: string;
-        rating: number;
-        body: string | null;
         createdAt: Date;
         updatedAt: Date;
+        rating: number;
+        productId: string;
+        body: string | null;
     })[]>;
     create(dto: CreateReviewDto, req: Request): Promise<{
-        product: {
-            id: string;
-            slug: string;
-            name: string;
-        };
         user: {
             id: string;
             email: string;
         };
+        product: {
+            id: string;
+            name: string;
+            slug: string;
+        };
     } & {
         id: string;
-        productId: string;
         userId: string;
-        rating: number;
-        body: string | null;
         createdAt: Date;
         updatedAt: Date;
+        rating: number;
+        productId: string;
+        body: string | null;
     }>;
     update(id: string, dto: UpdateReviewDto, req: Request): Promise<{
-        product: {
-            id: string;
-            slug: string;
-            name: string;
-        };
         user: {
             id: string;
             email: string;
         };
+        product: {
+            id: string;
+            name: string;
+            slug: string;
+        };
     } & {
         id: string;
-        productId: string;
         userId: string;
-        rating: number;
-        body: string | null;
         createdAt: Date;
         updatedAt: Date;
+        rating: number;
+        productId: string;
+        body: string | null;
     }>;
     remove(id: string, req: Request): Promise<{
         message: string;

@@ -40,6 +40,7 @@ export declare class CreateProductDto {
     categoryId: string;
     description?: string;
     basePrice: number;
+    images?: string[];
     isActive?: boolean;
     metadata?: Record<string, unknown>;
     variants?: CreateVariantDto[];
@@ -50,5 +51,6 @@ export declare class UpdateProductDto {
     description?: string;
     basePrice?: number;
     isActive?: boolean;
+    images?: string[];
     metadata?: Record<string, unknown>;
 }

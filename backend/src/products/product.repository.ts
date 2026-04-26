@@ -310,6 +310,7 @@ export class ProductRepository {
         categoryId: dto.categoryId,
         description: dto.description,
         basePrice: dto.basePrice,
+        images: dto.images,
         isActive: dto.isActive ?? true,
         metadata:
           dto.metadata !== undefined
@@ -332,6 +333,7 @@ export class ProductRepository {
       data: {
         ...(dto.name && { name: dto.name }),
         ...(dto.categoryId && { categoryId: dto.categoryId }),
+        ...(dto.images !== undefined && { images: dto.images }),
         ...(dto.description !== undefined && { description: dto.description }),
         ...(dto.basePrice !== undefined && { basePrice: dto.basePrice }),
         ...(dto.isActive !== undefined && { isActive: dto.isActive }),

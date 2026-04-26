@@ -30,6 +30,7 @@ export declare class OrdersRepository {
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
             addressId: string;
+            trackingNumber: string | null;
             totalAmount: Prisma.Decimal;
             stripePaymentId: string | null;
         })[];
@@ -106,6 +107,7 @@ export declare class OrdersRepository {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
+        trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
     }) | null>;
@@ -174,6 +176,7 @@ export declare class OrdersRepository {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
+        trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
     }>;
@@ -184,6 +187,7 @@ export declare class OrdersRepository {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
+        trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
     } | null>;

@@ -32,6 +32,7 @@ export declare class ProductRepository {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
+            images: string[];
             slug: string;
             categoryId: string;
             basePrice: Prisma.Decimal;
@@ -84,6 +85,7 @@ export declare class ProductRepository {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: Prisma.Decimal;
@@ -96,6 +98,7 @@ export declare class ProductRepository {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: Prisma.Decimal;
@@ -126,6 +129,7 @@ export declare class ProductRepository {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
+            images: string[];
             slug: string;
             categoryId: string;
             basePrice: Prisma.Decimal;
@@ -187,6 +191,7 @@ export declare class ProductRepository {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: Prisma.Decimal;
@@ -215,6 +220,7 @@ export declare class ProductRepository {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: Prisma.Decimal;

@@ -166,7 +166,10 @@ export class CreateVariantDto {
   @Min(0)
   stockQuantity: number;
 
-  @ApiPropertyOptional({ type: [String], description: 'S3 image URLs' })
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'Variant image URLs/paths',
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -199,6 +202,15 @@ export class CreateProductDto {
   @IsNumber()
   @IsPositive()
   basePrice: number;
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'Product-level image URLs/paths',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 
   @ApiPropertyOptional({ default: true })
   @IsOptional()
@@ -246,6 +258,10 @@ export class UpdateProductDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsArray()
+  @IsOptional()
+  images?: string[];
 
   @ApiPropertyOptional()
   @IsOptional()

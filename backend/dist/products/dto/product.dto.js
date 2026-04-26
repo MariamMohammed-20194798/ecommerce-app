@@ -204,7 +204,10 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateVariantDto.prototype, "stockQuantity", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ type: [String], description: 'S3 image URLs' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        type: [String],
+        description: 'Variant image URLs/paths',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
@@ -216,6 +219,7 @@ class CreateProductDto {
     categoryId;
     description;
     basePrice;
+    images;
     isActive = true;
     metadata;
     variants;
@@ -253,6 +257,16 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "basePrice", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        type: [String],
+        description: 'Product-level image URLs/paths',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], CreateProductDto.prototype, "images", void 0);
+__decorate([
     (0, swagger_1.ApiPropertyOptional)({ default: true }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsBoolean)(),
@@ -277,6 +291,7 @@ class UpdateProductDto {
     description;
     basePrice;
     isActive;
+    images;
     metadata;
 }
 exports.UpdateProductDto = UpdateProductDto;
@@ -314,6 +329,11 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateProductDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateProductDto.prototype, "images", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsOptional)(),

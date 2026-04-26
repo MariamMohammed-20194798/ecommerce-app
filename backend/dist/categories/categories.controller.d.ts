@@ -10,9 +10,9 @@ export declare class CategoriesController {
     } & {
         id: string;
         name: string;
-        slug: string;
         description: string | null;
         images: string[];
+        slug: string;
         parentId: string | null;
     } & {
         children: ({
@@ -22,30 +22,30 @@ export declare class CategoriesController {
         } & {
             id: string;
             name: string;
-            slug: string;
             description: string | null;
             images: string[];
+            slug: string;
             parentId: string | null;
         } & any)[];
     })[]>;
     findAll(query: CategoriesQueryDto): Promise<{
         data: ({
-            parent: {
-                id: string;
-                name: string;
-                slug: string;
-            } | null;
             _count: {
                 parent: number;
                 children: number;
                 products: number;
             };
+            parent: {
+                id: string;
+                name: string;
+                slug: string;
+            } | null;
         } & {
             id: string;
             name: string;
-            slug: string;
             description: string | null;
             images: string[];
+            slug: string;
             parentId: string | null;
         })[];
         meta: {
@@ -57,6 +57,10 @@ export declare class CategoriesController {
         };
     }>;
     findOne(slug: string): Promise<{
+        _count: {
+            children: number;
+            products: number;
+        };
         parent: {
             id: string;
             name: string;
@@ -65,19 +69,15 @@ export declare class CategoriesController {
         children: {
             id: string;
             name: string;
-            slug: string;
             description: string | null;
+            slug: string;
         }[];
-        _count: {
-            children: number;
-            products: number;
-        };
     } & {
         id: string;
         name: string;
-        slug: string;
         description: string | null;
         images: string[];
+        slug: string;
         parentId: string | null;
     }>;
     findProducts(slug: string, query: CategoryProductsQueryDto): Promise<{
@@ -93,23 +93,24 @@ export declare class CategoriesController {
             };
             variants: {
                 id: string;
-                images: string[];
                 size: string | null;
                 color: string | null;
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
+                images: string[];
             }[];
         } & {
             id: string;
+            createdAt: Date;
             name: string;
-            slug: string;
+            updatedAt: Date;
             description: string | null;
+            isActive: boolean;
+            images: string[];
+            slug: string;
             categoryId: string;
             basePrice: import("@prisma/client/runtime/library").Decimal;
-            isActive: boolean;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -128,12 +129,15 @@ export declare class CategoriesController {
     } & {
         id: string;
         name: string;
-        slug: string;
         description: string | null;
         images: string[];
+        slug: string;
         parentId: string | null;
     }>;
     update(id: string, dto: UpdateCategoryDto): Promise<{
+        _count: {
+            products: number;
+        };
         parent: {
             id: string;
             name: string;
@@ -144,15 +148,12 @@ export declare class CategoriesController {
             name: string;
             slug: string;
         }[];
-        _count: {
-            products: number;
-        };
     } & {
         id: string;
         name: string;
-        slug: string;
         description: string | null;
         images: string[];
+        slug: string;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{

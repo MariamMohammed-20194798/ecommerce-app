@@ -32,6 +32,7 @@ export declare class OrdersService {
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
             addressId: string;
+            trackingNumber: string | null;
             totalAmount: import("@prisma/client/runtime/library").Decimal;
             stripePaymentId: string | null;
         })[];
@@ -108,6 +109,7 @@ export declare class OrdersService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
+        trackingNumber: string | null;
         totalAmount: import("@prisma/client/runtime/library").Decimal;
         stripePaymentId: string | null;
     }>;
@@ -176,6 +178,7 @@ export declare class OrdersService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
+        trackingNumber: string | null;
         totalAmount: import("@prisma/client/runtime/library").Decimal;
         stripePaymentId: string | null;
     }>;

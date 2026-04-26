@@ -29,6 +29,7 @@ export declare class ProductsService {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
+            images: string[];
             slug: string;
             categoryId: string;
             basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -81,6 +82,7 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -111,6 +113,7 @@ export declare class ProductsService {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
+            images: string[];
             slug: string;
             categoryId: string;
             basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -172,6 +175,7 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -200,6 +204,7 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
+        images: string[];
         slug: string;
         categoryId: string;
         basePrice: import("@prisma/client/runtime/library").Decimal;
