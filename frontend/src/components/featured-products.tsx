@@ -23,8 +23,6 @@ type ProductsResponse = {
   data?: ProductItem[]
 }
 
-const DEFAULT_PRODUCT_IMAGE = "/images/mini-bags/prada.jpg"
-
 const formatPrice = (priceInCents: number) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -34,7 +32,7 @@ const formatPrice = (priceInCents: number) =>
 
 const getProductImage = (product: ProductItem) => {
   const variantImage = product.variants?.find((variant) => variant.images?.length)?.images?.[0]
-  return variantImage || DEFAULT_PRODUCT_IMAGE
+  return variantImage || ''
 }
 
 const getProductName = (product: ProductItem) => {
@@ -85,6 +83,7 @@ export function FeaturedProducts() {
                   src={getProductImage(product)}
                   alt={product.name}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {/* Quick actions */}

@@ -11,6 +11,7 @@ export function Hero() {
           src="/images/hero-fashion.jpg"
           alt="Woman in elegant fashion"
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className="object-cover object-center"
           priority
         />

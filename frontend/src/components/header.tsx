@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 
 const navigation = [
   { name: "New Arrivals", href: "#new" },
+  { name: "Size Guide", href: "/size-guide" },
   { name: "Collections", href: "#collections" },
   { name: "Dresses", href: "#dresses" },
   { name: "Accessories", href: "#accessories" },
@@ -26,7 +27,7 @@ export function Header() {
 
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Mobile menu button */}
