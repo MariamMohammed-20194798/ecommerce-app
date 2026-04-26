@@ -31,7 +31,7 @@ export function Hero() {
             Discover our new collection of refined pieces designed for the contemporary woman.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="bg-white text-foreground hover:bg-white/90 rounded-none px-8">
+            <Button size="lg" className="bg-white text-foreground hover:bg-white/90 rounded-none px-8" >
               Shop Collection
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
