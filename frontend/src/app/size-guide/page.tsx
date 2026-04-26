@@ -56,16 +56,15 @@ const sizes = [
           </p>
           <p className="mt-10 mb-4 text-xl text-semibold">step two</p>
 
-          <div className="grid grid-cols-2 gap-8 items-center">
-            <div className="relative aspect-[4/4] mb-4 overflow-hidden">
-              <Image
-                src={'/images/size-guide/sizechart.jpg'}
-                alt=""
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
+          <div className="grid grid-cols-2 items-center">
+          <div className="relative w-90 aspect-[3/4] mb-4 overflow-hidden">
+          <Image
+              src="/images/size-guide/sizechart.jpg"
+              alt=""
+              fill
+              className="object-cover"
+            />
+          </div>
 
             <p className="text-muted-foreground">
               check the measurements.<br />
