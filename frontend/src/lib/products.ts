@@ -14,6 +14,13 @@ export interface Product {
   details: string[]
   sizes: string[]
   colors: { name: string; hex: string }[]
+  variants: {
+    id: string
+    size: string | null
+    color: string | null
+    images: string[]
+    stockQuantity: number
+  }[]
   inStock: boolean
   isNew?: boolean
   isSale?: boolean
@@ -74,6 +81,7 @@ const toColorHex = (colorName: string) => {
     green: "#166534",
     pink: "#ec4899",
     cream: "#f5f5dc",
+    tiger: "#e08d3c"
   }
 
   return map[normalized] ?? "#888888"
@@ -93,6 +101,9 @@ const mapSort = (sort: SortOption) => {
 }
 
 const dedupe = (values: string[]) => [...new Set(values.filter(Boolean))]
+
+const normalizeVariantValue = (value: string | null | undefined) =>
+  (value ?? "").trim().toLowerCase()
 
 const mapApiProductToProduct = (product: ApiProduct): Product => {
   const variants = product.variants ?? []
@@ -126,6 +137,13 @@ const mapApiProductToProduct = (product: ApiProduct): Product => {
     details: product.metadata?.details ?? [],
     sizes,
     colors: colorNames.map((name) => ({ name, hex: toColorHex(name) })),
+    variants: variants.map((variant) => ({
+      id: variant.id,
+      size: variant.size,
+      color: variant.color,
+      images: variant.images ?? [],
+      stockQuantity: variant.stockQuantity,
+    })),
     inStock: variants.some((variant) => variant.stockQuantity > 0),
     isNew: daysSinceCreated <= 30,
     isSale: typeof originalPrice === "number" && originalPrice > formatPriceFromCents(product.basePrice),
@@ -167,16 +185,42 @@ export async function getRelatedProducts(product: Product, limit = 4): Promise<P
   return sameCategory.filter((item) => item.id !== product.id).slice(0, limit)
 }
 
-export async function addProductToCart(product: Product, quantity = 1): Promise<void> {
-  const firstVariantId = product.variantIds[0]
-  if (!firstVariantId) {
+export async function addProductToCart(
+  product: Product,
+  quantity = 1,
+  variantId?: string | null,
+): Promise<void> {
+  const targetVariantId = variantId ?? product.variantIds[0]
+  if (!targetVariantId) {
     throw new Error("No product variant available for cart action.")
   }
 
   await api.post("/cart/items", {
-    variantId: firstVariantId,
+    variantId: targetVariantId,
     quantity,
   })
+}
+
+const getWishlistIdsFromStorage = (): string[] => {
+  if (typeof window === "undefined") {
+    return []
+  }
+
+  try {
+    const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY)
+    const parsed = raw ? (JSON.parse(raw) as unknown) : []
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : []
+  } catch {
+    return []
+  }
+}
+
+export function getWishlistProductIds(): string[] {
+  return getWishlistIdsFromStorage()
+}
+
+export function isProductWishlisted(productId: string): boolean {
+  return getWishlistIdsFromStorage().includes(productId)
 }
 
 export function addProductToWishlist(product: Product): void {
@@ -184,10 +228,83 @@ export function addProductToWishlist(product: Product): void {
     return
   }
 
-  const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY)
-  const current = raw ? (JSON.parse(raw) as string[]) : []
+  const current = getWishlistIdsFromStorage()
   const next = Array.from(new Set([...current, product.id]))
   window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
+}
+
+export function removeProductFromWishlist(productId: string): void {
+  if (typeof window === "undefined") {
+    return
+  }
+
+  const current = getWishlistIdsFromStorage()
+  const next = current.filter((id) => id !== productId)
+  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
+}
+
+export function toggleProductInWishlist(product: Product): boolean {
+  const isWishlisted = isProductWishlisted(product.id)
+  if (isWishlisted) {
+    removeProductFromWishlist(product.id)
+    return false
+  }
+
+  addProductToWishlist(product)
+  return true
+}
+
+export function getMatchingVariantId(product: Product, input?: { size?: string; color?: string }): string | null {
+  const desiredSize = normalizeVariantValue(input?.size)
+  const desiredColor = normalizeVariantValue(input?.color)
+
+  const inStockVariants = product.variants.filter((variant) => variant.stockQuantity > 0)
+  const allVariants = inStockVariants.length > 0 ? inStockVariants : product.variants
+
+  const bySizeAndColor = allVariants.find(
+    (variant) =>
+      normalizeVariantValue(variant.size) === desiredSize &&
+      normalizeVariantValue(variant.color) === desiredColor,
+  )
+  if (bySizeAndColor) {
+    return bySizeAndColor.id
+  }
+
+  const bySizeOnly = allVariants.find((variant) => normalizeVariantValue(variant.size) === desiredSize)
+  if (bySizeOnly) {
+    return bySizeOnly.id
+  }
+
+  const byColorOnly = allVariants.find((variant) => normalizeVariantValue(variant.color) === desiredColor)
+  if (byColorOnly) {
+    return byColorOnly.id
+  }
+
+  return allVariants[0]?.id ?? product.variantIds[0] ?? null
+}
+
+export function getImagesForProductColor(product: Product, colorName?: string): string[] {
+  const desiredColor = normalizeVariantValue(colorName)
+  if (!desiredColor) {
+    return product.images
+  }
+
+  const colorImages = dedupe(
+    product.variants
+      .filter((variant) => normalizeVariantValue(variant.color) === desiredColor)
+      .flatMap((variant) => variant.images),
+  )
+
+  return colorImages.length > 0 ? colorImages : product.images
+}
+
+export function formatPriceEgp(value: number): string {
+  return new Intl.NumberFormat("en-EG", {
+    style: "currency",
+    currency: "EGP",
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(value)
 }
 
 export const getCategories = (products: Product[]) => [

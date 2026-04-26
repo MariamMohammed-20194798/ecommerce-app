@@ -10,9 +10,13 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import {
   addProductToCart,
-  addProductToWishlist,
+  formatPriceEgp,
+  getImagesForProductColor,
+  getMatchingVariantId,
   getProductBySlug,
   getRelatedProducts,
+  isProductWishlisted,
+  toggleProductInWishlist,
   type Product,
 } from "@/lib/products"
 
@@ -21,12 +25,54 @@ interface ProductPageProps {
 }
 
 function ProductDetails({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
-  const [selectedSize, setSelectedSize] = useState<string>("")
+  const hasSizes = product.sizes.length > 0
+  const [selectedSize, setSelectedSize] = useState<string>(hasSizes ? product.sizes[0] ?? "" : "")
   const [selectedColor, setSelectedColor] = useState(product.colors[0] ?? { name: "Default", hex: "#888888" })
+  const [galleryImages, setGalleryImages] = useState<string[]>(
+    getImagesForProductColor(product, product.colors[0]?.name),
+  )
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState<"description" | "details" | "shipping">("description")
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false)
+  const [isWishlisted, setIsWishlisted] = useState(false)
+
+  useEffect(() => {
+    const nextImages = getImagesForProductColor(product, selectedColor.name)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGalleryImages(nextImages)
+    setSelectedImageIndex(0)
+  }, [product, selectedColor.name])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsWishlisted(isProductWishlisted(product.id))
+  }, [product.id])
+
+  const canNavigateGallery = galleryImages.length > 1
+  const activeImage = galleryImages[selectedImageIndex] ?? product.image
+  const requiresSizeSelection = hasSizes && !selectedSize
+  const colorPreviewImages = product.colors.map((color) => ({
+    color,
+    image: getImagesForProductColor(product, color.name)[0] ?? product.image,
+  }))
+
+  const showNextImage = () => {
+    if (!canNavigateGallery) {
+      return
+    }
+
+    setSelectedImageIndex((prev) => (prev + 1) % galleryImages.length)
+  }
+
+  const showPreviousImage = () => {
+    if (!canNavigateGallery) {
+      return
+    }
+
+    setSelectedImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,11 +114,28 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
             <div className="space-y-4">
               <div className="relative aspect-[3/4] bg-muted overflow-hidden">
                 <Image
-                  src={product.image}
+                  src={activeImage}
                   alt={product.name}
                   fill
                   className="object-cover"
                   priority
+                />       
+                <button
+                  type="button"
+                  onClick={showNextImage}
+                  onWheel={(event) => {
+                    if (!canNavigateGallery) {
+                      return
+                    }
+
+                    if (event.deltaY > 0) {
+                      showNextImage()
+                    } else if (event.deltaY < 0) {
+                      showPreviousImage()
+                    }
+                  }}
+                  className="absolute inset-0 z-10"
+                  aria-label="Change product image"
                 />
                 {product.isNew && (
                   <span className="absolute top-4 left-4 bg-foreground text-background text-xs uppercase tracking-wider px-3 py-1.5">
@@ -86,21 +149,30 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                 )}
               </div>
               {/* Thumbnail gallery placeholder */}
-              <div className="flex gap-4">
-                {product.images.map((img, i) => (
-                  <button
-                    key={i}
-                    className="relative w-20 aspect-square bg-muted overflow-hidden border-2 border-foreground"
-                  >
-                    <Image
-                      src={img}
-                      alt={`${product.name} view ${i + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              {colorPreviewImages.length > 1 && (
+                <div className="flex flex-wrap gap-3 pt-1">
+                  {colorPreviewImages.map(({ color, image }) => (
+                    <button
+                      key={color.name}
+                      onClick={() => setSelectedColor(color)}
+                      className={`relative w-16 aspect-square bg-muted overflow-hidden border-2 transition-colors ${
+                        selectedColor.name === color.name
+                          ? "border-foreground"
+                          : "border-transparent hover:border-muted-foreground"
+                      }`}
+                      aria-label={`Switch to ${color.name} color`}
+                      title={color.name}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${color.name}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product info */}
@@ -115,16 +187,16 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                 <div className="flex items-center gap-3">
                   {product.originalPrice && (
                     <span className="text-xl text-muted-foreground line-through">
-                      ${product.originalPrice}
+                      {formatPriceEgp(product.originalPrice)}
                     </span>
                   )}
                   <span className={`text-2xl ${product.isSale ? "text-accent" : "text-foreground"}`}>
-                    ${product.price}
+                    {formatPriceEgp(product.price)}
                   </span>
                 </div>
               </div>
 
-              <p className="text-muted-foreground leading-relaxed mb-8">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-8">
                 {product.description}
               </p>
 
@@ -152,36 +224,38 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
               </div>
 
               {/* Size selection */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-foreground">Size</span>
-                  <button className="text-sm text-muted-foreground underline hover:text-foreground transition-colors">
-                    Size Guide
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`min-w-[3rem] px-4 py-2.5 text-sm border transition-colors ${
-                        selectedSize === size
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border hover:border-foreground"
-                      }`}
-                    >
-                      {size}
+              {hasSizes && (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-foreground">Size</span>
+                    <button className="text-sm text-muted-foreground underline hover:text-foreground transition-colors">
+                      Size Guide
                     </button>
-                  ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-[3rem] px-4 py-2.5 text-sm border transition-colors ${
+                          selectedSize === size
+                            ? "border-foreground bg-foreground text-background"
+                            : "border-border hover:border-foreground"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Quantity and add to bag */}
-              <div className="flex gap-4 mb-6">
-                <div className="flex items-center border border-border">
+              <div className="flex gap-2 mb-6">
+                <div className="flex items-center border border-border rounded-full">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 hover:bg-muted transition-colors"
+                    className="p-3 transition-colors"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-4 w-4" />
@@ -189,19 +263,23 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                   <span className="w-12 text-center text-sm">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 hover:bg-muted transition-colors"
+                    className="p-3 transition-colors"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
                 <Button 
-                  className="flex-1 rounded-none bg-foreground text-background hover:bg-foreground/90 h-auto py-4 text-sm uppercase tracking-wider"
-                  disabled={!selectedSize}
+                  className="flex-1 rounded-full bg-foreground text-background hover:bg-foreground/90 h-auto py-3 text-sm uppercase tracking-wider"
+                  disabled={requiresSizeSelection}
                   onClick={async () => {
                     setIsAddingToCart(true)
                     try {
-                      await addProductToCart(product, quantity)
+                      const variantId = getMatchingVariantId(product, {
+                        size: selectedSize,
+                        color: selectedColor.name,
+                      })
+                      await addProductToCart(product, quantity, variantId)
                       toast.success("Added to cart")
                     } catch {
                       toast.error("Could not add this product to cart")
@@ -210,25 +288,26 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                     }
                   }}
                 >
-                  {selectedSize ? (isAddingToCart ? "Adding..." : "Add to Bag") : "Select a Size"}
+                  {requiresSizeSelection ? "Select a Size" : isAddingToCart ? "Adding..." : "Add to Bag"}
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-none h-auto aspect-square border-border"
+                  className="rounded-full h-auto aspect-square border-border"
                   aria-label="Add to wishlist"
                   onClick={() => {
                     setIsAddingToWishlist(true)
                     try {
-                      addProductToWishlist(product)
-                      toast.success("Added to wishlist")
+                      const nextValue = toggleProductInWishlist(product)
+                      setIsWishlisted(nextValue)
+                      toast.success(nextValue ? "Added to wishlist" : "Removed from wishlist")
                     } finally {
                       setIsAddingToWishlist(false)
                     }
                   }}
                   disabled={isAddingToWishlist}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />
                 </Button>
               </div>
 
@@ -236,7 +315,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
               <div className="border-t border-border pt-6 space-y-4">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Truck className="h-5 w-5" />
-                  <span>Free shipping on orders over $200</span>
+                  <span>Free shipping on orders over EGP 10,000</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <RotateCcw className="h-5 w-5" />
@@ -283,9 +362,9 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                   )}
                   {activeTab === "shipping" && (
                     <div className="text-sm text-muted-foreground space-y-4">
-                      <p>Standard shipping: 5-7 business days</p>
-                      <p>Express shipping: 2-3 business days</p>
-                      <p>Free shipping on orders over $200</p>
+                      <p>- Standard shipping: 5-7 business days</p>
+                      <p>- Express shipping: 2-3 business days</p>
+                      <p>- Free shipping on orders over EGP 10,000</p>
                     </div>
                   )}
                 </div>
@@ -323,7 +402,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                       <h3 className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
                         {relatedProduct.name}
                       </h3>
-                      <p className="mt-1 text-sm text-foreground">${relatedProduct.price}</p>
+                      <p className="mt-1 text-sm text-foreground">{formatPriceEgp(relatedProduct.price)}</p>
                     </div>
                   </Link>
                 ))}
@@ -332,8 +411,6 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
           </section>
         )}
       </main>
-
-      <Footer />
     </div>
   )
 }
@@ -373,11 +450,9 @@ export default function ProductPage({ params }: ProductPageProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="pt-24 pb-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-muted-foreground">Loading product...</p>
         </main>
-        <Footer />
       </div>
     )
   }
