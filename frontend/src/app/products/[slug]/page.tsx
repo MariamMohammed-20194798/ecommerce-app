@@ -399,7 +399,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                       <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                         {relatedProduct.category}
                       </p>
-                      <h3 className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
+                      <h3 className="text-sm font-medium text-foreground transition-colors">
                         {relatedProduct.name}
                       </h3>
                       <p className="mt-1 text-sm text-foreground">{formatPriceEgp(relatedProduct.price)}</p>

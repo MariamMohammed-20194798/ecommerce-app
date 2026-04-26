@@ -302,8 +302,8 @@ export function formatPriceEgp(value: number): string {
   return new Intl.NumberFormat("en-EG", {
     style: "currency",
     currency: "EGP",
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: value % 5 === 0 ? 0 : 2,
+    maximumFractionDigits: 5,
   }).format(value)
 }
 
