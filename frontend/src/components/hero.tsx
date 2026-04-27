@@ -38,13 +38,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="w-[1px] h-16 bg-white/40 relative overflow-hidden">
-          <div className="w-full h-1/2 bg-white animate-pulse" />
-        </div>
-      </div>
     </section>
   )
 }
