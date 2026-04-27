@@ -63,9 +63,6 @@ type SortOption = "newest" | "price-asc" | "price-desc" | "best-selling"
 const FALLBACK_IMAGE = "/images/placeholder-product.jpg"
 const WISHLIST_STORAGE_KEY = "wishlistProductIds"
 
-const formatPriceFromCents = (priceInCents: number) =>
-  Math.round((priceInCents / 100) * 100) / 100
-
 const toColorHex = (colorName: string) => {
   const normalized = colorName.trim().toLowerCase()
   const map: Record<string, string> = {
@@ -118,7 +115,7 @@ const mapApiProductToProduct = (product: ApiProduct): Product => {
   )
   const variantIds = variants.map((variant) => variant.id)
   const originalPrice = product.metadata?.originalPriceCents
-    ? formatPriceFromCents(product.metadata.originalPriceCents)
+    ? (product.metadata.originalPriceCents)
     : undefined
   const createdAtMs = product.createdAt ? new Date(product.createdAt).getTime() : 0
   const daysSinceCreated = createdAtMs ? (Date.now() - createdAtMs) / (1000 * 60 * 60 * 24) : 999
@@ -127,7 +124,7 @@ const mapApiProductToProduct = (product: ApiProduct): Product => {
     id: product.id,
     slug: product.slug,
     name: product.name,
-    price: formatPriceFromCents(product.basePrice),
+    price: product.basePrice,
     originalPrice,
     image: images[0] ?? FALLBACK_IMAGE,
     images: images.length > 0 ? images : [FALLBACK_IMAGE],
@@ -146,7 +143,7 @@ const mapApiProductToProduct = (product: ApiProduct): Product => {
     })),
     inStock: variants.some((variant) => variant.stockQuantity > 0),
     isNew: daysSinceCreated <= 30,
-    isSale: typeof originalPrice === "number" && originalPrice > formatPriceFromCents(product.basePrice),
+    isSale: typeof originalPrice === "number" && originalPrice > product.basePrice,
     variantIds,
   }
 }

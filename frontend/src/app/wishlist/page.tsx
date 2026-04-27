@@ -9,7 +9,6 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   addProductToCart,
-  formatPriceEgp,
   getProducts,
   getWishlistProductIds,
   removeProductFromWishlist,
@@ -79,7 +78,7 @@ export default function WishlistPage() {
       )}
 
       {hasItems && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <article key={product.id} className="overflow-hidden rounded-2xl border border-border bg-background">
               <Link href={`/products/${product.slug}`} className="block">
@@ -93,7 +92,7 @@ export default function WishlistPage() {
                   <Link href={`/products/${product.slug}`}>
                     <h3 className="mt-1 text-xl font-light text-foreground">{product.name}</h3>
                   </Link>
-                  <p className="mt-2 text-base text-foreground">{formatPriceEgp(product.price)}</p>
+                  <p className="mt-2 text-base text-foreground">{product.price}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Button
