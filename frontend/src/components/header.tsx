@@ -10,6 +10,7 @@ const navigation = [
   { name: "New Arrivals", href: "#new" },
   { name: "Size Guide", href: "/size-guide" },
   { name: "Collections", href: "/collections" },
+  { name: "Wishlist", href: "/wishlist" },
   { name: "Dresses", href: "#dresses" },
   { name: "Accessories", href: "#accessories" },
   { name: "Sale", href: "#sale" },
@@ -67,9 +68,11 @@ export function Header() {
             <Button variant="ghost" size="icon" aria-label="Search">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Wishlist">
-              <Heart className="h-5 w-5" />
-            </Button>
+            <Link href="/wishlist" className="hidden sm:block">
+              <Button variant="ghost" size="icon" aria-label="Wishlist">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
             <Link href='/account'>
             <Button variant="ghost" size="icon" aria-label="Account">
               <User className="h-5 w-5" />
