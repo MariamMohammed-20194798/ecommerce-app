@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import api from "@/lib/api"
@@ -15,6 +16,7 @@ type ProductItem = {
   id: string
   name: string
   basePrice: number
+  slug?: string
   category?: { name?: string }
   variants?: ProductVariant[]
 }
@@ -40,6 +42,13 @@ const getProductName = (product: ProductItem) => {
     (variant) => typeof variant.name === "string" && variant.name.trim().length > 0,
   )?.name
   return variantName ?? product.name
+}
+
+const getProductHref = (product: ProductItem) => {
+  if (product.slug) {
+    return `/products/${product.slug}`
+  }
+  return "/collections"
 }
 
 export function FeaturedProducts() {
@@ -99,8 +108,8 @@ export function FeaturedProducts() {
                 </div>
                 {/* Add to bag button */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <Button className="w-full rounded-none bg-foreground text-background hover:bg-foreground/90">
-                    Add to Bag
+                  <Button asChild className="w-full rounded-none bg-foreground text-background hover:bg-foreground/90">
+                    <Link href={getProductHref(product)}>Add to Bag</Link>
                   </Button>
                 </div>
               </div>
@@ -109,9 +118,11 @@ export function FeaturedProducts() {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                   {product.category?.name ?? "Uncategorized"}
                 </p>
-                <h3 className="text-base font-medium text-foreground group-hover:text-accent transition-colors">
-                  {getProductName(product)}
-                </h3>
+                <Link href={getProductHref(product)} className="inline-block">
+                  <h3 className="text-base font-medium text-foreground group-hover:text-accent transition-colors">
+                    {getProductName(product)}
+                  </h3>
+                </Link>
                 <p className="mt-1 text-sm text-foreground">{formatPrice(product.basePrice)}</p>
               </div>
             </div>
@@ -120,8 +131,8 @@ export function FeaturedProducts() {
 
         {/* View all link */}
         <div className="text-center mt-16">
-          <Button variant="outline" size="lg" className="rounded-none px-12">
-            View All New Arrivals
+          <Button asChild variant="outline" size="lg" className="rounded-none px-12">
+            <Link href="/collections">View All New Arrivals</Link>
           </Button>
         </div>
       </div>

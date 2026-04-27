@@ -1,4 +1,4 @@
-"use-client"
+"use client"
 import Image from "next/image"
 
 export default function SizeGuide(){
@@ -60,8 +60,9 @@ const sizes = [
           <div className="relative w-90 aspect-[3/4] mb-4 overflow-hidden">
           <Image
               src="/images/size-guide/sizechart.jpg"
-              alt=""
+              alt="Size chart reference"
               fill
+              sizes="(max-width: 768px) 100vw, 360px"
               className="object-cover"
             />
           </div>
