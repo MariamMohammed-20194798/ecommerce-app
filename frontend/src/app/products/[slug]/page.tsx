@@ -190,7 +190,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                       {formatPriceEgp(product.originalPrice)}
                     </span>
                   )}
-                  <span className={`text-2xl ${product.isSale ? "text-accent" : "text-foreground"}`}>
+                  <span className={`text-xl ${product.isSale ? "text-accent" : "text-foreground/70"}`}>
                     {formatPriceEgp(product.price)}
                   </span>
                 </div>

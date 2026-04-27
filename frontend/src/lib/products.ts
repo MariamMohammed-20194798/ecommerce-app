@@ -78,7 +78,9 @@ const toColorHex = (colorName: string) => {
     green: "#166534",
     pink: "#ec4899",
     cream: "#f5f5dc",
-    tiger: "#e08d3c"
+    tiger: "#e08d3c",
+    naviblue: "#000080",
+    beige: "#EDE8D0"
   }
 
   return map[normalized] ?? "#888888"

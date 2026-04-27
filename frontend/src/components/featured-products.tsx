@@ -6,6 +6,7 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import api from "@/lib/api"
+import { formatPriceEgp } from "@/lib/products"
 
 type ProductVariant = {
   name?: string
@@ -164,7 +165,7 @@ export function FeaturedProducts() {
                       {getProductName(product)}
                     </h3>
                   </Link>
-                  <p className="mt-1 text-md text-foreground/50">{product.basePrice.toLocaleString("en-EG")} EGP</p>
+                  <p className="mt-1 text-md text-foreground/50">{formatPriceEgp(product.basePrice)}</p>
                 </div>
               </div>
             ))}

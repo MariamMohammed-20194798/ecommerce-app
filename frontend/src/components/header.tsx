@@ -7,13 +7,11 @@ import { Search, ShoppingBag, User, Menu, X, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const navigation = [
+  { name: "Home", href: "/home" },
   { name: "New Arrivals", href: "#new" },
-  { name: "Size Guide", href: "/size-guide" },
   { name: "Collections", href: "/collections" },
+  { name: "Size Guide", href: "/size-guide" },
   { name: "Wishlist", href: "/wishlist" },
-  { name: "Dresses", href: "#dresses" },
-  { name: "Accessories", href: "#accessories" },
-  { name: "Sale", href: "#sale" },
 ]
 
 export function Header() {

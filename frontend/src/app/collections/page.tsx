@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { addProductToCart, addProductToWishlist, getCategories, getProducts, type Product } from "@/lib/products"
+import { addProductToCart, formatPriceEgp, addProductToWishlist, getCategories, getProducts, type Product } from "@/lib/products"
 
 const sortOptions = [
   { name: "Newest", value: "newest" },
@@ -306,7 +306,7 @@ export default function CollectionsPage() {
                     </span>
                   )}
                   <span className={`text-sm ${product.isSale ? "text-accent" : "text-foreground"}`}>
-                    ${product.price}
+                    {formatPriceEgp(product.price)}
                   </span>
                 </div>
               </div>
