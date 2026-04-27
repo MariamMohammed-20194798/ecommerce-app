@@ -137,13 +137,15 @@ export function Categories() {
                 href={category.href}
                 className="group/card relative aspect-[3/4] w-[72%] shrink-0 snap-start overflow-hidden rounded-[28px] sm:w-[46%] lg:w-[31%]"
               >
+              {category.image ? (
+  
                 <Image
                   src={category.image}
                   alt={category.name}
                   fill
                   sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 30vw"
                   className="object-cover transition-transform duration-700 group-hover/card:scale-105"
-                />
+                /> ):null}
                 <div className="absolute inset-0 bg-foreground/30 transition-colors duration-300 group-hover/card:bg-foreground/40" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white">
                   <h3 className="mb-2 text-xl font-light tracking-wider sm:text-2xl">{category.name}</h3>

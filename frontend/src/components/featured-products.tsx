@@ -55,7 +55,7 @@ export function FeaturedProducts() {
     const fetchNewArrivals = async () => {
       try {
         const response = await api.get<ProductsResponse>("/products", {
-          params: { sort: "newest", limit: 4 },
+          params: { sort: "newest" },
         })
         setProducts(response.data?.data ?? [])
       } catch (error) {
@@ -160,11 +160,11 @@ export function FeaturedProducts() {
                 </div>
                 <div>
                   <Link href={getProductHref(product)} className="inline-block">
-                    <h3 className="text-xl font-light tracking-wide text-foreground group-hover/card:text-accent transition-colors">
+                    <h3 className="text-lg font-light tracking-wide text-foreground transition-colors">
                       {getProductName(product)}
                     </h3>
                   </Link>
-                  <p className="mt-2 text-xl text-foreground/90">{product.basePrice.toLocaleString("en-EG")} EGP</p>
+                  <p className="mt-1 text-md text-foreground/50">{product.basePrice.toLocaleString("en-EG")} EGP</p>
                 </div>
               </div>
             ))}
