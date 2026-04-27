@@ -25,13 +25,6 @@ type ProductsResponse = {
   data?: ProductItem[]
 }
 
-const formatPrice = (priceInCents: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(priceInCents / 100)
-
 const getProductImage = (product: ProductItem) => {
   const variantImage = product.variants?.find((variant) => variant.images?.length)?.images?.[0]
   return variantImage || ''
@@ -83,11 +76,11 @@ export function FeaturedProducts() {
         </div>
 
         {/* Products grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((product) => (
             <div key={product.id} className="group cursor-pointer">
               {/* Product image */}
-              <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-muted">
+              <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-muted rounded-xl">
                 <Image
                   src={getProductImage(product)}
                   alt={product.name}
@@ -107,9 +100,9 @@ export function FeaturedProducts() {
                   </Button>
                 </div>
                 {/* Add to bag button */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <Button asChild className="w-full rounded-none bg-foreground text-background hover:bg-foreground/90">
-                    <Link href={getProductHref(product)}>Add to Bag</Link>
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 background-white">
+                  <Button asChild className="w-full rounded-full bg-white text-foreground">
+                    <Link href={getProductHref(product)}>Quick Add</Link>
                   </Button>
                 </div>
               </div>
@@ -123,7 +116,7 @@ export function FeaturedProducts() {
                     {getProductName(product)}
                   </h3>
                 </Link>
-                <p className="mt-1 text-sm text-foreground">{formatPrice(product.basePrice)}</p>
+                <p className="mt-1 text-sm text-foreground">{product.basePrice} EGP</p>
               </div>
             </div>
           ))}
