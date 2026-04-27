@@ -122,7 +122,7 @@ export function FeaturedProducts() {
           >
             {products.map((product) => (
               <div key={product.id} className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]">
-                <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-[24px] bg-muted">
+                <div className="relative group/image mb-4 aspect-[4/4] overflow-hidden rounded-[24px] bg-muted">
                   <Image
                     src={getProductImage(product)}
                     alt={product.name}
@@ -130,7 +130,7 @@ export function FeaturedProducts() {
                     sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
                     className="object-cover transition-transform duration-500 group-hover/card:scale-105"
                   />
-                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm opacity-100 transition md:opacity-0 md:group-hover/card:opacity-100">
+                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm md:hidden">
                     <button
                       type="button"
                       aria-label="Quick add"
@@ -153,8 +153,11 @@ export function FeaturedProducts() {
                       <Eye className="h-4 w-4" />
                     </Link>
                   </div>
-                  <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full transition-transform duration-300 md:block md:group-hover/card:translate-y-0">
-                    <Button asChild className="w-full rounded-full bg-white text-foreground hover:bg-white/95">
+                  <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full opacity-0 transition-all duration-300 md:block md:group-hover/image:translate-y-0 md:group-hover/image:opacity-100">
+                      <Button
+                        asChild
+                        className="w-full rounded-full bg-white text-foreground hover:bg-white/95"
+                      >
                       <Link href={getProductHref(product)}>Quick Add</Link>
                     </Button>
                   </div>
@@ -214,12 +217,6 @@ export function FeaturedProducts() {
           </div>
         </div>
 
-        {/* View all link */}
-        <div className="text-center mt-16">
-          <Button asChild variant="outline" size="lg" className="rounded-none px-12">
-            <Link href="/collections">View All New Arrivals</Link>
-          </Button>
-        </div>
       </div>
     </section>
   )
