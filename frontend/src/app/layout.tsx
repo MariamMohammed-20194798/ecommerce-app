@@ -19,13 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.className} min-h-dvh bg-muted flex flex-col`} suppressHydrationWarning>
         <QueryProvider>
-          <div className="min-h-dvh bg-muted">
-            <Header />
+          <Header />
+          <main className="flex-1">
             {children}
-            <Footer/>
-          </div>
+          </main>
+          <Footer/>
         </QueryProvider>
       </body>
     </html>
