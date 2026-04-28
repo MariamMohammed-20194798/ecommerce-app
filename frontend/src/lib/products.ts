@@ -27,6 +27,8 @@ export interface Product {
   variantIds: string[]
 }
 
+type WishlistProduct = Pick<Product, "id">
+
 type ApiProductVariant = {
   id: string
   size: string | null
@@ -222,7 +224,7 @@ export function isProductWishlisted(productId: string): boolean {
   return getWishlistIdsFromStorage().includes(productId)
 }
 
-export function addProductToWishlist(product: Product): void {
+export function addProductToWishlist(product: WishlistProduct): void {
   if (typeof window === "undefined") {
     return
   }
@@ -242,7 +244,7 @@ export function removeProductFromWishlist(productId: string): void {
   window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
 }
 
-export function toggleProductInWishlist(product: Product): boolean {
+export function toggleProductInWishlist(product: WishlistProduct): boolean {
   const isWishlisted = isProductWishlisted(product.id)
   if (isWishlisted) {
     removeProductFromWishlist(product.id)

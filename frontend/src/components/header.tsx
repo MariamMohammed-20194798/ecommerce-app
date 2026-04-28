@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Search, ShoppingBag, User, Menu, X, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { getWishlistProductIds } from "@/lib/products"
 
 const navigation = [
   { name: "Home", href: "/home" },
@@ -16,13 +17,23 @@ const navigation = [
 
 export function Header() {
   const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([])
 
+  useEffect(() => {
+    const syncWishlist = () => {
+      setWishlistedProductIds(getWishlistProductIds())
+    }
+
+    syncWishlist()
+    window.addEventListener("focus", syncWishlist)
+
+    return () => window.removeEventListener("focus", syncWishlist)
+  }, [])
 
   if (pathname === "/auth" || pathname === "/verify-email" || pathname === "/account") {
     return null
   }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
 
   return (
@@ -67,14 +78,18 @@ export function Header() {
               <Search className="h-5 w-5" />
             </Button>
             <Link href="/wishlist" className="hidden sm:block">
-              <Button variant="ghost" size="icon" aria-label="Wishlist">
+              <Button variant="ghost" size="icon" aria-label="Wishlist" className="relative">
                 <Heart className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">
+                {wishlistedProductIds.length}
+              </span>
               </Button>
             </Link>
             <Link href='/account'>
             <Button variant="ghost" size="icon" aria-label="Account">
               <User className="h-5 w-5" />
             </Button></Link>
+            
             <Button variant="ghost" size="icon" className="relative" aria-label="Shopping bag">
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">

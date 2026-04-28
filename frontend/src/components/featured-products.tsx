@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import api from "@/lib/api"
-import { formatPriceEgp } from "@/lib/products"
+import { addProductToWishlist, formatPriceEgp, isProductWishlisted } from "@/lib/products"
 
 type ProductVariant = {
   name?: string
@@ -47,10 +48,13 @@ const getProductHref = (product: ProductItem) => {
 
 export function FeaturedProducts() {
   const [products, setProducts] = useState<ProductItem[]>([])
+  const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([])
+  const [activeWishlistProductId, setActiveWishlistProductId] = useState<string | null>(null)
   const [isHovered, setIsHovered] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const wishlistedProductIdSet = useMemo(() => new Set(wishlistedProductIds), [wishlistedProductIds])
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -58,7 +62,11 @@ export function FeaturedProducts() {
         const response = await api.get<ProductsResponse>("/products", {
           params: { sort: "newest" },
         })
-        setProducts(response.data?.data ?? [])
+        const nextProducts = response.data?.data ?? []
+        setProducts(nextProducts)
+        setWishlistedProductIds(
+          nextProducts.filter((product) => isProductWishlisted(product.id)).map((product) => product.id),
+        )
       } catch (error) {
         console.error("Failed to load new arrivals:", error)
       }
@@ -97,6 +105,22 @@ export function FeaturedProducts() {
     return () => window.removeEventListener("resize", updateScrollState)
   }, [products.length])
 
+  const handleAddToWishlist = (product: ProductItem) => {
+    if (wishlistedProductIdSet.has(product.id)) {
+      toast.info("Already in wishlist")
+      return
+    }
+
+    setActiveWishlistProductId(product.id)
+    try {
+      addProductToWishlist(product)
+      setWishlistedProductIds((current) => [...current, product.id])
+      toast.success("Added to wishlist")
+    } finally {
+      setActiveWishlistProductId(null)
+    }
+  }
+
   return (
     <section className="py-24 bg-background" id="new">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -122,7 +146,7 @@ export function FeaturedProducts() {
           >
             {products.map((product) => (
               <div key={product.id} className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]">
-                <div className="relative group/image mb-4 aspect-[4/4] overflow-hidden rounded-[24px] bg-muted">
+                <div className="relative group/image mb-4 aspect-[3/4] overflow-hidden rounded-[24px] bg-muted">
                   <Image
                     src={getProductImage(product)}
                     alt={product.name}
@@ -130,6 +154,29 @@ export function FeaturedProducts() {
                     sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
                     className="object-cover transition-transform duration-500 group-hover/card:scale-105"
                   />
+                  <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 transition-opacity duration-300">
+                    <Link
+                      href={getProductHref(product)}
+                      aria-label="View product"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-md"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Link>
+
+                    <button
+                      type="button"
+                      aria-label="Add to wishlist"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-md"
+                      onClick={(event) => {
+                        event.preventDefault()
+                        handleAddToWishlist(product)
+                      }}
+                      disabled={activeWishlistProductId === product.id}
+                    >
+                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current" : ""}`} />
+                    </button>
+                  </div>
+                  
                   <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm md:hidden">
                     <button
                       type="button"
@@ -138,13 +185,15 @@ export function FeaturedProducts() {
                     >
                       <ShoppingBag className="h-4 w-4" />
                     </button>
-                    <Link
-                      href="/wishlist"
+                    <button
+                      type="button"
                       aria-label="Add to wishlist"
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
+                      onClick={() => handleAddToWishlist(product)}
+                      disabled={activeWishlistProductId === product.id}
                     >
-                      <Heart className="h-4 w-4" />
-                    </Link>
+                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current" : ""}`} />
+                    </button>
                     <Link
                       href={getProductHref(product)}
                       aria-label="View product"
@@ -154,13 +203,14 @@ export function FeaturedProducts() {
                     </Link>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full opacity-0 transition-all duration-300 md:block md:group-hover/image:translate-y-0 md:group-hover/image:opacity-100">
-                      <Button
-                        asChild
-                        className="w-full rounded-full bg-white text-foreground hover:bg-white/95"
-                      >
-                      <Link href={getProductHref(product)}>Quick Add</Link>
-                    </Button>
-                  </div>
+                  <Button
+                    asChild
+                    className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
+                  >
+                    <Link href={getProductHref(product)}>Quick Add</Link>
+                  </Button>
+            
+                </div>
                 </div>
                 <div>
                   <Link href={getProductHref(product)} className="inline-block">
