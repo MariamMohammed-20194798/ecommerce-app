@@ -64,6 +64,8 @@ type SortOption = "newest" | "price-asc" | "price-desc" | "best-selling"
 
 const FALLBACK_IMAGE = "/images/placeholder-product.jpg"
 const WISHLIST_STORAGE_KEY = "wishlistProductIds"
+export const WISHLIST_UPDATED_EVENT = "wishlist-updated"
+const wishlistListeners = new Set<() => void>()
 
 const toColorHex = (colorName: string) => {
   const normalized = colorName.trim().toLowerCase()
@@ -216,6 +218,24 @@ const getWishlistIdsFromStorage = (): string[] => {
   }
 }
 
+const notifyWishlistUpdated = () => {
+  for (const listener of wishlistListeners) {
+    listener()
+  }
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(WISHLIST_UPDATED_EVENT))
+  }
+}
+
+export function subscribeToWishlistUpdates(listener: () => void): () => void {
+  wishlistListeners.add(listener)
+
+  return () => {
+    wishlistListeners.delete(listener)
+  }
+}
+
 export function getWishlistProductIds(): string[] {
   return getWishlistIdsFromStorage()
 }
@@ -232,6 +252,7 @@ export function addProductToWishlist(product: WishlistProduct): void {
   const current = getWishlistIdsFromStorage()
   const next = Array.from(new Set([...current, product.id]))
   window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
+  notifyWishlistUpdated()
 }
 
 export function removeProductFromWishlist(productId: string): void {
@@ -242,6 +263,7 @@ export function removeProductFromWishlist(productId: string): void {
   const current = getWishlistIdsFromStorage()
   const next = current.filter((id) => id !== productId)
   window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
+  notifyWishlistUpdated()
 }
 
 export function toggleProductInWishlist(product: WishlistProduct): boolean {

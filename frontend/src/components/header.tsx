@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Search, ShoppingBag, User, Menu, X, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getWishlistProductIds } from "@/lib/products"
+import { getWishlistProductIds, subscribeToWishlistUpdates } from "@/lib/products"
 
 const navigation = [
   { name: "Home", href: "/home" },
@@ -26,9 +26,15 @@ export function Header() {
     }
 
     syncWishlist()
+    window.addEventListener("storage", syncWishlist)
     window.addEventListener("focus", syncWishlist)
+    const unsubscribe = subscribeToWishlistUpdates(syncWishlist)
 
-    return () => window.removeEventListener("focus", syncWishlist)
+    return () => {
+      window.removeEventListener("storage", syncWishlist)
+      window.removeEventListener("focus", syncWishlist)
+      unsubscribe()
+    }
   }, [])
 
   if (pathname === "/auth" || pathname === "/verify-email" || pathname === "/account") {
