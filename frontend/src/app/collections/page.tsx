@@ -7,7 +7,6 @@ import { Heart, SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutGrid } from "l
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { addProductToCart, formatPriceEgp, addProductToWishlist, getCategories, getProducts, type Product } from "@/lib/products"
 
 const sortOptions = [
@@ -110,7 +109,7 @@ export default function CollectionsPage() {
                     onClick={() => setSelectedCategory(cat.slug)}
                     className={`px-3 py-1.5 text-sm transition-colors ${
                       selectedCategory === cat.slug
-                        ? "bg-foreground text-background"
+                        ? "bg-muted text-foreground rounded-full"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -217,7 +216,7 @@ export default function CollectionsPage() {
         {isLoading && (
           <div className="py-20 text-center text-sm text-muted-foreground">Loading products...</div>
         )}
-        <div className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12 ${
+        <div className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12  ${
           gridCols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"
         }`}>
           {sortedProducts.map((product) => (
@@ -227,7 +226,7 @@ export default function CollectionsPage() {
               className="group cursor-pointer"
             >
               {/* Product image */}
-              <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-muted">
+              <div className="relative aspect-[3/4] mb-4 rounded-xl overflow-hidden bg-muted">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -236,11 +235,11 @@ export default function CollectionsPage() {
                 />
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
-                  {product.isNew && (
+                  {/* {product.isNew && (
                     <span className="bg-foreground text-background text-[10px] uppercase tracking-wider px-2 py-1">
                       New
                     </span>
-                  )}
+                  )} */}
                   {product.isSale && (
                     <span className="bg-accent text-accent-foreground text-[10px] uppercase tracking-wider px-2 py-1">
                       Sale
@@ -270,9 +269,9 @@ export default function CollectionsPage() {
                   </Button>
                 </div>
                 {/* Quick add button */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <div className="absolute bottom-4 left-4 right-4 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                   <Button 
-                    className="w-full rounded-none bg-foreground text-background hover:bg-foreground/90 text-sm"
+                    className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
                     onClick={async (e) => {
                       e.preventDefault()
                       setActiveProductAction(`${product.id}:cart`)
@@ -296,7 +295,7 @@ export default function CollectionsPage() {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                   {product.category}
                 </p>
-                <h3 className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
+                <h3 className="text-sm font-medium text-foreground">
                   {product.name}
                 </h3>
                 <div className="mt-1 flex items-center justify-center gap-2">
@@ -305,7 +304,7 @@ export default function CollectionsPage() {
                       ${product.originalPrice}
                     </span>
                   )}
-                  <span className={`text-sm ${product.isSale ? "text-accent" : "text-foreground"}`}>
+                  <span className={`text-sm ${product.isSale ? "text-accent" : "text-foreground/60"}`}>
                     {formatPriceEgp(product.price)}
                   </span>
                 </div>
@@ -314,8 +313,6 @@ export default function CollectionsPage() {
           ))}
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }
