@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreatePaymentIntentDto = void 0;
+exports.ConfirmPaymentDto = exports.CreatePaymentIntentDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 class CreatePaymentIntentDto {
@@ -34,4 +34,16 @@ __decorate([
     (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], CreatePaymentIntentDto.prototype, "discountCode", void 0);
+class ConfirmPaymentDto {
+    paymentIntentId;
+}
+exports.ConfirmPaymentDto = ConfirmPaymentDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Stripe PaymentIntent id returned after client-side confirmation',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(3),
+    __metadata("design:type", String)
+], ConfirmPaymentDto.prototype, "paymentIntentId", void 0);
 //# sourceMappingURL=checkout.dto.js.map

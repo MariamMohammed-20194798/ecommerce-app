@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Search, ShoppingBag, User, Menu, X, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { fetchCart, subscribeToCartUpdates } from "@/lib/cart"
 import { getWishlistProductIds, subscribeToWishlistUpdates } from "@/lib/products"
 
 const navigation = [
@@ -19,6 +20,7 @@ export function Header() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([])
+  const [cartItemCount, setCartItemCount] = useState(0)
 
   useEffect(() => {
     const syncWishlist = () => {
@@ -33,6 +35,28 @@ export function Header() {
     return () => {
       window.removeEventListener("storage", syncWishlist)
       window.removeEventListener("focus", syncWishlist)
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    const syncCart = async () => {
+      try {
+        const cart = await fetchCart()
+        setCartItemCount(cart.itemCount ?? 0)
+      } catch {
+        setCartItemCount(0)
+      }
+    }
+
+    void syncCart()
+    window.addEventListener("focus", syncCart)
+    const unsubscribe = subscribeToCartUpdates(() => {
+      void syncCart()
+    })
+
+    return () => {
+      window.removeEventListener("focus", syncCart)
       unsubscribe()
     }
   }, [])
@@ -96,12 +120,14 @@ export function Header() {
               <User className="h-5 w-5" />
             </Button></Link>
             
-            <Button variant="ghost" size="icon" className="relative" aria-label="Shopping bag">
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">
-                2
-              </span>
-            </Button>
+            <Link href="/cart">
+              <Button variant="ghost" size="icon" className="relative" aria-label="Shopping bag">
+                <ShoppingBag className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-medium text-accent-foreground">
+                  {cartItemCount}
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
 

@@ -9,7 +9,9 @@ export declare class CartRepository {
                 product: {
                     id: string;
                     name: string;
+                    images: string[];
                     slug: string;
+                    basePrice: Prisma.Decimal;
                 };
             } & {
                 id: string;
@@ -41,7 +43,9 @@ export declare class CartRepository {
                 product: {
                     id: string;
                     name: string;
+                    images: string[];
                     slug: string;
+                    basePrice: Prisma.Decimal;
                 };
             } & {
                 id: string;
@@ -72,7 +76,9 @@ export declare class CartRepository {
             product: {
                 id: string;
                 name: string;
+                images: string[];
                 slug: string;
+                basePrice: Prisma.Decimal;
             };
         } & {
             id: string;
@@ -96,7 +102,9 @@ export declare class CartRepository {
             product: {
                 id: string;
                 name: string;
+                images: string[];
                 slug: string;
+                basePrice: Prisma.Decimal;
             };
         } & {
             id: string;

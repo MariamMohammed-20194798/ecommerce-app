@@ -23,3 +23,13 @@ export class CreatePaymentIntentDto {
   @MaxLength(50)
   discountCode?: string;
 }
+
+export class ConfirmPaymentDto {
+  @ApiProperty({
+    description:
+      'Stripe PaymentIntent id returned after client-side confirmation',
+  })
+  @IsString()
+  @MinLength(3)
+  paymentIntentId: string;
+}

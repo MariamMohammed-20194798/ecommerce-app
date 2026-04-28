@@ -1,4 +1,5 @@
 import api from "@/lib/api"
+import { addCartItem } from "@/lib/cart"
 
 export interface Product {
   id: string
@@ -198,10 +199,7 @@ export async function addProductToCart(
     throw new Error("No product variant available for cart action.")
   }
 
-  await api.post("/cart/items", {
-    variantId: targetVariantId,
-    quantity,
-  })
+  await addCartItem(targetVariantId, quantity)
 }
 
 const getWishlistIdsFromStorage = (): string[] => {

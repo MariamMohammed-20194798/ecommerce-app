@@ -51,6 +51,20 @@ type Order = {
   status: string;
   totalAmount: string;
   createdAt: string;
+  items?: Array<{
+    id: string;
+    quantity: number;
+    unitPrice: string;
+    variant: {
+      size?: string | null;
+      color?: string | null;
+      images?: string[] | null;
+      product: {
+        name: string;
+        slug: string;
+      };
+    };
+  }>;
   _count?: { items: number };
 };
 
@@ -65,6 +79,36 @@ type OrdersResponse = {
   };
 };
 
+type OrderDetail = {
+  id: string;
+  status: string;
+  totalAmount: string;
+  createdAt: string;
+  trackingNumber?: string | null;
+  items: Array<{
+    id: string;
+    quantity: number;
+    unitPrice: string;
+    variant: {
+      size?: string | null;
+      color?: string | null;
+      product: {
+        name: string;
+        slug: string;
+      };
+    };
+  }>;
+  address: Address;
+  payments?: Array<{
+    id: string;
+    status: string;
+    amount: string;
+    currency: string;
+    paidAt?: string | null;
+    stripePaymentId: string;
+  }>;
+};
+
 function getApiErrorMessage(error: unknown, fallback: string) {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.message;
@@ -76,6 +120,16 @@ function getApiErrorMessage(error: unknown, fallback: string) {
     }
   }
   return fallback;
+}
+
+function formatPrice(value: string | number) {
+  const numericValue = typeof value === "number" ? value : Number(value);
+  return new Intl.NumberFormat("en-EG", {
+    style: "currency",
+    currency: "EGP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(Number.isFinite(numericValue) ? numericValue : 0);
 }
 
 function decodeToken(token: string): UserState | null {
@@ -117,11 +171,14 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isLoadingOrderDetail, setIsLoadingOrderDetail] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
   const [addressModalMode, setAddressModalMode] = useState<"add" | "edit" | null>(null);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [addressForm, setAddressForm] = useState<AddressFormState>(emptyAddressForm);
+  const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
+  const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
 
   const displayName = user?.email ? user.email.split("@")[0] : "User";
 
@@ -146,6 +203,23 @@ export default function AccountPage() {
       setPageError(getApiErrorMessage(error, "Failed to load orders."));
     } finally {
       setIsLoadingOrders(false);
+    }
+  };
+
+  const loadOrderDetail = async (orderId: string) => {
+    setIsLoadingOrderDetail(true);
+    setPageError(null);
+    setSelectedOrder(null);
+    setIsOrderDialogOpen(true);
+
+    try {
+      const response = await api.get<OrderDetail>(`/orders/${orderId}`);
+      setSelectedOrder(response.data);
+    } catch (error) {
+      setIsOrderDialogOpen(false);
+      setPageError(getApiErrorMessage(error, "Failed to load order details."));
+    } finally {
+      setIsLoadingOrderDetail(false);
     }
   };
 
@@ -485,21 +559,130 @@ export default function AccountPage() {
               <ul className="space-y-3">
                 {orders.map((order) => (
                   <li key={order.id} className="rounded-lg bg-card p-3 text-sm">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                       <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
                       <p className="text-xs">{order.status}</p>
                     </div>
                     <p className="text-muted-foreground">
-                      Items: {order._count?.items ?? 0} • Total: ${order.totalAmount}
+                      Items: {order._count?.items ?? order.items?.length ?? 0} • Total:{" "}
+                      {formatPrice(order.totalAmount)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(order.createdAt).toLocaleString()}
                     </p>
+                    <div className="mt-3 flex justify-end">
+                      <button
+                        type="button"
+                        className="text-sm font-medium text-foreground/80 hover:text-foreground"
+                        onClick={() => void loadOrderDetail(order.id)}
+                        disabled={isLoadingOrderDetail}
+                      >
+                        {isLoadingOrderDetail ? "Loading..." : "View details"}
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
             )}
           </div>
+
+          <Dialog open={isOrderDialogOpen} onOpenChange={setIsOrderDialogOpen}>
+            <DialogContent className="max-w-2xl bg-card p-6">
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedOrder ? `Order #${selectedOrder.id.slice(0, 8)}` : "Order details"}
+                </DialogTitle>
+                <DialogDescription>
+                  Review the products, payment status, and shipping address for this order.
+                </DialogDescription>
+              </DialogHeader>
+
+              {selectedOrder ? (
+                <div className="space-y-5 text-sm">
+                  <div className="grid gap-3 rounded-xl border border-border bg-background p-4 md:grid-cols-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Status</p>
+                      <p className="font-medium">{selectedOrder.status}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Total</p>
+                      <p className="font-medium">{formatPrice(selectedOrder.totalAmount)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Placed</p>
+                      <p className="font-medium">
+                        {new Date(selectedOrder.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Tracking</p>
+                      <p className="font-medium">{selectedOrder.trackingNumber ?? "Not assigned"}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="font-semibold">Items</h3>
+                    <ul className="space-y-3">
+                      {selectedOrder.items.map((item) => (
+                        <li key={item.id} className="rounded-xl border border-border bg-background p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-medium">{item.variant.product.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Qty {item.quantity}
+                                {item.variant.color ? ` • ${item.variant.color}` : ""}
+                                {item.variant.size ? ` • ${item.variant.size}` : ""}
+                              </p>
+                            </div>
+                            <p className="font-medium">
+                              {formatPrice(Number(item.unitPrice) * item.quantity)}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <h3 className="mb-2 font-semibold">Shipping address</h3>
+                      <p>{selectedOrder.address.line1}</p>
+                      {selectedOrder.address.line2 ? <p>{selectedOrder.address.line2}</p> : null}
+                      <p>
+                        {selectedOrder.address.city}
+                        {selectedOrder.address.state ? `, ${selectedOrder.address.state}` : ""}
+                      </p>
+                      <p>{selectedOrder.address.postalCode}</p>
+                      <p>{selectedOrder.address.country}</p>
+                    </div>
+
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <h3 className="mb-2 font-semibold">Payment</h3>
+                      {selectedOrder.payments?.length ? (
+                        selectedOrder.payments.map((payment) => (
+                          <div key={payment.id} className="space-y-1">
+                            <p>Status: {payment.status}</p>
+                            <p>Amount: {formatPrice(payment.amount)}</p>
+                            <p>Currency: {payment.currency.toUpperCase()}</p>
+                            <p>
+                              Paid at:{" "}
+                              {payment.paidAt
+                                ? new Date(payment.paidAt).toLocaleString()
+                                : "Pending confirmation"}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground">No payment records available.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Loading order details...</p>
+              )}
+            </DialogContent>
+          </Dialog>
         </section>
       )}
 

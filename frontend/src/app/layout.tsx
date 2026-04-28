@@ -5,6 +5,7 @@ import './tailwind.config.ts';
 import { QueryProvider } from '@/providers/query-provider';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer/>
+          <Toaster richColors position="top-right" />
         </QueryProvider>
       </body>
     </html>

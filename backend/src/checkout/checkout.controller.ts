@@ -11,7 +11,7 @@ import {
 import type { Request } from 'express';
 
 import { CheckoutService } from './checkout.service';
-import { CreatePaymentIntentDto } from './dto/checkout.dto';
+import { ConfirmPaymentDto, CreatePaymentIntentDto } from './dto/checkout.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard';
 
 @ApiTags('checkout')
@@ -73,6 +73,33 @@ export class CheckoutController {
       dto,
       autoCreateOrder === 'true',
     );
+  }
+
+  @common.Post('confirm')
+  @common.UseGuards(JwtAuthGuard)
+  @common.HttpCode(common.HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Finalize a successful Stripe payment',
+    description:
+      'Fetches a Stripe PaymentIntent after client-side confirmation, verifies that it belongs to the authenticated user, and creates the order if payment succeeded.',
+  })
+  @ApiOkResponse({
+    description: 'Returns confirmation status and the created order id when available',
+  })
+  @ApiBadRequestResponse({
+    description: 'Payment is not successful yet or does not belong to the user',
+  })
+  async confirmPayment(
+    @common.Body() dto: ConfirmPaymentDto,
+    @common.Req() req: Request,
+  ) {
+    const userId = this.getAuthUserId(req);
+    if (!userId) {
+      throw new common.UnauthorizedException('Missing authenticated user id.');
+    }
+
+    return this.checkoutService.confirmPayment(userId, dto.paymentIntentId);
   }
 
   // ─────────────────────────────────────────────────────────────────────────────

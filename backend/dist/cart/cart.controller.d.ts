@@ -24,7 +24,9 @@ export declare class CartController {
             product: {
                 id: string;
                 name: string;
+                images: string[];
                 slug: string;
+                basePrice: import("@prisma/client/runtime/library").Decimal;
             };
         } & {
             id: string;
@@ -48,7 +50,9 @@ export declare class CartController {
             product: {
                 id: string;
                 name: string;
+                images: string[];
                 slug: string;
+                basePrice: import("@prisma/client/runtime/library").Decimal;
             };
         } & {
             id: string;

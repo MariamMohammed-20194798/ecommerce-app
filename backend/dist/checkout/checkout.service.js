@@ -25,6 +25,8 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
     config;
     stripe;
     logger = new common_1.Logger(CheckoutService_1.name);
+    freeShippingThreshold = 10000;
+    standardShippingAmount = 250;
     constructor(prisma, cartRepo, config) {
         this.prisma = prisma;
         this.cartRepo = cartRepo;
@@ -67,7 +69,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
         for (const item of items) {
             const variant = variantMap.get(item.variantId);
             const unitPrice = Number(variant.priceOverride ?? variant.product.basePrice);
-            subtotalCents += Math.round(unitPrice * item.quantity);
+            subtotalCents += Math.round(unitPrice * 100) * item.quantity;
         }
         let discountCents = 0;
         let discountCodeRecord = null;
@@ -97,16 +99,20 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
                 discountCents = Math.round(Number(discountCodeRecord.value) * 100);
             }
         }
-        const totalCents = Math.max(subtotalCents - discountCents, 50);
+        const shippingCents = subtotalCents >= this.freeShippingThreshold * 100
+            ? 0
+            : this.standardShippingAmount * 100;
+        const totalCents = Math.max(subtotalCents + shippingCents - discountCents, 50);
         const paymentIntent = await this.stripe.paymentIntents.create({
             amount: totalCents,
-            currency: 'usd',
+            currency: 'egp',
             metadata: {
                 userId,
                 cartId: cart.id,
                 addressId: dto.addressId,
                 discountCodeId: discountCodeRecord?.id ?? '',
                 subtotalCents: String(subtotalCents),
+                shippingCents: String(shippingCents),
                 discountCents: String(discountCents),
             },
             automatic_payment_methods: { enabled: true },
@@ -117,9 +123,29 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
         return {
             clientSecret: paymentIntent.client_secret,
             paymentIntentId: paymentIntent.id,
-            subtotal: subtotalCents,
-            discount: discountCents,
-            total: totalCents,
+            subtotal: subtotalCents / 100,
+            shipping: shippingCents / 100,
+            discount: discountCents / 100,
+            total: totalCents / 100,
+            currency: 'egp',
+        };
+    }
+    async confirmPayment(userId, paymentIntentId) {
+        const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+        if (!paymentIntent) {
+            throw new common_1.NotFoundException('Payment intent was not found.');
+        }
+        if (paymentIntent.metadata?.userId !== userId) {
+            throw new common_1.ForbiddenException('You are not allowed to confirm this payment.');
+        }
+        if (paymentIntent.status !== 'succeeded') {
+            throw new common_1.BadRequestException(`Payment is not complete. Current status: ${paymentIntent.status}.`);
+        }
+        const order = await this.createOrderFromIntent(paymentIntent);
+        return {
+            success: true,
+            status: paymentIntent.status,
+            orderId: order?.id,
         };
     }
     async handleWebhook(rawBody, signature) {
@@ -149,7 +175,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
         });
         if (existing) {
             this.logger.warn(`Order already exists for PaymentIntent ${intent.id}. Skipping.`);
-            return;
+            return existing;
         }
         const cart = (await this.prisma.cart.findUnique({
             where: { id: cartId },
@@ -162,7 +188,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
             return;
         }
         try {
-            await this.prisma.$transaction(async (tx) => {
+            return await this.prisma.$transaction(async (tx) => {
                 const order = await tx.order.create({
                     data: {
                         userId,
@@ -216,6 +242,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
                 }
                 await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
                 this.logger.log(`Order ${order.id} created from PaymentIntent ${intent.id}`);
+                return order;
             });
         }
         catch (err) {

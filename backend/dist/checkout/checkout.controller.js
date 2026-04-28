@@ -67,6 +67,13 @@ let CheckoutController = class CheckoutController {
         }
         return this.checkoutService.createPaymentIntent(userId, dto, autoCreateOrder === 'true');
     }
+    async confirmPayment(dto, req) {
+        const userId = this.getAuthUserId(req);
+        if (!userId) {
+            throw new common.UnauthorizedException('Missing authenticated user id.');
+        }
+        return this.checkoutService.confirmPayment(userId, dto.paymentIntentId);
+    }
     async webhook(req, signature) {
         return this.checkoutService.handleWebhook(req.rawBody, signature);
     }
@@ -103,6 +110,27 @@ __decorate([
     __metadata("design:paramtypes", [checkout_dto_1.CreatePaymentIntentDto, Object, String]),
     __metadata("design:returntype", Promise)
 ], CheckoutController.prototype, "createIntent", null);
+__decorate([
+    common.Post('confirm'),
+    common.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
+    common.HttpCode(common.HttpStatus.OK),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Finalize a successful Stripe payment',
+        description: 'Fetches a Stripe PaymentIntent after client-side confirmation, verifies that it belongs to the authenticated user, and creates the order if payment succeeded.',
+    }),
+    (0, swagger_1.ApiOkResponse)({
+        description: 'Returns confirmation status and the created order id when available',
+    }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        description: 'Payment is not successful yet or does not belong to the user',
+    }),
+    __param(0, common.Body()),
+    __param(1, common.Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [checkout_dto_1.ConfirmPaymentDto, Object]),
+    __metadata("design:returntype", Promise)
+], CheckoutController.prototype, "confirmPayment", null);
 __decorate([
     common.Post('webhook'),
     common.HttpCode(common.HttpStatus.OK),

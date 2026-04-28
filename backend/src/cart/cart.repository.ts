@@ -13,6 +13,8 @@ const CART_INCLUDE = {
               id: true,
               name: true,
               slug: true,
+              basePrice: true,
+              images: true,
             },
           },
         },
@@ -88,7 +90,15 @@ export class CartRepository {
         include: {
           variant: {
             include: {
-              product: { select: { id: true, name: true, slug: true } },
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  basePrice: true,
+                  images: true,
+                },
+              },
             },
           },
         },
@@ -107,7 +117,15 @@ export class CartRepository {
       include: {
         variant: {
           include: {
-            product: { select: { id: true, name: true, slug: true } },
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                basePrice: true,
+                images: true,
+              },
+            },
           },
         },
       },
@@ -123,7 +141,15 @@ export class CartRepository {
       include: {
         variant: {
           include: {
-            product: { select: { id: true, name: true, slug: true } },
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                basePrice: true,
+                images: true,
+              },
+            },
           },
         },
       },

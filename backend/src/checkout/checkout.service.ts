@@ -6,6 +6,7 @@ import {
   BadRequestException,
   NotFoundException,
   InternalServerErrorException,
+  ForbiddenException,
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -19,6 +20,8 @@ import Stripe from 'stripe';
 export class CheckoutService {
   private readonly stripe: any;
   private readonly logger = new Logger(CheckoutService.name);
+  private readonly freeShippingThreshold = 10000;
+  private readonly standardShippingAmount = 250;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -98,7 +101,7 @@ export class CheckoutService {
       const unitPrice = Number(
         variant.priceOverride ?? variant.product.basePrice,
       );
-      subtotalCents += Math.round(unitPrice * item.quantity);
+      subtotalCents += Math.round(unitPrice * 100) * item.quantity;
     }
 
     let discountCents = 0;
@@ -146,18 +149,26 @@ export class CheckoutService {
       }
     }
 
-    const totalCents = Math.max(subtotalCents - discountCents, 50); // Stripe minimum is 50 cents
+    const shippingCents =
+      subtotalCents >= this.freeShippingThreshold * 100
+        ? 0
+        : this.standardShippingAmount * 100;
+    const totalCents = Math.max(
+      subtotalCents + shippingCents - discountCents,
+      50,
+    );
 
     // Step 5 — Create Stripe PaymentIntent
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: totalCents,
-      currency: 'usd',
+      currency: 'egp',
       metadata: {
         userId,
         cartId: cart.id,
         addressId: dto.addressId,
         discountCodeId: discountCodeRecord?.id ?? '',
         subtotalCents: String(subtotalCents),
+        shippingCents: String(shippingCents),
         discountCents: String(discountCents),
       },
       automatic_payment_methods: { enabled: true },
@@ -170,9 +181,40 @@ export class CheckoutService {
     return {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
-      subtotal: subtotalCents,
-      discount: discountCents,
-      total: totalCents,
+      subtotal: subtotalCents / 100,
+      shipping: shippingCents / 100,
+      discount: discountCents / 100,
+      total: totalCents / 100,
+      currency: 'egp',
+    };
+  }
+
+  async confirmPayment(userId: string, paymentIntentId: string) {
+    const paymentIntent =
+      await this.stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (!paymentIntent) {
+      throw new NotFoundException('Payment intent was not found.');
+    }
+
+    if (paymentIntent.metadata?.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to confirm this payment.',
+      );
+    }
+
+    if (paymentIntent.status !== 'succeeded') {
+      throw new BadRequestException(
+        `Payment is not complete. Current status: ${paymentIntent.status}.`,
+      );
+    }
+
+    const order = await this.createOrderFromIntent(paymentIntent);
+
+    return {
+      success: true,
+      status: paymentIntent.status,
+      orderId: order?.id,
     };
   }
 
@@ -232,7 +274,7 @@ export class CheckoutService {
       this.logger.warn(
         `Order already exists for PaymentIntent ${intent.id}. Skipping.`,
       );
-      return;
+      return existing;
     }
 
     type CartWithItemsAndProduct = Prisma.CartGetPayload<{
@@ -257,7 +299,7 @@ export class CheckoutService {
     }
 
     try {
-      await this.prisma.$transaction(async (tx) => {
+      return await this.prisma.$transaction(async (tx) => {
         // 1 — Create the order
         const order = await tx.order.create({
           data: {
@@ -326,6 +368,8 @@ export class CheckoutService {
         this.logger.log(
           `Order ${order.id} created from PaymentIntent ${intent.id}`,
         );
+
+        return order;
       });
     } catch (err: any) {
       this.logger.error(`Failed to create order: ${err.message}`, err.stack);
