@@ -1,10 +1,12 @@
-"use client";
+'use client'
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/api";
+
+export const dynamic = 'force-dynamic'
 
 function getApiErrorMessage(error: unknown) {
   if (axios.isAxiosError(error)) {
