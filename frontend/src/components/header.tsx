@@ -13,7 +13,7 @@ const navigation = [
   { name: "New Arrivals", href: "#new" },
   { name: "Collections", href: "/collections" },
   { name: "Size Guide", href: "/size-guide" },
-  { name: "Wishlist", href: "/wishlist" },
+  { name: "Our Story", href: "/our-story" },
 ]
 
 export function Header() {

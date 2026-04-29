@@ -1,3 +1,4 @@
+import { Mail, Phone } from "lucide-react"
 import Link from "next/link"
 
 const footerLinks = {
@@ -8,12 +9,9 @@ const footerLinks = {
     { name: "Accessories", href: "#" },
     { name: "Sale", href: "#" },
   ],
-  help: [
-    { name: "Contact Us", href: "#" },
-    { name: "Shipping & Returns", href: "#" },
-    { name: "Size Guide", href: "#" },
-    { name: "FAQs", href: "#" },
-    { name: "Track Order", href: "#" },
+  touch: [
+    { name: "info@womensegypt.com", href: "#", icon: <Mail className="h-4 w-4" /> },
+    { name: "+201096666666", href: "#", icon: <Phone className="h-4 w-4" /> },
   ],
   about: [
     { name: "Our Story", href: "#" },
@@ -75,17 +73,9 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-medium text-foreground uppercase tracking-wider mb-4">
-              Help
+            Get in touch
             </h3>
-            <ul className="space-y-3">
-              {footerLinks.help.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <ul className="space-y-3"> {footerLinks.touch.map((link) => ( <li key={link.name}> <Link href={link.href} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors" > <span className="flex items-center">{link.icon}</span> <span>{link.name}</span> </Link> </li> ))} </ul>
           </div>
 
           <div>
