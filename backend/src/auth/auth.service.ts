@@ -5,36 +5,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
+import { User, OtpType } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { AccessJwtPayload } from './strategies/jwt.strategy';
 import { GoogleOAuthUser } from './types';
 import { generateOpaqueToken, hashOpaqueToken } from './auth.utils';
-
-const EMAIL_VERIFY_HOURS = 48;
-const BCRYPT_ROUNDS = 12;
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Injectable()
 export class AuthService {
-  async verifyEmail(token: string) {
-    const tokenHash = hashOpaqueToken(token);
-    const record = await this.prisma.emailVerificationToken.findUnique({
-      where: { tokenHash },
-    });
-    if (!record || record.expiresAt < new Date()) {
-      throw new UnauthorizedException('Invalid or expired token');
-    }
-    await this.prisma.user.update({
-      where: { id: record.userId },
-      data: { emailVerifiedAt: new Date() },
-    });
-    await this.prisma.emailVerificationToken.delete({
-      where: { id: record.id },
-    });
-    return { message: 'Email verified successfully' };
-  }
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
@@ -42,53 +23,110 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async register(email: string, password: string) {
-    const existing = await this.prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      throw new ConflictException('Email already registered');
+  async sendOtp(dto: SendOtpDto) {
+    if (dto.type === OtpType.LOGIN) {
+      const user = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+    } else if (dto.type === OtpType.SIGNUP) {
+      const user = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (user) {
+        throw new ConflictException('Email already registered');
+      }
     }
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-    const user = await this.prisma.user.create({
-      data: { email, passwordHash },
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    const existingOtp = await this.prisma.authOtp.findFirst({
+      where: { email: dto.email, type: dto.type },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const rawToken = generateOpaqueToken();
-    console.log(rawToken);
-    const tokenHash = hashOpaqueToken(rawToken);
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + EMAIL_VERIFY_HOURS);
+    if (
+      existingOtp &&
+      Date.now() - existingOtp.createdAt.getTime() < 60 * 1000
+    ) {
+      throw new ConflictException(
+        'Please wait a minute before requesting a new OTP',
+      );
+    }
 
-    await this.prisma.emailVerificationToken.deleteMany({
-      where: { userId: user.id },
+    await this.prisma.authOtp.deleteMany({
+      where: { email: dto.email, type: dto.type },
     });
-    await this.prisma.emailVerificationToken.create({
-      data: { userId: user.id, tokenHash, expiresAt },
+
+    await this.prisma.authOtp.create({
+      data: {
+        email: dto.email,
+        code,
+        type: dto.type,
+        expiresAt,
+      },
     });
 
-    const frontendUrl = this.config.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3000',
-    );
-    const verifyUrl = `${frontendUrl}/verify-email?token=${rawToken}`;
-    await this.mail.sendVerificationEmail(user.email, verifyUrl);
+    await this.mail.sendOtpEmail(dto.email, code);
 
-    return {
-      id: user.id,
-      email: user.email,
-      emailVerified: !!user.emailVerifiedAt,
-    };
+    return { message: 'OTP sent successfully' };
   }
 
-  async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user?.passwordHash) {
-      throw new UnauthorizedException('Invalid credentials');
+  async verifyOtp(dto: VerifyOtpDto) {
+    const otpRecord = await this.prisma.authOtp.findFirst({
+      where: { email: dto.email, type: dto.type },
+    });
+
+    if (!otpRecord) {
+      throw new UnauthorizedException('Invalid OTP');
     }
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) {
-      throw new UnauthorizedException('Invalid credentials');
+
+    if (otpRecord.expiresAt < new Date()) {
+      throw new UnauthorizedException('OTP expired');
     }
-    return this.issueTokens(user);
+
+    if (otpRecord.attempts >= 5) {
+      await this.prisma.authOtp.delete({ where: { id: otpRecord.id } });
+      throw new UnauthorizedException(
+        'Too many failed attempts, please request a new OTP',
+      );
+    }
+
+    if (otpRecord.code !== dto.code) {
+      await this.prisma.authOtp.update({
+        where: { id: otpRecord.id },
+        data: { attempts: { increment: 1 } },
+      });
+      throw new UnauthorizedException('Invalid OTP');
+    }
+
+    await this.prisma.authOtp.delete({ where: { id: otpRecord.id } });
+
+    let user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (dto.type === OtpType.SIGNUP) {
+      if (user) {
+        throw new ConflictException('Email already registered');
+      }
+      user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          name: dto.name,
+          emailVerifiedAt: new Date(),
+        },
+      });
+    } else if (dto.type === OtpType.LOGIN) {
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+    }
+
+    return this.issueTokens(user!);
   }
 
   async oauthLogin(profile: GoogleOAuthUser) {

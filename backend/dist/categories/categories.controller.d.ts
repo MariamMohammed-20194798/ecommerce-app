@@ -8,8 +8,8 @@ export declare class CategoriesController {
             products: number;
         };
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -20,8 +20,8 @@ export declare class CategoriesController {
                 products: number;
             };
         } & {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             images: string[];
             slug: string;
@@ -36,13 +36,13 @@ export declare class CategoriesController {
                 products: number;
             };
             parent: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             } | null;
         } & {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             images: string[];
             slug: string;
@@ -62,19 +62,19 @@ export declare class CategoriesController {
             products: number;
         };
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
         children: {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             slug: string;
         }[];
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -100,9 +100,9 @@ export declare class CategoriesController {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -122,13 +122,13 @@ export declare class CategoriesController {
     }>;
     create(dto: CreateCategoryDto): Promise<{
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -139,18 +139,18 @@ export declare class CategoriesController {
             products: number;
         };
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
         children: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         }[];
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;

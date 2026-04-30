@@ -21,8 +21,8 @@ export declare class CartService {
     addItem(dto: AddCartItemDto, userId?: string, sessionId?: string): Promise<{
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -47,8 +47,8 @@ export declare class CartService {
     updateItem(itemId: string, dto: UpdateCartItemDto, userId?: string, sessionId?: string): Promise<({
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: import("@prisma/client/runtime/library").Decimal;

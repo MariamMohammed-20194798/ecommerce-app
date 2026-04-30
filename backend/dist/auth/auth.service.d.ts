@@ -4,21 +4,18 @@ import { User } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { GoogleOAuthUser } from './types';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 export declare class AuthService {
     private readonly prisma;
     private readonly jwt;
     private readonly mail;
     private readonly config;
-    verifyEmail(token: string): Promise<{
+    constructor(prisma: PrismaService, jwt: JwtService, mail: MailService, config: ConfigService);
+    sendOtp(dto: SendOtpDto): Promise<{
         message: string;
     }>;
-    constructor(prisma: PrismaService, jwt: JwtService, mail: MailService, config: ConfigService);
-    register(email: string, password: string): Promise<{
-        id: string;
-        email: string;
-        emailVerified: boolean;
-    }>;
-    login(email: string, password: string): Promise<{
+    verifyOtp(dto: VerifyOtpDto): Promise<{
         accessToken: string;
         refreshToken: string;
         user: {

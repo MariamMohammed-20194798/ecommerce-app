@@ -22,8 +22,8 @@ export declare class CartController {
     addItem(dto: AddCartItemDto, req: express.Request): Promise<{
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: import("@prisma/client/runtime/library").Decimal;
@@ -48,8 +48,8 @@ export declare class CartController {
     updateItem(id: string, dto: UpdateCartItemDto, req: express.Request): Promise<({
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: import("@prisma/client/runtime/library").Decimal;

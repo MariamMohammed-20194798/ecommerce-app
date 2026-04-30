@@ -12,13 +12,13 @@ export declare class CategoryRepository {
                 products: number;
             };
             parent: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             } | null;
         } & {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             images: string[];
             slug: string;
@@ -37,8 +37,8 @@ export declare class CategoryRepository {
             products: number;
         };
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -49,8 +49,8 @@ export declare class CategoryRepository {
                 products: number;
             };
         } & {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             images: string[];
             slug: string;
@@ -63,27 +63,27 @@ export declare class CategoryRepository {
             products: number;
         };
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
         children: {
-            id: string;
             name: string;
+            id: string;
             description: string | null;
             slug: string;
         }[];
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
         parentId: string | null;
     }) | null>;
     findById(id: string): Promise<{
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -109,9 +109,9 @@ export declare class CategoryRepository {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -133,13 +133,13 @@ export declare class CategoryRepository {
         slug: string;
     }): Promise<{
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
@@ -153,26 +153,26 @@ export declare class CategoryRepository {
             products: number;
         };
         parent: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         } | null;
         children: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         }[];
     } & {
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{
-        id: string;
         name: string;
+        id: string;
         description: string | null;
         images: string[];
         slug: string;

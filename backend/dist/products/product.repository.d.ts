@@ -9,8 +9,8 @@ export declare class ProductRepository {
     findMany(query: ProductsQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -26,9 +26,9 @@ export declare class ProductRepository {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -48,20 +48,20 @@ export declare class ProductRepository {
     }>;
     findBySlug(slug: string): Promise<({
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         reviews: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -79,9 +79,9 @@ export declare class ProductRepository {
             images: string[];
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -92,9 +92,9 @@ export declare class ProductRepository {
         metadata: Prisma.JsonValue | null;
     }) | null>;
     findById(id: string): Promise<{
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -107,8 +107,8 @@ export declare class ProductRepository {
     search(query: SearchQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -123,9 +123,9 @@ export declare class ProductRepository {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -146,14 +146,14 @@ export declare class ProductRepository {
     findReviews(productId: string, query: ReviewsQueryDto): Promise<{
         data: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -170,8 +170,8 @@ export declare class ProductRepository {
     }>;
     create(dto: CreateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -185,9 +185,9 @@ export declare class ProductRepository {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -199,8 +199,8 @@ export declare class ProductRepository {
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -214,9 +214,9 @@ export declare class ProductRepository {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;

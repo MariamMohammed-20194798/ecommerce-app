@@ -27,9 +27,9 @@ export declare class OrdersService {
             }[];
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             status: import("@prisma/client").$Enums.OrderStatus;
             addressId: string;
             trackingNumber: string | null;
@@ -59,8 +59,8 @@ export declare class OrdersService {
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     slug: string;
                 };
             } & {
@@ -92,8 +92,8 @@ export declare class OrdersService {
         discounts: ({
             discount: {
                 type: import("@prisma/client").$Enums.DiscountType;
-                value: import("@prisma/client/runtime/library").Decimal;
                 code: string;
+                value: import("@prisma/client/runtime/library").Decimal;
             };
         } & {
             id: string;
@@ -104,9 +104,9 @@ export declare class OrdersService {
         })[];
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
         trackingNumber: string | null;
@@ -128,8 +128,8 @@ export declare class OrdersService {
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     slug: string;
                 };
             } & {
@@ -161,8 +161,8 @@ export declare class OrdersService {
         discounts: ({
             discount: {
                 type: import("@prisma/client").$Enums.DiscountType;
-                value: import("@prisma/client/runtime/library").Decimal;
                 code: string;
+                value: import("@prisma/client/runtime/library").Decimal;
             };
         } & {
             id: string;
@@ -173,9 +173,9 @@ export declare class OrdersService {
         })[];
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
         trackingNumber: string | null;

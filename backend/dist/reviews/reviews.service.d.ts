@@ -5,57 +5,57 @@ export declare class ReviewsService {
     constructor(reviewsRepo: ReviewRepository);
     findMyReviews(userId: string): Promise<({
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     })[]>;
     create(userId: string, dto: CreateReviewDto): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     }>;
     update(id: string, userId: string, dto: UpdateReviewDto): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;

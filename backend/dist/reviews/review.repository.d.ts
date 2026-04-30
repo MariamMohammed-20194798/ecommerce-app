@@ -4,38 +4,38 @@ export declare class ReviewRepository {
     constructor(prisma: PrismaService);
     findMyReviews(userId: string): Promise<({
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     })[]>;
     findById(id: string): Promise<({
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
@@ -54,19 +54,19 @@ export declare class ReviewRepository {
         body?: string;
     }): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
@@ -76,28 +76,28 @@ export declare class ReviewRepository {
         body: string | null;
     }>): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     }>;
     remove(id: string): Promise<{
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;

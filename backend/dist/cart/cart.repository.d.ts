@@ -7,8 +7,8 @@ export declare class CartRepository {
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     images: string[];
                     slug: string;
                     basePrice: Prisma.Decimal;
@@ -32,17 +32,17 @@ export declare class CartRepository {
         })[];
     } & {
         id: string;
-        userId: string | null;
-        expiresAt: Date | null;
         createdAt: Date;
+        expiresAt: Date | null;
+        userId: string | null;
         sessionId: string | null;
     }>;
     findById(cartId: string): Promise<({
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     images: string[];
                     slug: string;
                     basePrice: Prisma.Decimal;
@@ -66,16 +66,16 @@ export declare class CartRepository {
         })[];
     } & {
         id: string;
-        userId: string | null;
-        expiresAt: Date | null;
         createdAt: Date;
+        expiresAt: Date | null;
+        userId: string | null;
         sessionId: string | null;
     }) | null>;
     addItem(cartId: string, variantId: string, quantity: number, customization?: Record<string, unknown>): Promise<{
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: Prisma.Decimal;
@@ -100,8 +100,8 @@ export declare class CartRepository {
     updateItem(itemId: string, quantity: number): Promise<{
         variant: {
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: string[];
                 slug: string;
                 basePrice: Prisma.Decimal;

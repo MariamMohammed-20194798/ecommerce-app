@@ -142,11 +142,11 @@ export default function CartPage() {
     () =>
       clientSecret
         ? {
-            clientSecret,
-            appearance: {
-              theme: "stripe" as const,
-            },
-          }
+          clientSecret,
+          appearance: {
+            theme: "stripe" as const,
+          },
+        }
         : undefined,
     [clientSecret],
   );
@@ -506,11 +506,10 @@ export default function CartPage() {
 
               {paymentState ? (
                 <section
-                  className={`rounded-3xl border p-4 text-sm ${
-                    paymentState.type === "success"
+                  className={`rounded-3xl border p-4 text-sm ${paymentState.type === "success"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                       : "border-red-200 bg-red-50 text-red-700"
-                  }`}
+                    }`}
                 >
                   {paymentState.message}
                 </section>

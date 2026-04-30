@@ -6,8 +6,8 @@ export declare class ProductsController {
     search(query: SearchQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -22,9 +22,9 @@ export declare class ProductsController {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -45,8 +45,8 @@ export declare class ProductsController {
     findAll(query: ProductsQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -62,9 +62,9 @@ export declare class ProductsController {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -84,20 +84,20 @@ export declare class ProductsController {
     }>;
     findOne(slug: string): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         reviews: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -115,9 +115,9 @@ export declare class ProductsController {
             images: string[];
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -130,14 +130,14 @@ export declare class ProductsController {
     findReviews(id: string, query: ReviewsQueryDto): Promise<{
         data: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -154,8 +154,8 @@ export declare class ProductsController {
     }>;
     create(dto: CreateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -169,9 +169,9 @@ export declare class ProductsController {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -183,8 +183,8 @@ export declare class ProductsController {
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -198,9 +198,9 @@ export declare class ProductsController {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;

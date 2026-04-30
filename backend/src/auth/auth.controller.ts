@@ -13,8 +13,8 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { REFRESH_COOKIE } from './auth.constants';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { GoogleOAuthConfiguredGuard } from './guards/google-oauth-configured.guard';
 import { GoogleOAuthUser } from './types';
 
@@ -25,17 +25,17 @@ export class AuthController {
     private readonly config: ConfigService,
   ) {}
 
-  @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.auth.register(dto.email, dto.password);
+  @Post('send-otp')
+  sendOtp(@Body() dto: SendOtpDto) {
+    return this.auth.sendOtp(dto);
   }
 
-  @Post('login')
-  async login(
-    @Body() dto: LoginDto,
+  @Post('verify-otp')
+  async verifyOtp(
+    @Body() dto: VerifyOtpDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = await this.auth.login(dto.email, dto.password);
+    const result = await this.auth.verifyOtp(dto);
     this.setRefreshCookie(res, result.refreshToken);
     return {
       accessToken: result.accessToken,
@@ -62,10 +62,7 @@ export class AuthController {
     return { ok: true };
   }
 
-  @Post('verify-email')
-  verifyEmail(@Query('token') token: string) {
-    return this.auth.verifyEmail(token);
-  }
+
 
   @Get('google')
   @UseGuards(GoogleOAuthConfiguredGuard, AuthGuard('google'))

@@ -18,8 +18,8 @@ const config_1 = require("@nestjs/config");
 const passport_1 = require("@nestjs/passport");
 const auth_service_1 = require("./auth.service");
 const auth_constants_1 = require("./auth.constants");
-const login_dto_1 = require("./dto/login.dto");
-const register_dto_1 = require("./dto/register.dto");
+const send_otp_dto_1 = require("./dto/send-otp.dto");
+const verify_otp_dto_1 = require("./dto/verify-otp.dto");
 const google_oauth_configured_guard_1 = require("./guards/google-oauth-configured.guard");
 let AuthController = class AuthController {
     auth;
@@ -28,11 +28,11 @@ let AuthController = class AuthController {
         this.auth = auth;
         this.config = config;
     }
-    register(dto) {
-        return this.auth.register(dto.email, dto.password);
+    sendOtp(dto) {
+        return this.auth.sendOtp(dto);
     }
-    async login(dto, res) {
-        const result = await this.auth.login(dto.email, dto.password);
+    async verifyOtp(dto, res) {
+        const result = await this.auth.verifyOtp(dto);
         this.setRefreshCookie(res, result.refreshToken);
         return {
             accessToken: result.accessToken,
@@ -50,9 +50,6 @@ let AuthController = class AuthController {
         await this.auth.revokeRefresh(raw);
         this.clearRefreshCookie(res);
         return { ok: true };
-    }
-    verifyEmail(token) {
-        return this.auth.verifyEmail(token);
     }
     googleAuth() {
     }
@@ -90,20 +87,20 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('register'),
+    (0, common_1.Post)('send-otp'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
+    __metadata("design:paramtypes", [send_otp_dto_1.SendOtpDto]),
     __metadata("design:returntype", void 0)
-], AuthController.prototype, "register", null);
+], AuthController.prototype, "sendOtp", null);
 __decorate([
-    (0, common_1.Post)('login'),
+    (0, common_1.Post)('verify-otp'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginDto, Object]),
+    __metadata("design:paramtypes", [verify_otp_dto_1.VerifyOtpDto, Object]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "login", null);
+], AuthController.prototype, "verifyOtp", null);
 __decorate([
     (0, common_1.Post)('refresh'),
     __param(0, (0, common_1.Req)()),
@@ -120,13 +117,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
-__decorate([
-    (0, common_1.Post)('verify-email'),
-    __param(0, (0, common_1.Query)('token')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], AuthController.prototype, "verifyEmail", null);
 __decorate([
     (0, common_1.Get)('google'),
     (0, common_1.UseGuards)(google_oauth_configured_guard_1.GoogleOAuthConfiguredGuard, (0, passport_1.AuthGuard)('google')),

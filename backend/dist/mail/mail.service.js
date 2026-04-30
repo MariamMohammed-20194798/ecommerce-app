@@ -38,6 +38,21 @@ let MailService = MailService_1 = class MailService {
         });
         this.logger.log(`Verification email sent to ${to}`);
     }
+    async sendOtpEmail(to, code) {
+        const from = this.config.get('EMAIL_FROM', 'noreply@ecommerce.com');
+        this.logger.log(`OTP for ${to}: ${code}`);
+        if (!this.resend) {
+            this.logger.warn(`RESEND_API_KEY not set; skipping OTP email to ${to}. OTP: ${code}`);
+            return;
+        }
+        await this.resend.emails.send({
+            from,
+            to,
+            subject: 'Your One-Time Password (OTP)',
+            html: `<p>Your one-time password is: <strong>${code}</strong></p><p>This code will expire in 10 minutes.</p>`,
+        });
+        this.logger.log(`OTP email sent to ${to}`);
+    }
 };
 exports.MailService = MailService;
 exports.MailService = MailService = MailService_1 = __decorate([

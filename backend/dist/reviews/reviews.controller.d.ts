@@ -8,57 +8,57 @@ export declare class ReviewsController {
     private getAuthUserId;
     findMyReviews(req: Request): Promise<({
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     })[]>;
     create(dto: CreateReviewDto, req: Request): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;
     }>;
     update(id: string, dto: UpdateReviewDto, req: Request): Promise<{
         user: {
-            id: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         rating: number;
         productId: string;
         body: string | null;

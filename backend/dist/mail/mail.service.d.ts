@@ -5,4 +5,5 @@ export declare class MailService {
     private readonly resend;
     constructor(config: ConfigService);
     sendVerificationEmail(to: string, verifyUrl: string): Promise<void>;
+    sendOtpEmail(to: string, code: string): Promise<void>;
 }

@@ -10,7 +10,7 @@ datasource db {
 model User {
   id                      String                   @id @default(uuid())
   email                   String                   @unique
-  passwordHash            String?
+  name                    String?
   role                    Role                     @default(CUSTOMER)
   emailVerifiedAt         DateTime?
   createdAt               DateTime                 @default(now())
@@ -267,4 +267,22 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+model AuthOtp {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  type      OtpType
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@map("auth_otps")
+}
+
+enum OtpType {
+  LOGIN
+  SIGNUP
 }

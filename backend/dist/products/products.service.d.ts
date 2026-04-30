@@ -6,8 +6,8 @@ export declare class ProductsService {
     findAll(query: ProductsQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -23,9 +23,9 @@ export declare class ProductsService {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -45,20 +45,20 @@ export declare class ProductsService {
     }>;
     findBySlug(slug: string): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         reviews: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -76,9 +76,9 @@ export declare class ProductsService {
             images: string[];
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -91,8 +91,8 @@ export declare class ProductsService {
     search(query: SearchQueryDto): Promise<{
         data: ({
             category: {
-                id: string;
                 name: string;
+                id: string;
                 slug: string;
             };
             _count: {
@@ -107,9 +107,9 @@ export declare class ProductsService {
                 images: string[];
             }[];
         } & {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
@@ -130,14 +130,14 @@ export declare class ProductsService {
     findReviews(productId: string, query: ReviewsQueryDto): Promise<{
         data: ({
             user: {
-                id: string;
                 email: string;
+                id: string;
             };
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             rating: number;
             productId: string;
             body: string | null;
@@ -154,8 +154,8 @@ export declare class ProductsService {
     }>;
     create(dto: CreateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -169,9 +169,9 @@ export declare class ProductsService {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
@@ -183,8 +183,8 @@ export declare class ProductsService {
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
         category: {
-            id: string;
             name: string;
+            id: string;
             slug: string;
         };
         variants: {
@@ -198,9 +198,9 @@ export declare class ProductsService {
             productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
-        name: string;
         updatedAt: Date;
         description: string | null;
         isActive: boolean;

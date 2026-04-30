@@ -25,9 +25,9 @@ export declare class OrdersRepository {
             }[];
         } & {
             id: string;
-            userId: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             status: import("@prisma/client").$Enums.OrderStatus;
             addressId: string;
             trackingNumber: string | null;
@@ -57,8 +57,8 @@ export declare class OrdersRepository {
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     slug: string;
                 };
             } & {
@@ -90,8 +90,8 @@ export declare class OrdersRepository {
         discounts: ({
             discount: {
                 type: import("@prisma/client").$Enums.DiscountType;
-                value: Prisma.Decimal;
                 code: string;
+                value: Prisma.Decimal;
             };
         } & {
             id: string;
@@ -102,9 +102,9 @@ export declare class OrdersRepository {
         })[];
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
         trackingNumber: string | null;
@@ -126,8 +126,8 @@ export declare class OrdersRepository {
         items: ({
             variant: {
                 product: {
-                    id: string;
                     name: string;
+                    id: string;
                     slug: string;
                 };
             } & {
@@ -159,8 +159,8 @@ export declare class OrdersRepository {
         discounts: ({
             discount: {
                 type: import("@prisma/client").$Enums.DiscountType;
-                value: Prisma.Decimal;
                 code: string;
+                value: Prisma.Decimal;
             };
         } & {
             id: string;
@@ -171,9 +171,9 @@ export declare class OrdersRepository {
         })[];
     } & {
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
         trackingNumber: string | null;
@@ -182,9 +182,9 @@ export declare class OrdersRepository {
     }>;
     findById(orderId: string): Promise<{
         id: string;
-        userId: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
         addressId: string;
         trackingNumber: string | null;

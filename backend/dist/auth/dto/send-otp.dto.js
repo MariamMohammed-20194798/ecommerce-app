@@ -9,20 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginDto = void 0;
+exports.SendOtpDto = void 0;
 const class_validator_1 = require("class-validator");
-class LoginDto {
+const client_1 = require("@prisma/client");
+class SendOtpDto {
     email;
-    password;
+    type;
+    name;
 }
-exports.LoginDto = LoginDto;
+exports.SendOtpDto = SendOtpDto;
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "email", void 0);
+], SendOtpDto.prototype, "email", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEnum)(client_1.OtpType),
     __metadata("design:type", String)
-], LoginDto.prototype, "password", void 0);
-//# sourceMappingURL=login.dto.js.map
+], SendOtpDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SendOtpDto.prototype, "name", void 0);
+//# sourceMappingURL=send-otp.dto.js.map

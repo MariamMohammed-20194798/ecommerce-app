@@ -95,7 +95,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
             </li>
             <ChevronRight className="h-4 w-4" />
             <li>
-              <Link 
+              <Link
                 href={`/collections?category=${product.category.toLowerCase()}`}
                 className="hover:text-foreground transition-colors"
               >
@@ -117,9 +117,12 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                   src={activeImage}
                   alt={product.name}
                   fill
+                  sizes="(max-width: 768px) 100vw,
+                       (max-width: 1200px) 50vw,
+                        50vw"
                   className="object-cover"
                   priority
-                />       
+                />
                 <button
                   type="button"
                   onClick={showNextImage}
@@ -155,11 +158,10 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                     <button
                       key={color.name}
                       onClick={() => setSelectedColor(color)}
-                      className={`relative w-16 aspect-square bg-muted overflow-hidden border-2 transition-colors ${
-                        selectedColor.name === color.name
-                          ? "border-foreground"
-                          : "border-transparent hover:border-muted-foreground"
-                      }`}
+                      className={`relative w-16 aspect-square bg-muted overflow-hidden border-2 transition-colors ${selectedColor.name === color.name
+                        ? "border-foreground"
+                        : "border-transparent hover:border-muted-foreground"
+                        }`}
                       aria-label={`Switch to ${color.name} color`}
                       title={color.name}
                     >
@@ -167,6 +169,9 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                         src={image}
                         alt={`${product.name} ${color.name}`}
                         fill
+                        sizes="(max-width: 768px) 100vw,
+                                (max-width: 1200px) 50vw,
+                                50vw"
                         className="object-cover"
                       />
                     </button>
@@ -211,11 +216,10 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                     <button
                       key={color.name}
                       onClick={() => setSelectedColor(color)}
-                      className={`w-10 h-10 rounded-full border-2 transition-all ${
-                        selectedColor.name === color.name 
-                          ? "border-foreground scale-110" 
-                          : "border-transparent hover:border-muted-foreground"
-                      }`}
+                      className={`w-10 h-10 rounded-full border-2 transition-all ${selectedColor.name === color.name
+                        ? "border-foreground scale-110"
+                        : "border-transparent hover:border-muted-foreground"
+                        }`}
                       style={{ backgroundColor: color.hex }}
                       aria-label={color.name}
                     />
@@ -237,11 +241,10 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-[3rem] px-4 py-2.5 text-sm border transition-colors ${
-                          selectedSize === size
-                            ? "border-foreground bg-foreground text-background"
-                            : "border-border hover:border-foreground"
-                        }`}
+                        className={`min-w-[3rem] px-4 py-2.5 text-sm border transition-colors ${selectedSize === size
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border hover:border-foreground"
+                          }`}
                       >
                         {size}
                       </button>
@@ -269,7 +272,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
-                <Button 
+                <Button
                   className="flex-1 rounded-full bg-foreground text-background hover:bg-foreground/90 h-auto py-3 text-sm uppercase tracking-wider"
                   disabled={requiresSizeSelection}
                   onClick={async () => {
@@ -334,11 +337,10 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-3 text-sm font-medium capitalize transition-colors border-b-2 -mb-[2px] ${
-                        activeTab === tab 
-                          ? "text-foreground border-foreground" 
-                          : "text-muted-foreground border-transparent hover:text-foreground"
-                      }`}
+                      className={`px-4 py-3 text-sm font-medium capitalize transition-colors border-b-2 -mb-[2px] ${activeTab === tab
+                        ? "text-foreground border-foreground"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                        }`}
                     >
                       {tab}
                     </button>
@@ -393,6 +395,9 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                         alt={relatedProduct.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw,
+                              (max-width: 1200px) 50vw,
+                              50vw"
                       />
                     </div>
                     <div className="text-center">

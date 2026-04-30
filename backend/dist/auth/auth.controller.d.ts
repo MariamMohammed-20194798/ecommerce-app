@@ -1,18 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 export declare class AuthController {
     private readonly auth;
     private readonly config;
     constructor(auth: AuthService, config: ConfigService);
-    register(dto: RegisterDto): Promise<{
-        id: string;
-        email: string;
-        emailVerified: boolean;
+    sendOtp(dto: SendOtpDto): Promise<{
+        message: string;
     }>;
-    login(dto: LoginDto, res: Response): Promise<{
+    verifyOtp(dto: VerifyOtpDto, res: Response): Promise<{
         accessToken: string;
         user: {
             id: string;
@@ -32,9 +30,6 @@ export declare class AuthController {
     }>;
     logout(req: Request, res: Response): Promise<{
         ok: boolean;
-    }>;
-    verifyEmail(token: string): Promise<{
-        message: string;
     }>;
     googleAuth(): void;
     googleCallback(req: Request, res: Response): Promise<void>;
