@@ -4,11 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react"
+import { motion, useInView, AnimatePresence, Variants } from "framer-motion"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { addProductToWishlist, formatPriceEgp, isProductWishlisted, getProducts, addProductToCart, type Product } from "@/lib/products"
-
-
 
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -19,6 +18,9 @@ export function FeaturedProducts() {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
+  
   const wishlistedProductIdSet = useMemo(() => new Set(wishlistedProductIds), [wishlistedProductIds])
 
   useEffect(() => {
@@ -95,63 +97,101 @@ export function FeaturedProducts() {
     }
   }
 
+  // Animation variants
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  }
+
   return (
-    <section className="py-24 bg-background" id="new">
+    <section ref={sectionRef} className="py-24 bg-background overflow-hidden" id="new">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
           <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-3">
             Curated Selection
           </p>
           <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
             New Arrivals
           </h2>
-        </div>
+        </motion.div>
 
         <div
           className="group relative"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div
+          <motion.div
             ref={scrollerRef}
             onScroll={updateScrollState}
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-6"
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
           >
             {products.map((product) => (
-              <div key={product.id} className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]">
+              <motion.div 
+                key={product.id} 
+                variants={itemVariants}
+                className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]"
+              >
                 <div className="relative group/image mb-4 aspect-[3/4] overflow-hidden rounded-[24px] bg-muted">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
-                    className="object-cover transition-transform duration-500 group-hover/card:scale-105"
-                  />
-                  <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 transition-opacity duration-300">
-                    <Link
-                      href={`/products/${product.slug}`}
-                      aria-label="View product"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-md"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Link>
+                  <Link href={`/products/${product.slug}`} className="absolute inset-0 z-10" />
+                  
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.5 }}
+                    className="h-full w-full"
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
+                      className="object-cover"
+                    />
+                  </motion.div>
 
-                    <button
+                  <div className="absolute right-3 top-3 flex flex-col gap-2 z-20 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       type="button"
                       aria-label="Add to wishlist"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-md"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-foreground shadow-md transition-colors hover:bg-white"
                       onClick={(event) => {
                         event.preventDefault()
                         handleAddToWishlist(product)
                       }}
                       disabled={activeWishlistProductId === product.id}
                     >
-                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current" : ""}`} />
-                    </button>
+                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current text-red-500" : ""}`} />
+                    </motion.button>
                   </div>
                   
-                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm md:hidden">
+                  {/* Mobile micro-interactions */}
+                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm md:hidden z-20">
                     <button
                       type="button"
                       aria-label="Quick add"
@@ -164,77 +204,80 @@ export function FeaturedProducts() {
                     >
                       <ShoppingBag className="h-4 w-4" />
                     </button>
-                    <button
-                      type="button"
-                      aria-label="Add to wishlist"
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
-                      onClick={() => handleAddToWishlist(product)}
-                      disabled={activeWishlistProductId === product.id}
-                    >
-                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current" : ""}`} />
-                    </button>
                     <Link
                       href={`/products/${product.slug}`}
-                      aria-label="View product"
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
                     >
                       <Eye className="h-4 w-4" />
                     </Link>
                   </div>
-                  <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full opacity-0 transition-all duration-300 md:block md:group-hover/image:translate-y-0 md:group-hover/image:opacity-100">
-                  <Button
-                    className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleAddToCart(product)
-                    }}
-                    disabled={activeCartProductId === product.id || !product.inStock}
-                  >
-                    Quick Add
-                  </Button>
-            
+
+                  {/* Desktop Quick Add */}
+                  <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full opacity-0 transition-all duration-300 md:block md:group-hover/image:translate-y-0 md:group-hover/image:opacity-100 z-20">
+                    <Button
+                      className="w-full h-12 rounded-full bg-white/90 backdrop-blur-sm text-foreground hover:bg-foreground hover:text-white border-none shadow-xl transition-all"
+                      onClick={(e: React.MouseEvent) => {
+                        e.preventDefault()
+                        handleAddToCart(product)
+                      }}
+                      disabled={activeCartProductId === product.id || !product.inStock}
+                    >
+                      Quick Add
+                    </Button>
+                  </div>
                 </div>
-                </div>
-                <div>
-                  <Link href={`/products/${product.slug}`} className="inline-block">
-                    <h3 className="text-lg font-light tracking-wide text-foreground transition-colors">
+
+                <div className="space-y-1">
+                  <Link href={`/products/${product.slug}`} className="inline-block group-hover/card:text-primary transition-colors">
+                    <h3 className="text-lg font-light tracking-wide">
                       {product.name}
                     </h3>
                   </Link>
-                  <p className="mt-1 text-md text-foreground/50">{formatPriceEgp(product.price)}</p>
+                  <p className="text-md font-medium text-foreground/70">{formatPriceEgp(product.price)}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <button
-            type="button"
-            onClick={() => scrollByAmount("left")}
-            aria-label="Scroll new arrivals left"
-            className={`absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-foreground shadow-md transition md:flex ${
-              canScrollLeft && isHovered ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollByAmount("right")}
-            aria-label="Scroll new arrivals right"
-            className={`absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-foreground shadow-md transition md:flex ${
-              canScrollRight && isHovered ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
+          <AnimatePresence>
+            {canScrollLeft && isHovered && (
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                type="button"
+                onClick={() => scrollByAmount("left")}
+                aria-label="Scroll new arrivals left"
+                className="absolute left-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </motion.button>
+            )}
+          </AnimatePresence>
 
-          <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
+          <AnimatePresence>
+            {canScrollRight && isHovered && (
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                type="button"
+                onClick={() => scrollByAmount("right")}
+                aria-label="Scroll new arrivals right"
+                className="absolute right-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          <div className="mt-8 flex items-center justify-center gap-4 md:hidden">
             <button
               type="button"
               onClick={() => scrollByAmount("left")}
               aria-label="Previous new arrivals"
               disabled={!canScrollLeft}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/20 text-foreground disabled:opacity-30"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -243,13 +286,12 @@ export function FeaturedProducts() {
               onClick={() => scrollByAmount("right")}
               aria-label="Next new arrivals"
               disabled={!canScrollRight}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/40 text-foreground disabled:opacity-30"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>
-
       </div>
     </section>
   )
