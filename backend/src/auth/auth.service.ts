@@ -21,7 +21,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly mail: MailService,
     private readonly config: ConfigService,
-  ) { }
+  ) {}
 
   async sendOtp(dto: SendOtpDto) {
     if (dto.type === OtpType.LOGIN) {
