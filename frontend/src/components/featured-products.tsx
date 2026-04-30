@@ -6,50 +6,15 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import api from "@/lib/api"
-import { addProductToWishlist, formatPriceEgp, isProductWishlisted } from "@/lib/products"
+import { addProductToWishlist, formatPriceEgp, isProductWishlisted, getProducts, addProductToCart, type Product } from "@/lib/products"
 
-type ProductVariant = {
-  name?: string
-  images?: string[]
-}
 
-type ProductItem = {
-  id: string
-  name: string
-  basePrice: number
-  slug?: string
-  category?: { name?: string }
-  variants?: ProductVariant[]
-}
-
-type ProductsResponse = {
-  data?: ProductItem[]
-}
-
-const getProductImage = (product: ProductItem) => {
-  const variantImage = product.variants?.find((variant) => variant.images?.length)?.images?.[0]
-  return variantImage || ''
-}
-
-const getProductName = (product: ProductItem) => {
-  const variantName = product.variants?.find(
-    (variant) => typeof variant.name === "string" && variant.name.trim().length > 0,
-  )?.name
-  return variantName ?? product.name
-}
-
-const getProductHref = (product: ProductItem) => {
-  if (product.slug) {
-    return `/products/${product.slug}`
-  }
-  return "/collections"
-}
 
 export function FeaturedProducts() {
-  const [products, setProducts] = useState<ProductItem[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([])
   const [activeWishlistProductId, setActiveWishlistProductId] = useState<string | null>(null)
+  const [activeCartProductId, setActiveCartProductId] = useState<string | null>(null)
   const [isHovered, setIsHovered] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -59,10 +24,7 @@ export function FeaturedProducts() {
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
-        const response = await api.get<ProductsResponse>("/products", {
-          params: { sort: "newest" },
-        })
-        const nextProducts = response.data?.data ?? []
+        const nextProducts = await getProducts({ sort: "newest" })
         setProducts(nextProducts)
         setWishlistedProductIds(
           nextProducts.filter((product) => isProductWishlisted(product.id)).map((product) => product.id),
@@ -105,7 +67,7 @@ export function FeaturedProducts() {
     return () => window.removeEventListener("resize", updateScrollState)
   }, [products.length])
 
-  const handleAddToWishlist = (product: ProductItem) => {
+  const handleAddToWishlist = (product: Product) => {
     if (wishlistedProductIdSet.has(product.id)) {
       toast.info("Already in wishlist")
       return
@@ -118,6 +80,18 @@ export function FeaturedProducts() {
       toast.success("Added to wishlist")
     } finally {
       setActiveWishlistProductId(null)
+    }
+  }
+
+  const handleAddToCart = async (product: Product) => {
+    setActiveCartProductId(product.id)
+    try {
+      await addProductToCart(product, 1)
+      toast.success("Added to cart")
+    } catch {
+      toast.error("Could not add this product to cart")
+    } finally {
+      setActiveCartProductId(null)
     }
   }
 
@@ -148,7 +122,7 @@ export function FeaturedProducts() {
               <div key={product.id} className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]">
                 <div className="relative group/image mb-4 aspect-[3/4] overflow-hidden rounded-[24px] bg-muted">
                   <Image
-                    src={getProductImage(product)}
+                    src={product.image}
                     alt={product.name}
                     fill
                     sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
@@ -156,7 +130,7 @@ export function FeaturedProducts() {
                   />
                   <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 transition-opacity duration-300">
                     <Link
-                      href={getProductHref(product)}
+                      href={`/products/${product.slug}`}
                       aria-label="View product"
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-md"
                     >
@@ -182,6 +156,11 @@ export function FeaturedProducts() {
                       type="button"
                       aria-label="Quick add"
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleAddToCart(product)
+                      }}
+                      disabled={activeCartProductId === product.id || !product.inStock}
                     >
                       <ShoppingBag className="h-4 w-4" />
                     </button>
@@ -195,7 +174,7 @@ export function FeaturedProducts() {
                       <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current" : ""}`} />
                     </button>
                     <Link
-                      href={getProductHref(product)}
+                      href={`/products/${product.slug}`}
                       aria-label="View product"
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
                     >
@@ -204,21 +183,25 @@ export function FeaturedProducts() {
                   </div>
                   <div className="absolute bottom-4 left-4 right-4 hidden translate-y-full opacity-0 transition-all duration-300 md:block md:group-hover/image:translate-y-0 md:group-hover/image:opacity-100">
                   <Button
-                    asChild
                     className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleAddToCart(product)
+                    }}
+                    disabled={activeCartProductId === product.id || !product.inStock}
                   >
-                    <Link href={getProductHref(product)}>Quick Add</Link>
+                    Quick Add
                   </Button>
             
                 </div>
                 </div>
                 <div>
-                  <Link href={getProductHref(product)} className="inline-block">
+                  <Link href={`/products/${product.slug}`} className="inline-block">
                     <h3 className="text-lg font-light tracking-wide text-foreground transition-colors">
-                      {getProductName(product)}
+                      {product.name}
                     </h3>
                   </Link>
-                  <p className="mt-1 text-md text-foreground/50">{formatPriceEgp(product.basePrice)}</p>
+                  <p className="mt-1 text-md text-foreground/50">{formatPriceEgp(product.price)}</p>
                 </div>
               </div>
             ))}
