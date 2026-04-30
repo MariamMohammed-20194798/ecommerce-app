@@ -21,6 +21,7 @@ type Tab = "profile" | "orders";
 type UserState = {
   id: string;
   email: string;
+  name: string;
   role: string;
   emailVerified?: boolean;
 };
@@ -139,12 +140,14 @@ function decodeToken(token: string): UserState | null {
     const decoded = JSON.parse(atob(payload)) as {
       sub?: string;
       email?: string;
+      name?:string;
       role?: string;
     };
-    if (!decoded.sub || !decoded.email) return null;
+    if (!decoded.sub || !decoded.email || !decoded.name) return null;
     return {
       id: decoded.sub,
       email: decoded.email,
+      name: decoded.name,
       role: decoded.role ?? "CUSTOMER",
     };
   } catch {
@@ -179,8 +182,6 @@ export default function AccountPage() {
   const [addressForm, setAddressForm] = useState<AddressFormState>(emptyAddressForm);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
-
-  const displayName = user?.email ? user.email.split("@")[0] : "User";
 
   const loadAddresses = async () => {
     setIsLoadingAddresses(true);
@@ -404,7 +405,7 @@ export default function AccountPage() {
 
           <div className="rounded-xl p-4 bg-card/90 ">
             <p className="text-sm text-muted-foreground">Name</p>
-            <p className="text-sm">{displayName}</p>
+            <p className="text-sm">{user?.name ?? "Not available"}</p>
             <p className="mt-2 text-sm text-muted-foreground">Email</p>
             <p className="text-sm">{user?.email ?? "Not available"}</p>
           </div>

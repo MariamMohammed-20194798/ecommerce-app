@@ -21,6 +21,7 @@ export declare class AuthService {
         user: {
             id: string;
             email: string;
+            name: string | null;
             role: import("@prisma/client").$Enums.Role;
             emailVerified: boolean;
         };
@@ -31,6 +32,7 @@ export declare class AuthService {
         user: {
             id: string;
             email: string;
+            name: string | null;
             role: import("@prisma/client").$Enums.Role;
             emailVerified: boolean;
         };
@@ -41,11 +43,12 @@ export declare class AuthService {
         user: {
             id: string;
             email: string;
+            name: string | null;
             role: import("@prisma/client").$Enums.Role;
             emailVerified: boolean;
         };
     }>;
     revokeRefresh(rawRefresh: string | undefined): Promise<void>;
-    signAccessToken(user: Pick<User, 'id' | 'email' | 'role'>): string;
+    signAccessToken(user: Pick<User, 'id' | 'email' | 'role' | 'name'>): string;
     private issueTokens;
 }

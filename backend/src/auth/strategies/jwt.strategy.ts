@@ -6,6 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export type AccessJwtPayload = {
   sub: string;
   email: string;
+  name: string;
   role: string;
 };
 

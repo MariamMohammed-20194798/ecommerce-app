@@ -177,6 +177,7 @@ let AuthService = class AuthService {
         const payload = {
             sub: user.id,
             email: user.email,
+            name: user.name || '',
             role: user.role,
         };
         const expiresIn = Number(this.config.get('JWT_ACCESS_EXPIRES_SECS', '900'));
@@ -202,6 +203,7 @@ let AuthService = class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
+                name: user.name,
                 role: user.role,
                 emailVerified: !!user.emailVerifiedAt,
             },

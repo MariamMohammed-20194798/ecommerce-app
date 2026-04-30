@@ -15,6 +15,7 @@ export declare class AuthController {
         user: {
             id: string;
             email: string;
+            name: string | null;
             role: import("@prisma/client").$Enums.Role;
             emailVerified: boolean;
         };
@@ -24,6 +25,7 @@ export declare class AuthController {
         user: {
             id: string;
             email: string;
+            name: string | null;
             role: import("@prisma/client").$Enums.Role;
             emailVerified: boolean;
         };

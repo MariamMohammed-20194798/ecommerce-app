@@ -21,7 +21,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly mail: MailService,
     private readonly config: ConfigService,
-  ) {}
+  ) { }
 
   async sendOtp(dto: SendOtpDto) {
     if (dto.type === OtpType.LOGIN) {
@@ -200,10 +200,11 @@ export class AuthService {
     });
   }
 
-  signAccessToken(user: Pick<User, 'id' | 'email' | 'role'>): string {
+  signAccessToken(user: Pick<User, 'id' | 'email' | 'role' | 'name'>): string {
     const payload: AccessJwtPayload = {
       sub: user.id,
       email: user.email,
+      name: user.name || '',
       role: user.role,
     };
     const expiresIn = Number(
@@ -234,6 +235,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
         role: user.role,
         emailVerified: !!user.emailVerifiedAt,
       },
