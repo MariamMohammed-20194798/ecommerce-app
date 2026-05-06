@@ -46,13 +46,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use((response) => {
-  const sessionId = response.headers["x-session-id"];
-  if (typeof sessionId === "string" && sessionId.trim().length > 0) {
-    storeCartSessionId(sessionId);
-  }
+api.interceptors.response.use(
+  (response) => {
+    const sessionId = response.headers["x-session-id"];
+    if (typeof sessionId === "string" && sessionId.trim().length > 0) {
+      storeCartSessionId(sessionId);
+    }
 
-  return response;
-});
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("accessToken");
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

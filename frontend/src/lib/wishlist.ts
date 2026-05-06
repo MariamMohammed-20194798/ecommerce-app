@@ -53,6 +53,9 @@ export const subscribeToWishlistUpdates = (listener: () => void) => {
 };
 
 export async function fetchWishlist() {
+  if (typeof window !== "undefined" && !window.localStorage.getItem("accessToken")) {
+    return [];
+  }
   const response = await api.get<WishlistItem[]>("/wishlist");
   return response.data;
 }
