@@ -10,7 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Women\'s the brand: Luxury & confidence for everyday life.',
+  title: 'Diva the brand: Luxury & confidence for everyday life.',
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
           <main className="flex-1">
             {children}
           </main>
-          <Footer/>
+          <Footer />
           <Toaster richColors position="top-right" />
         </QueryProvider>
       </body>

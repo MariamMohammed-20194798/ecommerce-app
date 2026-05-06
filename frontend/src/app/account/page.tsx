@@ -140,7 +140,7 @@ function decodeToken(token: string): UserState | null {
     const decoded = JSON.parse(atob(payload)) as {
       sub?: string;
       email?: string;
-      name?:string;
+      name?: string;
       role?: string;
     };
     if (!decoded.sub || !decoded.email || !decoded.name) return null;
@@ -374,9 +374,9 @@ export default function AccountPage() {
     <main className="mx-auto max-w-6xl px-4 py-6">
       <header className="mb-6 flex items-center justify-between border-b-2 border-secondary pb-4">
         <div className="flex items-center gap-15">
-        <div className="flex lg:flex-1">
+          <div className="flex lg:flex-1">
             <Link href="/" className="text-2xl font-light tracking-[0.3em] text-foreground">
-              Women&apos;s
+              Diva
             </Link>
           </div>
           <nav className="flex items-center gap-6 text-sm mt-2">

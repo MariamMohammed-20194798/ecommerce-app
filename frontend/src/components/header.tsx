@@ -110,7 +110,7 @@ export function Header() {
             {/* Logo */}
             <div className="flex lg:flex-1">
               <Link href="/" className="text-2xl font-light tracking-[0.3em] text-foreground">
-                Women&apos;s
+                DIVA
               </Link>
             </div>
 

@@ -56,7 +56,7 @@ export default function OurStoryPage() {
 
               <p className="pt-4">
                 With love, <br />
-                <span className="font-medium">Women&apos;s</span>
+                <span className="font-medium">Diva</span>
               </p>
             </div>
           </div>
