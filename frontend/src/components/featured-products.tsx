@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react
 import { motion, useInView, AnimatePresence, Variants } from "framer-motion"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { addProductToWishlist, formatPriceEgp, isProductWishlisted, getProducts, addProductToCart, type Product } from "@/lib/products"
+import { addProductToWishlist, formatPriceEgp, isProductWishlisted, getProducts, addProductToCart, getWishlistProductIds, type Product } from "@/lib/products"
 
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([])
