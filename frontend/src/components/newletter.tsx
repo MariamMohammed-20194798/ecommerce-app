@@ -57,10 +57,12 @@ export function Newsletter() {
               onChange={(e) => setEmail(e.target.value)}
               className="h-14 flex-1 rounded-2xl bg-white/50 border-foreground/10 text-foreground placeholder:text-foreground/40 focus:border-foreground/30 focus:bg-white transition-all shadow-sm"
               required
+              suppressHydrationWarning
             />
             <Button
               type="submit"
               className="h-14 rounded-2xl bg-foreground text-background hover:bg-foreground/90 px-10 font-medium transition-all active:scale-95 shadow-lg"
+              suppressHydrationWarning
             >
               Subscribe
             </Button>

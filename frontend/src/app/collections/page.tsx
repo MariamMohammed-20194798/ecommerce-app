@@ -67,7 +67,7 @@ export default function CollectionsPage() {
       <Header />
       
       {/* Hero section */}
-      <section className="relative h-[40vh] min-h-[320px] mt-16">
+      {/* <section className="relative h-[40vh] min-h-[320px] mt-16">
         <Image
           src="/images/collection-hero.jpg"
           alt="Spring Summer Collection"
@@ -83,10 +83,10 @@ export default function CollectionsPage() {
             </h1>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Filters and sort bar */}
-      <div className="sticky top-16 z-40 bg-background border-b border-border">
+      <div className="sticky top-16 z-40 bg-background border-b border-border mt-15">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             {/* Left side: Filter button and category pills */}

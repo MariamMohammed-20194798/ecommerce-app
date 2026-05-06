@@ -1,14 +1,15 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { useParams, useSearchParams } from "next/navigation"
+import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Heart, SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutGrid } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { Heart, ChevronDown, Grid3X3, LayoutGrid } from "lucide-react"
+import { motion } from "framer-motion"
 import { toast } from "sonner"
 
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import {
   getProducts,
@@ -334,6 +335,7 @@ export default function CategoryPage() {
         )}
       </main>
 
+      <Footer />
     </div>
   )
 }
