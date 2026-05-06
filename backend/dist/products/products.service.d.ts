@@ -17,22 +17,22 @@ export declare class ProductsService {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
                 sku: string;
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
-                images: string[];
             }[];
         } & {
             name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
-            images: string[];
             slug: string;
-            categoryId: string;
+            description: string | null;
+            images: string[];
             basePrice: import("@prisma/client/runtime/library").Decimal;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -59,8 +59,8 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            rating: number;
             productId: string;
+            rating: number;
             body: string | null;
         })[];
         _count: {
@@ -70,22 +70,22 @@ export declare class ProductsService {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
-            images: string[];
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: import("@prisma/client/runtime/library").Decimal;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     search(query: SearchQueryDto): Promise<{
@@ -102,21 +102,21 @@ export declare class ProductsService {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
-                images: string[];
             }[];
         } & {
             name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
-            images: string[];
             slug: string;
-            categoryId: string;
+            description: string | null;
+            images: string[];
             basePrice: import("@prisma/client/runtime/library").Decimal;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -138,8 +138,8 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            rating: number;
             productId: string;
+            rating: number;
             body: string | null;
         })[];
         meta: {
@@ -162,23 +162,23 @@ export declare class ProductsService {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
+            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
-            images: string[];
-            productId: string;
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: import("@prisma/client/runtime/library").Decimal;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
@@ -191,23 +191,23 @@ export declare class ProductsService {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
+            productId: string;
             sku: string;
             priceOverride: import("@prisma/client/runtime/library").Decimal | null;
             stockQuantity: number;
-            images: string[];
-            productId: string;
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: import("@prisma/client/runtime/library").Decimal;
+        categoryId: string;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }

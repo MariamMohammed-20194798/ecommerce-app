@@ -1,5 +1,14 @@
 import api from "@/lib/api"
 import { addCartItem } from "@/lib/cart"
+import {
+  fetchWishlist,
+  addToWishlist as apiAddToWishlist,
+  removeFromWishlist as apiRemoveFromWishlist,
+  checkWishlistStatus,
+  WISHLIST_UPDATED_EVENT,
+  subscribeToWishlistUpdates as apiSubscribeToWishlistUpdates,
+  notifyWishlistUpdated,
+} from "@/lib/wishlist"
 
 export interface Product {
   id: string
@@ -64,9 +73,8 @@ type ProductsResponse = {
 type SortOption = "newest" | "price-asc" | "price-desc" | "best-selling"
 
 const FALLBACK_IMAGE = "/images/placeholder-product.jpg"
-const WISHLIST_STORAGE_KEY = "wishlistProductIds"
-export const WISHLIST_UPDATED_EVENT = "wishlist-updated"
-const wishlistListeners = new Set<() => void>()
+
+export const subscribeToWishlistUpdates = apiSubscribeToWishlistUpdates
 
 const toColorHex = (colorName: string) => {
   const normalized = colorName.trim().toLowerCase()
@@ -202,77 +210,73 @@ export async function addProductToCart(
   await addCartItem(targetVariantId, quantity)
 }
 
-const getWishlistIdsFromStorage = (): string[] => {
-  if (typeof window === "undefined") {
-    return []
-  }
-
+export async function getWishlistProductIds(): Promise<string[]> {
   try {
-    const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY)
-    const parsed = raw ? (JSON.parse(raw) as unknown) : []
-    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : []
+    const items = await fetchWishlist()
+    return items.map((item) => item.variant.product.id)
   } catch {
     return []
   }
 }
 
-const notifyWishlistUpdated = () => {
-  for (const listener of wishlistListeners) {
-    listener()
+export async function isProductWishlisted(productId: string): Promise<boolean> {
+  const ids = await getWishlistProductIds()
+  return ids.includes(productId)
+}
+
+export async function addProductToWishlist(product: WishlistProduct): Promise<void> {
+  // We need a variant ID. Use the first one or a default if available.
+  // The product passed here might not have variants if it's the simplified WishlistProduct.
+  // If it's a full Product, we use product.variantIds[0].
+  
+  let variantId: string | undefined
+  
+  if ('variantIds' in product) {
+    variantId = (product as Product).variantIds[0]
+  } else {
+    // If we only have product ID, we might need to fetch the product first to get a variant
+    const fullProduct = await getProductBySlug((product as any).slug || (product as any).id)
+    variantId = fullProduct?.variantIds[0]
   }
 
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event(WISHLIST_UPDATED_EVENT))
+  if (!variantId) {
+    throw new Error("No variant available to wishlist")
+  }
+
+  // Use the provided image if available (WishlistProduct might have it, or Product has it as 'image')
+  const image = (product as any).image || (product as any).images?.[0]
+
+  await apiAddToWishlist(variantId, image)
+}
+
+export async function removeProductFromWishlist(productId: string): Promise<void> {
+  // The backend remove endpoint takes variantId. 
+  // If we only have productId, we need to find which variant is wishlisted.
+  const wishlist = await fetchWishlist()
+  const item = wishlist.find(i => i.variant.product.id === productId)
+  
+  if (item) {
+    await apiRemoveFromWishlist(item.variantId)
   }
 }
 
-export function subscribeToWishlistUpdates(listener: () => void): () => void {
-  wishlistListeners.add(listener)
-
-  return () => {
-    wishlistListeners.delete(listener)
-  }
-}
-
-export function getWishlistProductIds(): string[] {
-  return getWishlistIdsFromStorage()
-}
-
-export function isProductWishlisted(productId: string): boolean {
-  return getWishlistIdsFromStorage().includes(productId)
-}
-
-export function addProductToWishlist(product: WishlistProduct): void {
-  if (typeof window === "undefined") {
-    return
-  }
-
-  const current = getWishlistIdsFromStorage()
-  const next = Array.from(new Set([...current, product.id]))
-  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
-  notifyWishlistUpdated()
-}
-
-export function removeProductFromWishlist(productId: string): void {
-  if (typeof window === "undefined") {
-    return
-  }
-
-  const current = getWishlistIdsFromStorage()
-  const next = current.filter((id) => id !== productId)
-  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(next))
-  notifyWishlistUpdated()
-}
-
-export function toggleProductInWishlist(product: WishlistProduct): boolean {
-  const isWishlisted = isProductWishlisted(product.id)
+export async function toggleProductInWishlist(product: Product): Promise<boolean> {
+  const wishlist = await fetchWishlist()
+  const isWishlisted = wishlist.some(i => i.variant.product.id === product.id)
+  
   if (isWishlisted) {
-    removeProductFromWishlist(product.id)
+    const item = wishlist.find(i => i.variant.product.id === product.id)
+    if (item) await apiRemoveFromWishlist(item.variantId)
     return false
   }
 
-  addProductToWishlist(product)
-  return true
+  const variantId = product.variantIds[0]
+  if (variantId) {
+    await apiAddToWishlist(variantId, product.image)
+    return true
+  }
+  
+  return false
 }
 
 export function getMatchingVariantId(product: Product, input?: { size?: string; color?: string }): string | null {

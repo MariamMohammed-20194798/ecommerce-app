@@ -20,22 +20,22 @@ export declare class ProductRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
                 sku: string;
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
-                images: string[];
             }[];
         } & {
             name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
-            images: string[];
             slug: string;
-            categoryId: string;
+            description: string | null;
+            images: string[];
             basePrice: Prisma.Decimal;
+            categoryId: string;
             metadata: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -62,8 +62,8 @@ export declare class ProductRepository {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            rating: number;
             productId: string;
+            rating: number;
             body: string | null;
         })[];
         _count: {
@@ -73,22 +73,22 @@ export declare class ProductRepository {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
-            images: string[];
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: Prisma.Decimal;
+        categoryId: string;
         metadata: Prisma.JsonValue | null;
     }) | null>;
     findById(id: string): Promise<{
@@ -96,12 +96,12 @@ export declare class ProductRepository {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: Prisma.Decimal;
+        categoryId: string;
         metadata: Prisma.JsonValue | null;
     } | null>;
     search(query: SearchQueryDto): Promise<{
@@ -118,21 +118,21 @@ export declare class ProductRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
-                images: string[];
             }[];
         } & {
             name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
-            images: string[];
             slug: string;
-            categoryId: string;
+            description: string | null;
+            images: string[];
             basePrice: Prisma.Decimal;
+            categoryId: string;
             metadata: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -154,8 +154,8 @@ export declare class ProductRepository {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            rating: number;
             productId: string;
+            rating: number;
             body: string | null;
         })[];
         meta: {
@@ -178,23 +178,23 @@ export declare class ProductRepository {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
+            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
-            images: string[];
-            productId: string;
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: Prisma.Decimal;
+        categoryId: string;
         metadata: Prisma.JsonValue | null;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
@@ -207,23 +207,23 @@ export declare class ProductRepository {
             id: string;
             size: string | null;
             color: string | null;
+            images: string[];
+            productId: string;
             sku: string;
             priceOverride: Prisma.Decimal | null;
             stockQuantity: number;
-            images: string[];
-            productId: string;
         }[];
     } & {
         name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         isActive: boolean;
-        images: string[];
         slug: string;
-        categoryId: string;
+        description: string | null;
+        images: string[];
         basePrice: Prisma.Decimal;
+        categoryId: string;
         metadata: Prisma.JsonValue | null;
     }>;
     slugExists(slug: string, excludeId?: string): Promise<boolean>;

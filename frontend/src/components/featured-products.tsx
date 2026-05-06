@@ -28,9 +28,9 @@ export function FeaturedProducts() {
       try {
         const nextProducts = await getProducts({ sort: "newest" })
         setProducts(nextProducts)
-        setWishlistedProductIds(
-          nextProducts.filter((product) => isProductWishlisted(product.id)).map((product) => product.id),
-        )
+        
+        const wishlistIds = await getWishlistProductIds()
+        setWishlistedProductIds(wishlistIds)
       } catch (error) {
         console.error("Failed to load new arrivals:", error)
       }
@@ -69,7 +69,7 @@ export function FeaturedProducts() {
     return () => window.removeEventListener("resize", updateScrollState)
   }, [products.length])
 
-  const handleAddToWishlist = (product: Product) => {
+  const handleAddToWishlist = async (product: Product) => {
     if (wishlistedProductIdSet.has(product.id)) {
       toast.info("Already in wishlist")
       return
@@ -77,9 +77,11 @@ export function FeaturedProducts() {
 
     setActiveWishlistProductId(product.id)
     try {
-      addProductToWishlist(product)
+      await addProductToWishlist(product)
       setWishlistedProductIds((current) => [...current, product.id])
       toast.success("Added to wishlist")
+    } catch {
+      toast.error("Please login to add items to your wishlist")
     } finally {
       setActiveWishlistProductId(null)
     }

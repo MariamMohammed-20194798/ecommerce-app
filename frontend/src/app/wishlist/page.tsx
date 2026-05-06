@@ -8,10 +8,12 @@ import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
+  fetchWishlist,
+  removeFromWishlist,
+} from "@/lib/wishlist"
+import {
   addProductToCart,
-  getProducts,
-  getWishlistProductIds,
-  removeProductFromWishlist,
+  formatPriceEgp,
   type Product,
 } from "@/lib/products"
 
@@ -26,16 +28,33 @@ export default function WishlistPage() {
       try {
         setIsLoading(true)
         setError(null)
-        const wishlistIds = new Set(getWishlistProductIds())
-        if (wishlistIds.size === 0) {
-          setProducts([])
-          return
-        }
+        const items = await fetchWishlist()
+        
+        // Map WishlistItem to Product shape for the UI
+        const mappedProducts: Product[] = items.map(item => {
+          const p = item.variant.product;
+          return {
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            price: Number(p.basePrice),
+            image: item.image || p.images[0] || "/images/placeholder-product.jpg",
+            images: p.images,
+            category: "Uncategorized", // Backend doesn't return category in wishlist include currently
+            subcategory: "",
+            description: "",
+            details: [],
+            sizes: [],
+            colors: [],
+            variants: [],
+            inStock: true, // Simplified
+            variantIds: [item.variantId]
+          } as Product
+        })
 
-        const allProducts = await getProducts({ limit: 100 })
-        setProducts(allProducts.filter((product) => wishlistIds.has(product.id)))
+        setProducts(mappedProducts)
       } catch {
-        setError("Could not load your wishlist right now.")
+        setError("Please login to see your wishlist.")
       } finally {
         setIsLoading(false)
       }
@@ -46,10 +65,18 @@ export default function WishlistPage() {
 
   const hasItems = useMemo(() => products.length > 0, [products.length])
 
-  const handleRemove = (productId: string) => {
-    removeProductFromWishlist(productId)
-    setProducts((current) => current.filter((product) => product.id !== productId))
-    toast.success("Removed from wishlist")
+  const handleRemove = async (productId: string) => {
+    try {
+      // Find the variantId for this product in the current list
+      const product = products.find(p => p.id === productId)
+      if (product && product.variantIds[0]) {
+        await removeFromWishlist(product.variantIds[0])
+        setProducts((current) => current.filter((p) => p.id !== productId))
+        toast.success("Removed from wishlist")
+      }
+    } catch {
+      toast.error("Failed to remove item")
+    }
   }
 
   return (
@@ -92,7 +119,7 @@ export default function WishlistPage() {
                   <Link href={`/products/${product.slug}`}>
                     <h3 className="mt-1 text-xl font-light text-foreground">{product.name}</h3>
                   </Link>
-                  <p className="mt-2 text-base text-foreground">{product.price}</p>
+                  <p className="mt-2 text-base text-foreground">{formatPriceEgp(product.price)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Button

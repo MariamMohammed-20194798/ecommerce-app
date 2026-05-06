@@ -26,17 +26,22 @@ export function Header() {
 
 
   useEffect(() => {
-    const syncWishlist = () => {
-      setWishlistedProductIds(getWishlistProductIds())
+    const syncWishlist = async () => {
+      try {
+        const ids = await getWishlistProductIds()
+        setWishlistedProductIds(ids)
+      } catch {
+        setWishlistedProductIds([])
+      }
     }
 
-    syncWishlist()
-    window.addEventListener("storage", syncWishlist)
+    void syncWishlist()
     window.addEventListener("focus", syncWishlist)
-    const unsubscribe = subscribeToWishlistUpdates(syncWishlist)
+    const unsubscribe = subscribeToWishlistUpdates(() => {
+      void syncWishlist()
+    })
 
     return () => {
-      window.removeEventListener("storage", syncWishlist)
       window.removeEventListener("focus", syncWishlist)
       unsubscribe()
     }
@@ -130,9 +135,9 @@ export function Header() {
               <Link href="/wishlist" className="hidden sm:block">
                 <Button variant="ghost" size="icon" aria-label="Wishlist" className="relative">
                   <Heart className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">
+                  {wishlistedProductIds.length > 0 && <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent text-[10px] font-medium text-accent-foreground flex items-center justify-center">
                     {wishlistedProductIds.length}
-                  </span>
+                  </span>}
                 </Button>
               </Link>
               <Link href='/account'>
@@ -143,9 +148,9 @@ export function Header() {
               <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative" aria-label="Shopping bag">
                   <ShoppingBag className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-medium text-accent-foreground">
+                  {cartItemCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-medium text-accent-foreground">
                     {cartItemCount}
-                  </span>
+                  </span>}
                 </Button>
               </Link>
             </div>

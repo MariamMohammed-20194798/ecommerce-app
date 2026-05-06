@@ -19,9 +19,9 @@ export declare class CategoriesService {
         } & {
             name: string;
             id: string;
+            slug: string;
             description: string | null;
             images: string[];
-            slug: string;
             parentId: string | null;
         })[];
         meta: {
@@ -39,9 +39,9 @@ export declare class CategoriesService {
     } & {
         name: string;
         id: string;
+        slug: string;
         description: string | null;
         images: string[];
-        slug: string;
         parentId: string | null;
     } & {
         children: ({
@@ -51,9 +51,9 @@ export declare class CategoriesService {
         } & {
             name: string;
             id: string;
+            slug: string;
             description: string | null;
             images: string[];
-            slug: string;
             parentId: string | null;
         } & any)[];
     })[]>;
@@ -70,15 +70,15 @@ export declare class CategoriesService {
         children: {
             name: string;
             id: string;
-            description: string | null;
             slug: string;
+            description: string | null;
         }[];
     } & {
         name: string;
         id: string;
+        slug: string;
         description: string | null;
         images: string[];
-        slug: string;
         parentId: string | null;
     }>;
     findProducts(slug: string, query: CategoryProductsQueryDto): Promise<{
@@ -96,21 +96,21 @@ export declare class CategoriesService {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
-                images: string[];
             }[];
         } & {
             name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
             isActive: boolean;
-            images: string[];
             slug: string;
-            categoryId: string;
+            description: string | null;
+            images: string[];
             basePrice: import("@prisma/client/runtime/library").Decimal;
+            categoryId: string;
             metadata: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -130,9 +130,9 @@ export declare class CategoriesService {
     } & {
         name: string;
         id: string;
+        slug: string;
         description: string | null;
         images: string[];
-        slug: string;
         parentId: string | null;
     }>;
     update(id: string, dto: UpdateCategoryDto): Promise<{
@@ -152,9 +152,9 @@ export declare class CategoriesService {
     } & {
         name: string;
         id: string;
+        slug: string;
         description: string | null;
         images: string[];
-        slug: string;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{

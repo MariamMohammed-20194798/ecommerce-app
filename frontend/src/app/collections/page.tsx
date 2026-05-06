@@ -250,8 +250,10 @@ export default function CollectionsPage() {
                       e.preventDefault()
                       setActiveProductAction(`${product.id}:wishlist`)
                       try {
-                        addProductToWishlist(product)
+                        await addProductToWishlist(product)
                         toast.success("Added to wishlist")
+                      } catch {
+                        toast.error("Please login to add items to your wishlist")
                       } finally {
                         setActiveProductAction(null)
                       }

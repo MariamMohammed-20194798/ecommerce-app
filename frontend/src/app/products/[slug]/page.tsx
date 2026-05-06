@@ -40,15 +40,30 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
 
   useEffect(() => {
     const nextImages = getImagesForProductColor(product, selectedColor.name)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGalleryImages(nextImages)
     setSelectedImageIndex(0)
   }, [product, selectedColor.name])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsWishlisted(isProductWishlisted(product.id))
+    const checkStatus = async () => {
+      const status = await isProductWishlisted(product.id)
+      setIsWishlisted(status)
+    }
+    void checkStatus()
   }, [product.id])
+
+  const handleToggleWishlist = async () => {
+    setIsAddingToWishlist(true)
+    try {
+      const nextValue = await toggleProductInWishlist(product)
+      setIsWishlisted(nextValue)
+      toast.success(nextValue ? "Added to wishlist" : "Removed from wishlist")
+    } catch {
+      toast.error("Please login to add items to your wishlist")
+    } finally {
+      setIsAddingToWishlist(false)
+    }
+  }
 
   const canNavigateGallery = galleryImages.length > 1
   const activeImage = galleryImages[selectedImageIndex] ?? product.image
@@ -298,16 +313,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
                   size="icon"
                   className="rounded-full h-auto aspect-square border-border"
                   aria-label="Add to wishlist"
-                  onClick={() => {
-                    setIsAddingToWishlist(true)
-                    try {
-                      const nextValue = toggleProductInWishlist(product)
-                      setIsWishlisted(nextValue)
-                      toast.success(nextValue ? "Added to wishlist" : "Removed from wishlist")
-                    } finally {
-                      setIsAddingToWishlist(false)
-                    }
-                  }}
+                  onClick={handleToggleWishlist}
                   disabled={isAddingToWishlist}
                 >
                   <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />

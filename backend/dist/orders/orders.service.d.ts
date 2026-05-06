@@ -31,10 +31,10 @@ export declare class OrdersService {
             updatedAt: Date;
             userId: string;
             status: import("@prisma/client").$Enums.OrderStatus;
-            addressId: string;
             trackingNumber: string | null;
             totalAmount: import("@prisma/client/runtime/library").Decimal;
             stripePaymentId: string | null;
+            addressId: string;
         })[];
         meta: {
             total: number;
@@ -67,11 +67,11 @@ export declare class OrdersService {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
+                productId: string;
                 sku: string;
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
-                images: string[];
-                productId: string;
             };
         } & {
             id: string;
@@ -108,10 +108,10 @@ export declare class OrdersService {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
-        addressId: string;
         trackingNumber: string | null;
         totalAmount: import("@prisma/client/runtime/library").Decimal;
         stripePaymentId: string | null;
+        addressId: string;
     }>;
     updateStatus(orderId: string, dto: UpdateOrderStatusDto): Promise<{
         address: {
@@ -136,11 +136,11 @@ export declare class OrdersService {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
+                productId: string;
                 sku: string;
                 priceOverride: import("@prisma/client/runtime/library").Decimal | null;
                 stockQuantity: number;
-                images: string[];
-                productId: string;
             };
         } & {
             id: string;
@@ -177,10 +177,10 @@ export declare class OrdersService {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
-        addressId: string;
         trackingNumber: string | null;
         totalAmount: import("@prisma/client/runtime/library").Decimal;
         stripePaymentId: string | null;
+        addressId: string;
     }>;
     private sendStatusEmail;
 }

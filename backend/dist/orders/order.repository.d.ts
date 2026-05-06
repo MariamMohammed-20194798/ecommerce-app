@@ -29,10 +29,10 @@ export declare class OrdersRepository {
             updatedAt: Date;
             userId: string;
             status: import("@prisma/client").$Enums.OrderStatus;
-            addressId: string;
             trackingNumber: string | null;
             totalAmount: Prisma.Decimal;
             stripePaymentId: string | null;
+            addressId: string;
         })[];
         meta: {
             total: number;
@@ -65,11 +65,11 @@ export declare class OrdersRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
+                productId: string;
                 sku: string;
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
-                images: string[];
-                productId: string;
             };
         } & {
             id: string;
@@ -106,10 +106,10 @@ export declare class OrdersRepository {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
-        addressId: string;
         trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
+        addressId: string;
     }) | null>;
     updateStatus(orderId: string, status: OrderStatusEnum, trackingNumber?: string): Promise<{
         address: {
@@ -134,11 +134,11 @@ export declare class OrdersRepository {
                 id: string;
                 size: string | null;
                 color: string | null;
+                images: string[];
+                productId: string;
                 sku: string;
                 priceOverride: Prisma.Decimal | null;
                 stockQuantity: number;
-                images: string[];
-                productId: string;
             };
         } & {
             id: string;
@@ -175,10 +175,10 @@ export declare class OrdersRepository {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
-        addressId: string;
         trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
+        addressId: string;
     }>;
     findById(orderId: string): Promise<{
         id: string;
@@ -186,9 +186,9 @@ export declare class OrdersRepository {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.OrderStatus;
-        addressId: string;
         trackingNumber: string | null;
         totalAmount: Prisma.Decimal;
         stripePaymentId: string | null;
+        addressId: string;
     } | null>;
 }
