@@ -7,7 +7,7 @@ import { Heart, Minus, Plus, ChevronRight, Truck, RotateCcw, Shield } from "luci
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
-import { Footer } from "../../../../../footer"
+import { Footer } from "@/components/footer"
 import {
   addProductToCart,
   formatPriceEgp,
@@ -76,7 +76,7 @@ function ProductDetails({ product, relatedProducts }: { product: Product; relate
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* <Header /> */}
 
       <main className="pt-20">
         {/* Breadcrumb */}
@@ -465,7 +465,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        {/* <Header /> */}
         <main className="pt-24 pb-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-light text-foreground mb-3">Product unavailable</h1>
           <p className="text-sm text-muted-foreground mb-6">

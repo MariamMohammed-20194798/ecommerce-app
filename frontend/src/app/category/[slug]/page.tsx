@@ -97,7 +97,7 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* <Header /> */}
 
       {/* Category Hero */}
       {/* <section className="relative h-[50vh] min-h-[400px] mt-16 overflow-hidden">

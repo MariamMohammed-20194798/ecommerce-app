@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react"
 import { Heart, SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutGrid } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Header } from "@/components/header"
 import { addProductToCart, formatPriceEgp, addProductToWishlist, getCategories, getProducts, type Product } from "@/lib/products"
 
 const sortOptions = [
@@ -45,8 +44,8 @@ export default function CollectionsPage() {
 
   const categories = useMemo(() => getCategories(products), [products])
 
-  const filteredProducts = selectedCategory === "all" 
-    ? products 
+  const filteredProducts = selectedCategory === "all"
+    ? products
     : products.filter(p => p.category.toLowerCase() === selectedCategory)
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -63,9 +62,7 @@ export default function CollectionsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
+    <div className="min-h-screen">
       {/* Hero section */}
       {/* <section className="relative h-[40vh] min-h-[320px] mt-16">
         <Image
@@ -86,7 +83,7 @@ export default function CollectionsPage() {
       </section> */}
 
       {/* Filters and sort bar */}
-      <div className="sticky top-16 z-40 bg-background border-b border-border mt-15">
+      <div className="top-16 z-40 bg-background/80 border-b border-border mt-15">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             {/* Left side: Filter button and category pills */}
@@ -100,18 +97,17 @@ export default function CollectionsPage() {
                 <SlidersHorizontal className="h-4 w-4" />
                 <span className="hidden sm:inline">Filters</span>
               </Button>
-              
+
               {/* Category pills - desktop */}
               <div className="hidden md:flex items-center gap-2">
                 {categories.map((cat) => (
                   <button
                     key={cat.slug}
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`px-3 py-1.5 text-sm transition-colors ${
-                      selectedCategory === cat.slug
-                        ? "bg-muted text-foreground rounded-full"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-3 py-1.5 text-sm transition-colors ${selectedCategory === cat.slug
+                      ? "bg-muted text-foreground rounded-full"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {cat.name}
                   </button>
@@ -126,7 +122,7 @@ export default function CollectionsPage() {
                   {isLoading ? "Loading..." : `${sortedProducts.length} ${sortedProducts.length === 1 ? "item" : "items"}`}
                 </span>
               </div>
-              
+
               {/* Sort dropdown */}
               <div className="relative group">
                 <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -138,9 +134,8 @@ export default function CollectionsPage() {
                     <button
                       key={option.value}
                       onClick={() => setSortBy(option.value)}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${
-                        sortBy === option.value ? "text-foreground font-medium" : "text-muted-foreground"
-                      }`}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${sortBy === option.value ? "text-foreground font-medium" : "text-muted-foreground"
+                        }`}
                     >
                       {option.name}
                     </button>
@@ -191,11 +186,10 @@ export default function CollectionsPage() {
                       setSelectedCategory(cat.slug)
                       setShowFilters(false)
                     }}
-                    className={`text-left py-2 text-sm transition-colors ${
-                      selectedCategory === cat.slug
-                        ? "text-foreground font-medium"
-                        : "text-muted-foreground"
-                    }`}
+                    className={`text-left py-2 text-sm transition-colors ${selectedCategory === cat.slug
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground"
+                      }`}
                   >
                     {cat.name}
                   </button>
@@ -216,12 +210,11 @@ export default function CollectionsPage() {
         {isLoading && (
           <div className="py-20 text-center text-sm text-muted-foreground">Loading products...</div>
         )}
-        <div className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12  ${
-          gridCols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"
-        }`}>
+        <div className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12  ${gridCols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"
+          }`}>
           {sortedProducts.map((product) => (
-            <Link 
-              key={product.id} 
+            <Link
+              key={product.id}
               href={`/products/${product.slug}`}
               className="group cursor-pointer"
             >
@@ -270,7 +263,7 @@ export default function CollectionsPage() {
                 </div>
                 {/* Quick add button */}
                 <div className="absolute bottom-4 left-4 right-4 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <Button 
+                  <Button
                     className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
                     onClick={async (e) => {
                       e.preventDefault()

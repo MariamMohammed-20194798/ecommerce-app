@@ -1,24 +1,24 @@
 "use client"
 import Image from "next/image"
 
-export default function SizeGuide(){
-const sizes = [
-  { idx: 0, name: "petite", size: "xs/s", image:"/images/size-guide/petite.jpg" },
-  { idx: 1, name: "one size", size: "s/m - m/l", image:"/images/size-guide/onesize.jpg" },
-  { idx: 2, name: "mid size", size: "l/xl - xl/2xl", image:"/images/size-guide/midsize.jpg" },
-  { idx: 3, name: "curved", size: "3xl - 4xl", image:"/images/size-guide/curved.jpg" },
-]
+export default function SizeGuide() {
+  const sizes = [
+    { idx: 0, name: "petite", size: "xs/s", image: "/images/size-guide/petite.jpg" },
+    { idx: 1, name: "one size", size: "s/m - m/l", image: "/images/size-guide/onesize.jpg" },
+    { idx: 2, name: "mid size", size: "l/xl - xl/2xl", image: "/images/size-guide/midsize.jpg" },
+    { idx: 3, name: "curved", size: "3xl - 4xl", image: "/images/size-guide/curved.jpg" },
+  ]
 
   return (
-    <section className="py-30 bg-background" id="new">
+    <section className="py-30" id="new">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
           <p className="text-md uppercase tracking-[0.3em] text-muted-foreground mb-3">
-          The Size Guide
+            The Size Guide
           </p>
           <h2 className="text-sm text-foreground tracking-tight">
-          your fit, figured out.
+            your fit, figured out.
           </h2>
         </div>
 
@@ -57,15 +57,15 @@ const sizes = [
           <p className="mt-10 mb-4 text-xl text-semibold">step two</p>
 
           <div className="grid grid-cols-2 items-center">
-          <div className="relative w-90 aspect-[3/4] mb-4 overflow-hidden">
-          <Image
-              src="/images/size-guide/sizechart.jpg"
-              alt="Size chart reference"
-              fill
-              sizes="(max-width: 768px) 100vw, 360px"
-              className="object-cover"
-            />
-          </div>
+            <div className="relative w-90 aspect-[3/4] mb-4 overflow-hidden">
+              <Image
+                src="/images/size-guide/sizechart.jpg"
+                alt="Size chart reference"
+                fill
+                sizes="(max-width: 768px) 100vw, 360px"
+                className="object-cover"
+              />
+            </div>
 
             <p className="text-muted-foreground">
               check the measurements.<br />
