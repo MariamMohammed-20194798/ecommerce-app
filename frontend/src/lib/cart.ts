@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { notifyWishlistUpdated } from "@/lib/wishlist";
 
 export const CART_UPDATED_EVENT = "cart-updated";
 export const CART_FREE_SHIPPING_THRESHOLD = 10000;
@@ -119,6 +120,7 @@ export async function addCartItem(variantId: string, quantity = 1) {
     quantity,
   });
   notifyCartUpdated();
+  notifyWishlistUpdated();
   return response.data;
 }
 
@@ -131,6 +133,7 @@ export async function updateCartItemQuantity(itemId: string, quantity: number) {
 export async function removeCartItem(itemId: string) {
   const response = await api.delete(`/cart/items/${itemId}`);
   notifyCartUpdated();
+  notifyWishlistUpdated();
   return response.data;
 }
 
