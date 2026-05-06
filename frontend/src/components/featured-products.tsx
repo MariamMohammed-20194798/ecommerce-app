@@ -185,6 +185,7 @@ export function FeaturedProducts() {
                         handleAddToWishlist(product)
                       }}
                       disabled={activeWishlistProductId === product.id}
+                      suppressHydrationWarning
                     >
                       <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current text-red-500" : ""}`} />
                     </motion.button>
@@ -201,6 +202,7 @@ export function FeaturedProducts() {
                         handleAddToCart(product)
                       }}
                       disabled={activeCartProductId === product.id || !product.inStock}
+                      suppressHydrationWarning
                     >
                       <ShoppingBag className="h-4 w-4" />
                     </button>
@@ -221,6 +223,7 @@ export function FeaturedProducts() {
                         handleAddToCart(product)
                       }}
                       disabled={activeCartProductId === product.id || !product.inStock}
+                      suppressHydrationWarning
                     >
                       Quick Add
                     </Button>
@@ -249,6 +252,7 @@ export function FeaturedProducts() {
                 onClick={() => scrollByAmount("left")}
                 aria-label="Scroll new arrivals left"
                 className="absolute left-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+                suppressHydrationWarning
               >
                 <ChevronLeft className="h-6 w-6" />
               </motion.button>
@@ -265,6 +269,7 @@ export function FeaturedProducts() {
                 onClick={() => scrollByAmount("right")}
                 aria-label="Scroll new arrivals right"
                 className="absolute right-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+                suppressHydrationWarning
               >
                 <ChevronRight className="h-6 w-6" />
               </motion.button>
@@ -278,6 +283,7 @@ export function FeaturedProducts() {
               aria-label="Previous new arrivals"
               disabled={!canScrollLeft}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
+              suppressHydrationWarning
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -287,6 +293,7 @@ export function FeaturedProducts() {
               aria-label="Next new arrivals"
               disabled={!canScrollRight}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
+              suppressHydrationWarning
             >
               <ChevronRight className="h-5 w-5" />
             </button>

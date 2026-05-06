@@ -72,6 +72,7 @@ export function ExchangeRefunds() {
             variant="outline"
             size="lg"
             className="mt-16 rounded-full border-foreground/30 px-10 h-14 text-base font-normal hover:bg-foreground hover:text-white transition-all hover:scale-105 active:scale-95"
+            suppressHydrationWarning
           >
             <Link href="/account">request an exchange/refund</Link>
           </Button>

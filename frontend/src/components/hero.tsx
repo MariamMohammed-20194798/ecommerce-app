@@ -1,93 +1,114 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function Hero() {
+  const router = useRouter()
+
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-      {/* Background image with parallax-like effect */}
-      <motion.div 
-        initial={{ scale: 1.1 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-0 z-0"
-      >
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="/images/hero-fashion.jpg"
-          alt="Woman in elegant fashion"
+          alt="Fashion model in elegant attire"
           fill
-          sizes="100vw"
           className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
-      </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
+      </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full pt-20">
         <div className="max-w-2xl">
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-sm uppercase tracking-[0.4em] text-white/90 mb-6 font-medium"
-          >
-            Spring/Summer 2026
-          </motion.p>
-          
-          <motion.h1 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 1 }}
-            className="text-5xl sm:text-7xl lg:text-8xl font-light text-white leading-[1.1] tracking-tight text-balance mb-8"
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Timeless Elegance, <br />
-            <span className="italic font-serif">Modern Spirit</span>
+            <span className="text-sm tracking-[0.3em] uppercase text-muted-foreground">
+              Spring/Summer 2026
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="font-serif text-4xl md:text-5xl lg:text-6xl font-light leading-[0.95] mt-6 text-balance"
+          >
+            Timeless elegance
+            <br />
+            <span className="italic font-normal">redefined</span>
           </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.8 }}
-            className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-md font-light"
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-md md:text-lg text-muted-foreground mt-8 max-w-md leading-relaxed"
           >
-            Discover our new collection of refined pieces designed for the contemporary woman.
+            Discover our curated collection of contemporary silhouettes crafted
+            for the modern woman.
           </motion.p>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.8 }}
-            className="mt-12 flex flex-col sm:flex-row gap-6"
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-4 mt-10"
           >
-            <Button asChild size="lg" className="bg-white text-foreground hover:bg-white/90 rounded-full px-10 h-14 text-base font-medium shadow-2xl transition-all hover:scale-105 active:scale-95">
-              <Link href="/collections">
-                Shop Collection
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            
-            <button className="text-white border-b border-white/30 pb-1 hover:border-white transition-colors text-base font-light tracking-wide">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group rounded-md flex items-center justify-center gap-3 bg-primary text-primary-foreground px-4 py-3 text-sm tracking-widest uppercase transition-all duration-300"
+              onClick={() => router.push("/collections")}
+              suppressHydrationWarning
+            >
+              Explore Collection
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center justify-center gap-3 border border-foreground/20 px-4 py-4 rounded-md text-sm tracking-widest uppercase hover:bg-foreground hover:text-background transition-all duration-300"
+              onClick={() => router.push("/lookbook")}
+              suppressHydrationWarning
+            >
               View Lookbook
-            </button>
+            </motion.button>
           </motion.div>
         </div>
       </div>
-      
-      {/* Scroll indicator */}
-      <motion.div 
+
+      {/* Scroll Indicator */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+        transition={{ duration: 1, delay: 1.2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <span className="text-[10px] uppercase tracking-[0.3em] text-white/60 rotate-90 origin-left ml-4">Scroll</span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-white/60 to-transparent" />
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2"
+        >
+          <span className="text-xs tracking-[0.3em] uppercase text-muted-foreground">
+            Scroll
+          </span>
+          <div className="w-px h-12 bg-foreground/30 relative overflow-hidden">
+            <motion.div
+              animate={{ y: [-48, 48] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute w-full h-1/2 bg-foreground"
+            />
+          </div>
+        </motion.div>
       </motion.div>
     </section>
-  )
+  );
 }

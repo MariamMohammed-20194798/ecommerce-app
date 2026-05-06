@@ -229,6 +229,7 @@ export function Categories() {
                 onClick={() => scrollByAmount("left")}
                 aria-label="Scroll categories left"
                 className="absolute left-4 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+                suppressHydrationWarning
               >
                 <ChevronLeft className="h-6 w-6" />
               </motion.button>
@@ -245,6 +246,7 @@ export function Categories() {
                 onClick={() => scrollByAmount("right")}
                 aria-label="Scroll categories right"
                 className="absolute right-4 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
+                suppressHydrationWarning
               >
                 <ChevronRight className="h-6 w-6" />
               </motion.button>
@@ -258,6 +260,7 @@ export function Categories() {
               aria-label="Previous categories"
               disabled={!canScrollLeft}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
+              suppressHydrationWarning
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -267,6 +270,7 @@ export function Categories() {
               aria-label="Next categories"
               disabled={!canScrollRight}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
+              suppressHydrationWarning
             >
               <ChevronRight className="h-5 w-5" />
             </button>
