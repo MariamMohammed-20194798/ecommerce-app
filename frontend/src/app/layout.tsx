@@ -10,7 +10,9 @@ import { Toaster } from '@/components/ui/sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  applicationName: 'DIVA',
   title: 'Diva the brand: Luxury & confidence for everyday life.',
+
 };
 
 export default function RootLayout({
