@@ -7,8 +7,6 @@ import Link from "next/link"
 import { Heart, ChevronDown, Grid3X3, LayoutGrid } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
-
-import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import {
@@ -225,7 +223,7 @@ export default function CategoryPage() {
         ) : products.length === 0 ? (
           <div className="text-center py-32">
             <h3 className="text-2xl font-light mb-4">No products found</h3>
-            <p className="text-muted-foreground mb-8">We couldn't find any products in the {categoryName} category.</p>
+            <p className="text-muted-foreground mb-8">We couldn&apos;t find any products in the {categoryName} category.</p>
             <Button asChild className="rounded-full px-8">
               <Link href="/collections">Browse All Products</Link>
             </Button>
@@ -252,7 +250,7 @@ export default function CategoryPage() {
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
-                      className="h-full w-full"
+                      className="relative h-full w-full"
                     >
                       <Image
                         src={product.image}

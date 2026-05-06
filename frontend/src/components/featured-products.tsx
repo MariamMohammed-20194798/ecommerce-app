@@ -164,7 +164,7 @@ export function FeaturedProducts() {
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.5 }}
-                    className="h-full w-full"
+                    className="relative h-full w-full"
                   >
                     <Image
                       src={product.image}
