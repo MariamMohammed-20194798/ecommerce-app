@@ -110,7 +110,7 @@ export default function WishlistPage() {
             <article key={product.id} className="overflow-hidden rounded-2xl border border-border bg-background">
               <Link href={`/products/${product.slug}`} className="block">
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" />
+                  <Image src={product.image} alt={product.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover" />
                 </div>
               </Link>
               <div className="space-y-4 p-5">

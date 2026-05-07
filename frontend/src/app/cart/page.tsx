@@ -328,6 +328,7 @@ export default function CartPage() {
                         src={previewImage}
                         alt={item.variant.product.name}
                         fill
+                        sizes="120px"
                         className="object-cover"
                       />
                     </Link>

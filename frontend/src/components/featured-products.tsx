@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import {
   addProductToWishlist,
   formatPriceEgp,
-  isProductWishlisted,
   getProducts,
   addProductToCart,
   getWishlistProductIds,
