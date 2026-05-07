@@ -1,103 +1,116 @@
-"use client"
+'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from "lucide-react"
-import { motion, useInView, AnimatePresence, Variants } from "framer-motion"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { addProductToWishlist, formatPriceEgp, isProductWishlisted, getProducts, addProductToCart, getWishlistProductIds, type Product } from "@/lib/products"
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ChevronLeft, ChevronRight, Eye, Heart, ShoppingBag } from 'lucide-react';
+import { motion, useInView, AnimatePresence, Variants } from 'framer-motion';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  addProductToWishlist,
+  formatPriceEgp,
+  isProductWishlisted,
+  getProducts,
+  addProductToCart,
+  getWishlistProductIds,
+  type Product,
+} from '@/lib/products';
 
 export function FeaturedProducts() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([])
-  const [activeWishlistProductId, setActiveWishlistProductId] = useState<string | null>(null)
-  const [activeCartProductId, setActiveCartProductId] = useState<string | null>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
-  const scrollerRef = useRef<HTMLDivElement>(null)
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
-  
-  const wishlistedProductIdSet = useMemo(() => new Set(wishlistedProductIds), [wishlistedProductIds])
+  const [products, setProducts] = useState<Product[]>([]);
+  const [wishlistedProductIds, setWishlistedProductIds] = useState<string[]>([]);
+  const [activeWishlistProductId, setActiveWishlistProductId] = useState<string | null>(
+    null,
+  );
+  const [activeCartProductId, setActiveCartProductId] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+
+  const wishlistedProductIdSet = useMemo(
+    () => new Set(wishlistedProductIds),
+    [wishlistedProductIds],
+  );
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
-        const nextProducts = await getProducts({ sort: "newest" })
-        setProducts(nextProducts)
-        
-        const wishlistIds = await getWishlistProductIds()
-        setWishlistedProductIds(wishlistIds)
-      } catch (error) {
-        console.error("Failed to load new arrivals:", error)
-      }
-    }
+        const nextProducts = await getProducts({ sort: 'newest' });
+        setProducts(nextProducts);
 
-    void fetchNewArrivals()
-  }, [])
+        const wishlistIds = await getWishlistProductIds();
+        setWishlistedProductIds(wishlistIds);
+      } catch (error) {
+        console.error('Failed to load new arrivals:', error);
+      }
+    };
+
+    void fetchNewArrivals();
+  }, []);
 
   const updateScrollState = () => {
-    const element = scrollerRef.current
+    const element = scrollerRef.current;
     if (!element) {
-      return
+      return;
     }
 
-    const maxScrollLeft = element.scrollWidth - element.clientWidth
-    setCanScrollLeft(element.scrollLeft > 0)
-    setCanScrollRight(element.scrollLeft < maxScrollLeft - 1)
-  }
+    const maxScrollLeft = element.scrollWidth - element.clientWidth;
+    setCanScrollLeft(element.scrollLeft > 0);
+    setCanScrollRight(element.scrollLeft < maxScrollLeft - 1);
+  };
 
-  const scrollByAmount = (direction: "left" | "right") => {
-    const element = scrollerRef.current
+  const scrollByAmount = (direction: 'left' | 'right') => {
+    const element = scrollerRef.current;
     if (!element) {
-      return
+      return;
     }
 
-    const distance = Math.max(element.clientWidth * 0.8, 260)
+    const distance = Math.max(element.clientWidth * 0.8, 260);
     element.scrollBy({
-      left: direction === "left" ? -distance : distance,
-      behavior: "smooth",
-    })
-  }
+      left: direction === 'left' ? -distance : distance,
+      behavior: 'smooth',
+    });
+  };
 
   useEffect(() => {
-    updateScrollState()
-    window.addEventListener("resize", updateScrollState)
-    return () => window.removeEventListener("resize", updateScrollState)
-  }, [products.length])
+    updateScrollState();
+    window.addEventListener('resize', updateScrollState);
+    return () => window.removeEventListener('resize', updateScrollState);
+  }, [products.length]);
 
   const handleAddToWishlist = async (product: Product) => {
     if (wishlistedProductIdSet.has(product.id)) {
-      toast.info("Already in wishlist")
-      return
+      toast.info('Already in wishlist');
+      return;
     }
 
-    setActiveWishlistProductId(product.id)
+    setActiveWishlistProductId(product.id);
     try {
-      await addProductToWishlist(product)
-      setWishlistedProductIds((current) => [...current, product.id])
-      toast.success("Added to wishlist")
+      await addProductToWishlist(product);
+      setWishlistedProductIds((current) => [...current, product.id]);
+      toast.success('Added to wishlist');
     } catch {
-      toast.error("Please login to add items to your wishlist")
+      toast.error('Please login to add items to your wishlist');
     } finally {
-      setActiveWishlistProductId(null)
+      setActiveWishlistProductId(null);
     }
-  }
+  };
 
   const handleAddToCart = async (product: Product) => {
-    setActiveCartProductId(product.id)
+    setActiveCartProductId(product.id);
     try {
-      await addProductToCart(product, 1)
-      toast.success("Added to cart")
+      await addProductToCart(product, 1);
+      toast.success('Added to cart');
     } catch {
-      toast.error("Could not add this product to cart")
+      toast.error('Could not add this product to cart');
     } finally {
-      setActiveCartProductId(null)
+      setActiveCartProductId(null);
     }
-  }
+  };
 
   // Animation variants
   const containerVariants: Variants = {
@@ -108,7 +121,7 @@ export function FeaturedProducts() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -117,15 +130,15 @@ export function FeaturedProducts() {
       scale: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut",
+        ease: 'easeOut',
       },
     },
-  }
+  };
 
   return (
     <section ref={sectionRef} className="py-24 bg-background overflow-hidden" id="new">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -150,17 +163,20 @@ export function FeaturedProducts() {
             className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-6"
             variants={containerVariants}
             initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
+            animate={isInView ? 'visible' : 'hidden'}
           >
             {products.map((product) => (
-              <motion.div 
-                key={product.id} 
+              <motion.div
+                key={product.id}
                 variants={itemVariants}
                 className="group/card w-[72%] shrink-0 snap-start cursor-pointer sm:w-[45%] lg:w-[24%]"
               >
                 <div className="relative group/image mb-4 aspect-[3/4] overflow-hidden rounded-[24px] bg-muted">
-                  <Link href={`/products/${product.slug}`} className="absolute inset-0 z-10" />
-                  
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="absolute inset-0 z-10"
+                  />
+
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.5 }}
@@ -172,6 +188,7 @@ export function FeaturedProducts() {
                       fill
                       sizes="(max-width: 640px) 70vw, (max-width: 1024px) 45vw, 24vw"
                       className="object-cover"
+                      loading="eager"
                     />
                   </motion.div>
 
@@ -183,16 +200,18 @@ export function FeaturedProducts() {
                       aria-label="Add to wishlist"
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-foreground shadow-md transition-colors hover:bg-white"
                       onClick={(event) => {
-                        event.preventDefault()
-                        handleAddToWishlist(product)
+                        event.preventDefault();
+                        handleAddToWishlist(product);
                       }}
                       disabled={activeWishlistProductId === product.id}
                       suppressHydrationWarning
                     >
-                      <Heart className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? "fill-current text-red-500" : ""}`} />
+                      <Heart
+                        className={`h-4 w-4 ${wishlistedProductIdSet.has(product.id) ? 'fill-current text-red-500' : ''}`}
+                      />
                     </motion.button>
                   </div>
-                  
+
                   {/* Mobile micro-interactions */}
                   <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/92 px-3 py-2 shadow-sm md:hidden z-20">
                     <button
@@ -200,8 +219,8 @@ export function FeaturedProducts() {
                       aria-label="Quick add"
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground"
                       onClick={(e) => {
-                        e.preventDefault()
-                        handleAddToCart(product)
+                        e.preventDefault();
+                        handleAddToCart(product);
                       }}
                       disabled={activeCartProductId === product.id || !product.inStock}
                       suppressHydrationWarning
@@ -221,8 +240,8 @@ export function FeaturedProducts() {
                     <Button
                       className="w-full h-12 rounded-full bg-white/90 backdrop-blur-sm text-foreground hover:bg-foreground hover:text-white border-none shadow-xl transition-all"
                       onClick={(e: React.MouseEvent) => {
-                        e.preventDefault()
-                        handleAddToCart(product)
+                        e.preventDefault();
+                        handleAddToCart(product);
                       }}
                       disabled={activeCartProductId === product.id || !product.inStock}
                       suppressHydrationWarning
@@ -233,12 +252,15 @@ export function FeaturedProducts() {
                 </div>
 
                 <div className="space-y-1">
-                  <Link href={`/products/${product.slug}`} className="inline-block group-hover/card:text-primary transition-colors">
-                    <h3 className="text-lg font-light tracking-wide">
-                      {product.name}
-                    </h3>
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="inline-block group-hover/card:text-primary transition-colors"
+                  >
+                    <h3 className="text-lg font-light tracking-wide">{product.name}</h3>
                   </Link>
-                  <p className="text-md font-medium text-foreground/70">{formatPriceEgp(product.price)}</p>
+                  <p className="text-md font-medium text-foreground/70">
+                    {formatPriceEgp(product.price)}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -251,7 +273,7 @@ export function FeaturedProducts() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 type="button"
-                onClick={() => scrollByAmount("left")}
+                onClick={() => scrollByAmount('left')}
                 aria-label="Scroll new arrivals left"
                 className="absolute left-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
                 suppressHydrationWarning
@@ -268,7 +290,7 @@ export function FeaturedProducts() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 type="button"
-                onClick={() => scrollByAmount("right")}
+                onClick={() => scrollByAmount('right')}
                 aria-label="Scroll new arrivals right"
                 className="absolute right-3 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg backdrop-blur-sm transition-colors hover:bg-white z-30 md:flex"
                 suppressHydrationWarning
@@ -281,7 +303,7 @@ export function FeaturedProducts() {
           <div className="mt-8 flex items-center justify-center gap-4 md:hidden">
             <button
               type="button"
-              onClick={() => scrollByAmount("left")}
+              onClick={() => scrollByAmount('left')}
               aria-label="Previous new arrivals"
               disabled={!canScrollLeft}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
@@ -291,7 +313,7 @@ export function FeaturedProducts() {
             </button>
             <button
               type="button"
-              onClick={() => scrollByAmount("right")}
+              onClick={() => scrollByAmount('right')}
               aria-label="Next new arrivals"
               disabled={!canScrollRight}
               className="flex h-12 w-12 items-center justify-center rounded-full border border-foreground/10 bg-white/50 text-foreground disabled:opacity-30"
@@ -303,5 +325,5 @@ export function FeaturedProducts() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,65 +1,80 @@
-"use client"
+'use client';
 
-import Image from "next/image"
-import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
-import { Heart, SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutGrid } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { addProductToCart, formatPriceEgp, addProductToWishlist, getCategories, getProducts, type Product } from "@/lib/products"
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  Heart,
+  SlidersHorizontal,
+  ChevronDown,
+  X,
+  Grid3X3,
+  LayoutGrid,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  addProductToCart,
+  formatPriceEgp,
+  addProductToWishlist,
+  getCategories,
+  getProducts,
+  type Product,
+} from '@/lib/products';
 
 const sortOptions = [
-  { name: "Newest", value: "newest" },
-  { name: "Price: Low to High", value: "price-asc" },
-  { name: "Price: High to Low", value: "price-desc" },
-  { name: "Best Selling", value: "best-selling" },
-]
+  { name: 'Newest', value: 'newest' },
+  { name: 'Price: Low to High', value: 'price-asc' },
+  { name: 'Price: High to Low', value: 'price-desc' },
+  { name: 'Best Selling', value: 'best-selling' },
+];
 
 export default function CollectionsPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [sortBy, setSortBy] = useState("newest")
-  const [showFilters, setShowFilters] = useState(false)
-  const [gridCols, setGridCols] = useState<3 | 4>(4)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [activeProductAction, setActiveProductAction] = useState<string | null>(null)
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
+  const [showFilters, setShowFilters] = useState(false);
+  const [gridCols, setGridCols] = useState<3 | 4>(4);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeProductAction, setActiveProductAction] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        setIsLoading(true)
-        setError(null)
-        const data = await getProducts()
-        setProducts(data)
+        setIsLoading(true);
+        setError(null);
+        const data = await getProducts();
+        setProducts(data);
       } catch {
-        setError("We could not load products right now. Please try again.")
+        setError('We could not load products right now. Please try again.');
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    void loadProducts()
-  }, [])
+    void loadProducts();
+  }, []);
 
-  const categories = useMemo(() => getCategories(products), [products])
+  const categories = useMemo(() => getCategories(products), [products]);
 
-  const filteredProducts = selectedCategory === "all"
-    ? products
-    : products.filter(p => p.category.toLowerCase() === selectedCategory)
+  const filteredProducts =
+    selectedCategory === 'all'
+      ? products
+      : products.filter((p) => p.category.toLowerCase() === selectedCategory);
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
-      case "price-asc":
-        return a.price - b.price
-      case "price-desc":
-        return b.price - a.price
-      case "newest":
-        return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)
+      case 'price-asc':
+        return a.price - b.price;
+      case 'price-desc':
+        return b.price - a.price;
+      case 'newest':
+        return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   return (
     <div className="min-h-screen">
@@ -104,10 +119,11 @@ export default function CollectionsPage() {
                   <button
                     key={cat.slug}
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`px-3 py-1.5 text-sm transition-colors ${selectedCategory === cat.slug
-                      ? "bg-muted text-foreground rounded-full"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`px-3 py-1.5 text-sm transition-colors ${
+                      selectedCategory === cat.slug
+                        ? 'bg-muted text-foreground rounded-full'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
                   >
                     {cat.name}
                   </button>
@@ -119,7 +135,9 @@ export default function CollectionsPage() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground hidden sm:inline">
-                  {isLoading ? "Loading..." : `${sortedProducts.length} ${sortedProducts.length === 1 ? "item" : "items"}`}
+                  {isLoading
+                    ? 'Loading...'
+                    : `${sortedProducts.length} ${sortedProducts.length === 1 ? 'item' : 'items'}`}
                 </span>
               </div>
 
@@ -134,8 +152,11 @@ export default function CollectionsPage() {
                     <button
                       key={option.value}
                       onClick={() => setSortBy(option.value)}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${sortBy === option.value ? "text-foreground font-medium" : "text-muted-foreground"
-                        }`}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${
+                        sortBy === option.value
+                          ? 'text-foreground font-medium'
+                          : 'text-muted-foreground'
+                      }`}
                     >
                       {option.name}
                     </button>
@@ -147,14 +168,14 @@ export default function CollectionsPage() {
               <div className="hidden lg:flex items-center gap-1 border-l border-border pl-4">
                 <button
                   onClick={() => setGridCols(3)}
-                  className={`p-1.5 transition-colors ${gridCols === 3 ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`p-1.5 transition-colors ${gridCols === 3 ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                   aria-label="3 column grid"
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setGridCols(4)}
-                  className={`p-1.5 transition-colors ${gridCols === 4 ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`p-1.5 transition-colors ${gridCols === 4 ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                   aria-label="4 column grid"
                 >
                   <Grid3X3 className="h-4 w-4" />
@@ -168,7 +189,10 @@ export default function CollectionsPage() {
       {/* Mobile filter drawer */}
       {showFilters && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-foreground/50" onClick={() => setShowFilters(false)} />
+          <div
+            className="absolute inset-0 bg-foreground/50"
+            onClick={() => setShowFilters(false)}
+          />
           <div className="absolute left-0 top-0 bottom-0 w-80 bg-background p-6">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-lg font-medium">Filters</h2>
@@ -177,19 +201,22 @@ export default function CollectionsPage() {
               </Button>
             </div>
             <div>
-              <h3 className="text-sm font-medium uppercase tracking-wider mb-4">Category</h3>
+              <h3 className="text-sm font-medium uppercase tracking-wider mb-4">
+                Category
+              </h3>
               <div className="flex flex-col gap-2">
                 {categories.map((cat) => (
                   <button
                     key={cat.slug}
                     onClick={() => {
-                      setSelectedCategory(cat.slug)
-                      setShowFilters(false)
+                      setSelectedCategory(cat.slug);
+                      setShowFilters(false);
                     }}
-                    className={`text-left py-2 text-sm transition-colors ${selectedCategory === cat.slug
-                      ? "text-foreground font-medium"
-                      : "text-muted-foreground"
-                      }`}
+                    className={`text-left py-2 text-sm transition-colors ${
+                      selectedCategory === cat.slug
+                        ? 'text-foreground font-medium'
+                        : 'text-muted-foreground'
+                    }`}
                   >
                     {cat.name}
                   </button>
@@ -208,10 +235,15 @@ export default function CollectionsPage() {
           </div>
         )}
         {isLoading && (
-          <div className="py-20 text-center text-sm text-muted-foreground">Loading products...</div>
+          <div className="py-20 text-center text-sm text-muted-foreground">
+            Loading products...
+          </div>
         )}
-        <div className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12  ${gridCols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"
-          }`}>
+        <div
+          className={`grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:gap-x-8 lg:gap-y-12  ${
+            gridCols === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
+          }`}
+        >
           {sortedProducts.map((product) => (
             <Link
               key={product.id}
@@ -225,6 +257,7 @@ export default function CollectionsPage() {
                   alt={product.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="eager"
                 />
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
@@ -247,15 +280,15 @@ export default function CollectionsPage() {
                     className="rounded-full h-9 w-9 bg-white/90 hover:bg-white"
                     aria-label="Add to wishlist"
                     onClick={async (e) => {
-                      e.preventDefault()
-                      setActiveProductAction(`${product.id}:wishlist`)
+                      e.preventDefault();
+                      setActiveProductAction(`${product.id}:wishlist`);
                       try {
-                        await addProductToWishlist(product)
-                        toast.success("Added to wishlist")
+                        await addProductToWishlist(product);
+                        toast.success('Added to wishlist');
                       } catch {
-                        toast.error("Please login to add items to your wishlist")
+                        toast.error('Please login to add items to your wishlist');
                       } finally {
-                        setActiveProductAction(null)
+                        setActiveProductAction(null);
                       }
                     }}
                     disabled={activeProductAction === `${product.id}:wishlist`}
@@ -268,18 +301,20 @@ export default function CollectionsPage() {
                   <Button
                     className="w-full h-12 rounded-full bg-white text-foreground hover:bg-foreground hover:text-white"
                     onClick={async (e) => {
-                      e.preventDefault()
-                      setActiveProductAction(`${product.id}:cart`)
+                      e.preventDefault();
+                      setActiveProductAction(`${product.id}:cart`);
                       try {
-                        await addProductToCart(product, 1)
-                        toast.success("Added to cart")
+                        await addProductToCart(product, 1);
+                        toast.success('Added to cart');
                       } catch {
-                        toast.error("Could not add this product to cart")
+                        toast.error('Could not add this product to cart');
                       } finally {
-                        setActiveProductAction(null)
+                        setActiveProductAction(null);
                       }
                     }}
-                    disabled={activeProductAction === `${product.id}:cart` || !product.inStock}
+                    disabled={
+                      activeProductAction === `${product.id}:cart` || !product.inStock
+                    }
                   >
                     Quick Add
                   </Button>
@@ -290,16 +325,16 @@ export default function CollectionsPage() {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                   {product.category}
                 </p>
-                <h3 className="text-sm font-medium text-foreground">
-                  {product.name}
-                </h3>
+                <h3 className="text-sm font-medium text-foreground">{product.name}</h3>
                 <div className="mt-1 flex items-center justify-center gap-2">
                   {product.originalPrice && (
                     <span className="text-sm text-muted-foreground line-through">
                       ${product.originalPrice}
                     </span>
                   )}
-                  <span className={`text-sm ${product.isSale ? "text-accent" : "text-foreground/60"}`}>
+                  <span
+                    className={`text-sm ${product.isSale ? 'text-accent' : 'text-foreground/60'}`}
+                  >
                     {formatPriceEgp(product.price)}
                   </span>
                 </div>
@@ -309,5 +344,5 @@ export default function CollectionsPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
