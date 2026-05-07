@@ -7,37 +7,36 @@ export declare class ProductRepository {
     private buildOrderBy;
     private buildVariantFilter;
     findMany(query: ProductsQueryDto): Promise<{
-        data: ({
+        data: {
+            basePrice: number;
+            variants: {
+                priceOverride: number | null;
+                id: string;
+                images: string[];
+                sku: string;
+                size: string | null;
+                color: string | null;
+                stockQuantity: number;
+            }[];
             category: {
-                name: string;
                 id: string;
                 slug: string;
+                name: string;
             };
             _count: {
                 reviews: number;
             };
-            variants: {
-                id: string;
-                size: string | null;
-                color: string | null;
-                images: string[];
-                sku: string;
-                priceOverride: Prisma.Decimal | null;
-                stockQuantity: number;
-            }[];
-        } & {
-            name: string;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            isActive: boolean;
+            categoryId: string;
             slug: string;
+            name: string;
             description: string | null;
             images: string[];
-            basePrice: Prisma.Decimal;
-            categoryId: string;
+            isActive: boolean;
             metadata: Prisma.JsonValue | null;
-        })[];
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         meta: {
             total: number;
             page: number;
@@ -46,95 +45,93 @@ export declare class ProductRepository {
             hasNextPage: boolean;
         };
     }>;
-    findBySlug(slug: string): Promise<({
+    findBySlug(slug: string): Promise<{
+        basePrice: number;
+        variants: {
+            priceOverride: number | null;
+            id: string;
+            images: string[];
+            sku: string;
+            size: string | null;
+            color: string | null;
+            stockQuantity: number;
+        }[];
         category: {
-            name: string;
             id: string;
             slug: string;
+            name: string;
         };
         reviews: ({
             user: {
-                email: string;
                 id: string;
+                email: string;
             };
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             productId: string;
+            userId: string;
             rating: number;
             body: string | null;
         })[];
         _count: {
             reviews: number;
         };
-        variants: {
-            id: string;
-            size: string | null;
-            color: string | null;
-            images: string[];
-            sku: string;
-            priceOverride: Prisma.Decimal | null;
-            stockQuantity: number;
-        }[];
-    } & {
-        name: string;
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        isActive: boolean;
+        categoryId: string;
         slug: string;
+        name: string;
         description: string | null;
         images: string[];
-        basePrice: Prisma.Decimal;
-        categoryId: string;
+        isActive: boolean;
         metadata: Prisma.JsonValue | null;
-    }) | null>;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
     findById(id: string): Promise<{
-        name: string;
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        isActive: boolean;
+        categoryId: string;
         slug: string;
+        name: string;
         description: string | null;
         images: string[];
         basePrice: Prisma.Decimal;
-        categoryId: string;
+        isActive: boolean;
         metadata: Prisma.JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     } | null>;
     search(query: SearchQueryDto): Promise<{
         data: ({
+            basePrice: number;
+            variants: {
+                priceOverride: number | null;
+                id: string;
+                images: string[];
+                size: string | null;
+                color: string | null;
+                stockQuantity: number;
+            }[];
             category: {
-                name: string;
                 id: string;
                 slug: string;
+                name: string;
             };
             _count: {
                 reviews: number;
             };
-            variants: {
-                id: string;
-                size: string | null;
-                color: string | null;
-                images: string[];
-                priceOverride: Prisma.Decimal | null;
-                stockQuantity: number;
-            }[];
-        } & {
-            name: string;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            isActive: boolean;
+            categoryId: string;
             slug: string;
+            name: string;
             description: string | null;
             images: string[];
-            basePrice: Prisma.Decimal;
-            categoryId: string;
+            isActive: boolean;
             metadata: Prisma.JsonValue | null;
-        })[];
+            createdAt: Date;
+            updatedAt: Date;
+        } | null)[];
         meta: {
             total: number;
             page: number;
@@ -146,15 +143,15 @@ export declare class ProductRepository {
     findReviews(productId: string, query: ReviewsQueryDto): Promise<{
         data: ({
             user: {
-                email: string;
                 id: string;
+                email: string;
             };
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             productId: string;
+            userId: string;
             rating: number;
             body: string | null;
         })[];
@@ -169,62 +166,60 @@ export declare class ProductRepository {
         };
     }>;
     create(dto: CreateProductDto): Promise<{
-        category: {
-            name: string;
-            id: string;
-            slug: string;
-        };
+        basePrice: number;
         variants: {
+            priceOverride: number | null;
             id: string;
-            size: string | null;
-            color: string | null;
             images: string[];
             productId: string;
             sku: string;
-            priceOverride: Prisma.Decimal | null;
+            size: string | null;
+            color: string | null;
             stockQuantity: number;
         }[];
-    } & {
-        name: string;
+        category: {
+            id: string;
+            slug: string;
+            name: string;
+        };
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        isActive: boolean;
+        categoryId: string;
         slug: string;
+        name: string;
         description: string | null;
         images: string[];
-        basePrice: Prisma.Decimal;
-        categoryId: string;
+        isActive: boolean;
         metadata: Prisma.JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     update(id: string, dto: UpdateProductDto): Promise<{
-        category: {
-            name: string;
-            id: string;
-            slug: string;
-        };
+        basePrice: number;
         variants: {
+            priceOverride: number | null;
             id: string;
-            size: string | null;
-            color: string | null;
             images: string[];
             productId: string;
             sku: string;
-            priceOverride: Prisma.Decimal | null;
+            size: string | null;
+            color: string | null;
             stockQuantity: number;
         }[];
-    } & {
-        name: string;
+        category: {
+            id: string;
+            slug: string;
+            name: string;
+        };
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        isActive: boolean;
+        categoryId: string;
         slug: string;
+        name: string;
         description: string | null;
         images: string[];
-        basePrice: Prisma.Decimal;
-        categoryId: string;
+        isActive: boolean;
         metadata: Prisma.JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     slugExists(slug: string, excludeId?: string): Promise<boolean>;
 }

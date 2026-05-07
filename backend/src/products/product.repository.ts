@@ -111,8 +111,20 @@ export class ProductRepository {
       this.prisma.product.count({ where }),
     ]);
 
+    // Convert Decimal prices to numbers
+    const productsWithNumberPrices = products.map((product) => ({
+      ...product,
+      basePrice: Number(product.basePrice),
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        priceOverride: variant.priceOverride
+          ? Number(variant.priceOverride)
+          : null,
+      })),
+    }));
+
     return {
-      data: products,
+      data: productsWithNumberPrices,
       meta: {
         total,
         page,
@@ -126,7 +138,7 @@ export class ProductRepository {
   // ─── findBySlug — full product detail ──────
 
   async findBySlug(slug: string) {
-    return this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { slug },
       include: {
         category: { select: { id: true, name: true, slug: true } },
@@ -152,6 +164,22 @@ export class ProductRepository {
         _count: { select: { reviews: true } },
       },
     });
+
+    if (!product) {
+      return null;
+    }
+
+    // Convert Decimal prices to numbers
+    return {
+      ...product,
+      basePrice: Number(product.basePrice),
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        priceOverride: variant.priceOverride
+          ? Number(variant.priceOverride)
+          : null,
+      })),
+    };
   }
 
   // ─── findById ──────
@@ -220,9 +248,22 @@ export class ProductRepository {
       },
     });
 
-    // Re-sort by the rank order from PostgreSQL
+    // Re-sort by the rank order from PostgreSQL and convert Decimal prices to numbers
     const ranked = ids
-      .map((id) => products.find((p) => p.id === id)!)
+      .map((id) => {
+        const product = products.find((p) => p.id === id);
+        if (!product) return null;
+        return {
+          ...product,
+          basePrice: Number(product.basePrice),
+          variants: product.variants.map((variant) => ({
+            ...variant,
+            priceOverride: variant.priceOverride
+              ? Number(variant.priceOverride)
+              : null,
+          })),
+        };
+      })
       .filter(Boolean);
 
     const countResult = await this.prisma.$queryRaw<[{ count: bigint }]>`
@@ -303,7 +344,7 @@ export class ProductRepository {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
 
-    return this.prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         name: dto.name,
         slug,
@@ -323,12 +364,24 @@ export class ProductRepository {
         variants: true,
       },
     });
+
+    // Convert Decimal prices to numbers
+    return {
+      ...product,
+      basePrice: Number(product.basePrice),
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        priceOverride: variant.priceOverride
+          ? Number(variant.priceOverride)
+          : null,
+      })),
+    };
   }
 
   // ─── update ────
 
   async update(id: string, dto: UpdateProductDto) {
-    return this.prisma.product.update({
+    const product = await this.prisma.product.update({
       where: { id },
       data: {
         ...(dto.name && { name: dto.name }),
@@ -346,6 +399,18 @@ export class ProductRepository {
         variants: true,
       },
     });
+
+    // Convert Decimal prices to numbers
+    return {
+      ...product,
+      basePrice: Number(product.basePrice),
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        priceOverride: variant.priceOverride
+          ? Number(variant.priceOverride)
+          : null,
+      })),
+    };
   }
 
   // ─── slugExists ───

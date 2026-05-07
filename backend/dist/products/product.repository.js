@@ -92,8 +92,18 @@ let ProductRepository = class ProductRepository {
             }),
             this.prisma.product.count({ where }),
         ]);
+        const productsWithNumberPrices = products.map((product) => ({
+            ...product,
+            basePrice: Number(product.basePrice),
+            variants: product.variants.map((variant) => ({
+                ...variant,
+                priceOverride: variant.priceOverride
+                    ? Number(variant.priceOverride)
+                    : null,
+            })),
+        }));
         return {
-            data: products,
+            data: productsWithNumberPrices,
             meta: {
                 total,
                 page,
@@ -104,7 +114,7 @@ let ProductRepository = class ProductRepository {
         };
     }
     async findBySlug(slug) {
-        return this.prisma.product.findUnique({
+        const product = await this.prisma.product.findUnique({
             where: { slug },
             include: {
                 category: { select: { id: true, name: true, slug: true } },
@@ -130,6 +140,19 @@ let ProductRepository = class ProductRepository {
                 _count: { select: { reviews: true } },
             },
         });
+        if (!product) {
+            return null;
+        }
+        return {
+            ...product,
+            basePrice: Number(product.basePrice),
+            variants: product.variants.map((variant) => ({
+                ...variant,
+                priceOverride: variant.priceOverride
+                    ? Number(variant.priceOverride)
+                    : null,
+            })),
+        };
     }
     async findById(id) {
         return this.prisma.product.findUnique({ where: { id } });
@@ -181,7 +204,21 @@ let ProductRepository = class ProductRepository {
             },
         });
         const ranked = ids
-            .map((id) => products.find((p) => p.id === id))
+            .map((id) => {
+            const product = products.find((p) => p.id === id);
+            if (!product)
+                return null;
+            return {
+                ...product,
+                basePrice: Number(product.basePrice),
+                variants: product.variants.map((variant) => ({
+                    ...variant,
+                    priceOverride: variant.priceOverride
+                        ? Number(variant.priceOverride)
+                        : null,
+                })),
+            };
+        })
             .filter(Boolean);
         const countResult = await this.prisma.$queryRaw `
       SELECT COUNT(*) FROM products
@@ -249,7 +286,7 @@ let ProductRepository = class ProductRepository {
                 .trim()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-|-$/g, '');
-        return this.prisma.product.create({
+        const product = await this.prisma.product.create({
             data: {
                 name: dto.name,
                 slug,
@@ -268,9 +305,19 @@ let ProductRepository = class ProductRepository {
                 variants: true,
             },
         });
+        return {
+            ...product,
+            basePrice: Number(product.basePrice),
+            variants: product.variants.map((variant) => ({
+                ...variant,
+                priceOverride: variant.priceOverride
+                    ? Number(variant.priceOverride)
+                    : null,
+            })),
+        };
     }
     async update(id, dto) {
-        return this.prisma.product.update({
+        const product = await this.prisma.product.update({
             where: { id },
             data: {
                 ...(dto.name && { name: dto.name }),
@@ -288,6 +335,16 @@ let ProductRepository = class ProductRepository {
                 variants: true,
             },
         });
+        return {
+            ...product,
+            basePrice: Number(product.basePrice),
+            variants: product.variants.map((variant) => ({
+                ...variant,
+                priceOverride: variant.priceOverride
+                    ? Number(variant.priceOverride)
+                    : null,
+            })),
+        };
     }
     async slugExists(slug, excludeId) {
         const product = await this.prisma.product.findFirst({
